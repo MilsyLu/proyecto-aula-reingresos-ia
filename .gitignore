@@ -1,0 +1,24 @@
+# Datos pesados: se descargan de UCI, no se versionan
+data/raw/diabetic_data.csv
+data/processed/
+models/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# Sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editores
+.vscode/
+.idea/
