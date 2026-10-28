@@ -67,7 +67,9 @@ proyecto-reingresos/
 ├── models/            modelos entrenados (no versionados)
 ├── reports/
 │   ├── figures/       gráficas generadas
-│   └── Fase_1_...pdf  documento de la Fase 1
+│   ├── Fase_1_...pdf  documento de la Fase 1
+│   ├── Fase_2_Informe_Tecnico_Grupo04.pdf   informe técnico de la Fase 2
+│   └── *.csv / *.json  métricas y resultados de cada notebook
 ├── requirements.txt
 └── README.md
 ```
@@ -114,7 +116,29 @@ para evitar fuga de información.
 | Clasificador mayoritario | Línea base trivial: referencia mínima que hay que superar |
 | Regresión logística | Línea base interpretable |
 | Gradient Boosting | Modelo propuesto: captura relaciones no lineales e interacciones |
-| MLP sencilla | Extensión opcional |
+| MLP sencilla | Extensión opcional — no ejecutada en la Fase 2 |
+
+### Resultados de la Fase 2
+
+Conjunto de prueba, evaluado una sola vez con el umbral 0,1123 fijado en validación:
+
+| Métrica | Valor | IC 95 % |
+|---|---|---|
+| Average Precision | **0,2249** | [0,2047 ; 0,2467] |
+| ROC-AUC | **0,6660** | [0,6527 ; 0,6786] |
+| Sensibilidad (recall) | **0,6001** | [0,5766 ; 0,6202] |
+| Precisión | 0,1781 | |
+| Brier | 0,0963 | |
+
+Validación y prueba coinciden casi exactamente (AP 0,2238 frente a 0,2249; ROC-AUC 0,6660 en
+ambos), lo que indica que no hubo sobreajuste en la búsqueda de hiperparámetros ni fuga de
+información entre conjuntos.
+
+**Resultado negativo documentado:** ningún umbral alcanza a la vez sensibilidad ≥ 0,60 y
+precisión ≥ 0,20. Con sensibilidad 0,60 la precisión cae a 0,177; exigiendo precisión 0,20 la
+sensibilidad máxima es 0,481. Se informa tal cual, sin modificar el conjunto de prueba.
+
+El detalle completo está en `reports/Fase_2_Informe_Tecnico_Grupo04.pdf`.
 
 ---
 
