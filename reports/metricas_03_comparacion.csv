@@ -1,0 +1,5 @@
+modelo,AP,ROC_AUC,AP_sobre_prevalencia,mejora_vs_logistica_%
+Mayoritario,0.113851,0.5,1.0,-46.7
+Regresion logistica,0.2136,0.654,1.88,0.0
+Gradient Boosting por defecto,0.219207,0.662126,1.93,2.6
+Gradient Boosting ajustado,0.223763,0.665977,1.97,4.8
