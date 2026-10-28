@@ -1,0 +1,5 @@
+meta de la Fase 1,objetivo,obtenido en prueba,cumple
+"AP >= 1,5 x prevalencia",0.1708,0.2249,SI
+"ROC-AUC >= 0,65",0.65,0.666,SI
+"Recall >= 0,60",0.6,0.6001,SI
+"Precision >= 0,20 (junto al recall)",0.2,0.1781,NO

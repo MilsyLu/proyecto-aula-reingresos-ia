@@ -1,0 +1,6 @@
+{
+  "umbral": 0.112346,
+  "criterio": "recall = 0,60 en validacion, meta priorizada en la Fase 1",
+  "recall_prueba": 0.6001,
+  "precision_prueba": 0.1781
+}
