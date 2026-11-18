@@ -5,6 +5,11 @@ Universidad Popular del Cesar · Ingeniería de Sistemas · Séptimo semestre ·
 
 **Integrantes:** Michel Custodes · Iván Güette · Maira Torres
 
+### 🔗 Aplicación en vivo: **https://reingresos-grupo04.streamlit.app/**
+
+Estima el riesgo de un paciente, muestra el desempeño del modelo y publica la auditoría de
+equidad. No requiere instalar nada.
+
 ---
 
 ## Qué hace este proyecto
@@ -62,13 +67,19 @@ proyecto-reingresos/
 │   ├── 01_preprocesamiento_particion.ipynb
 │   ├── 02_modelos_baseline.ipynb
 │   ├── 03_hiperparametros.ipynb
-│   └── 04_evaluacion_comparada.ipynb
+│   ├── 04_evaluacion_comparada.ipynb
+│   └── 05_equidad_sensibilidad.ipynb      auditoría de equidad y sensibilidad
+├── app/
+│   ├── app.py                     aplicación Streamlit (4 páginas)
+│   └── valores_por_defecto.json   valores típicos de las variables no pedidas
 ├── src/               funciones reutilizables
-├── models/            modelos entrenados (no versionados)
+├── models/            modelo entrenado (versionado: lo necesita la app)
 ├── reports/
 │   ├── figures/       gráficas generadas
-│   ├── Fase_1_...pdf  documento de la Fase 1
+│   ├── Fase_1_...pdf                        documento de la Fase 1
 │   ├── Fase_2_Informe_Tecnico_Grupo04.pdf   informe técnico de la Fase 2
+│   ├── Fase_3_Informe_Final_Grupo04.pdf     informe final (15 páginas)
+│   ├── predicciones_prueba.csv              19.870 filas para el tablero
 │   └── *.csv / *.json  métricas y resultados de cada notebook
 ├── requirements.txt
 └── README.md
@@ -78,13 +89,29 @@ proyecto-reingresos/
 
 ## Cómo ejecutarlo
 
+**1. Instalar las dependencias**
+
 ```bash
 pip install -r requirements.txt
+```
+
+**2. Reproducir el análisis** — los notebooks se ejecutan **en orden numérico**: cada uno
+guarda sus resultados en `data/processed/` o en `reports/`, y el siguiente los lee desde ahí.
+
+```bash
 jupyter notebook
 ```
 
-Los notebooks se ejecutan **en orden numérico**: cada uno guarda sus resultados en
-`data/processed/` y el siguiente los lee desde ahí.
+**3. Levantar la aplicación en local**
+
+```bash
+streamlit run app/app.py
+```
+
+La aplicación carga `models/gradient_boosting_ajustado.joblib` y
+`reports/predicciones_prueba.csv`, ambos versionados, así que funciona sin haber ejecutado los
+notebooks. Las versiones de `requirements.txt` están fijadas a propósito: el modelo se
+serializó con `scikit-learn==1.9.1` y otra versión puede no cargarlo.
 
 ---
 
@@ -140,16 +167,80 @@ sensibilidad máxima es 0,481. Se informa tal cual, sin modificar el conjunto de
 
 El detalle completo está en `reports/Fase_2_Informe_Tecnico_Grupo04.pdf`.
 
+### Cumplimiento de las metas de la Fase 1
+
+| Meta | Objetivo | Obtenido | |
+|---|---|---|---|
+| AP ≥ 1,5 × prevalencia | 0,1708 | 0,2249 | ✅ |
+| ROC-AUC ≥ 0,65 | 0,650 | 0,666 | ✅ |
+| Sensibilidad ≥ 0,60 | 0,600 | 0,6001 | ✅ |
+| Precisión ≥ 0,20 junto al recall | 0,200 | 0,1781 | ❌ |
+
+---
+
+## Resultados de la Fase 3
+
+La Fase 3 añadió el despliegue y la evaluación crítica. Produjo tres hallazgos que condicionan
+cualquier uso del modelo.
+
+**1. Dos variables administrativas concentran el 43,5 % del desempeño.** La importancia por
+permutación sobre el conjunto de prueba muestra que `number_inpatient` (hospitalizaciones
+previas) aporta el 25,1 % del AP y `discharge_disposition_id` (tipo de egreso) el 18,4 %. De
+las 50 variables, 21 no aportan nada. El modelo se apoya más en el historial administrativo
+del paciente que en su estado clínico.
+
+**2. La sensibilidad global oculta dos comportamientos muy distintos.** Al separar el conjunto
+de prueba por tipo de egreso:
+
+| Escenario | n | Prevalencia | AP | Sensibilidad |
+|---|---|---|---|---|
+| Prueba completa | 19.870 | 11,39 % | 0,2249 | 0,6001 |
+| Transferidos a otra institución | 4.144 | 15,97 % | 0,2541 | **0,8822** |
+| Dados de alta a casa | 15.726 | 10,18 % | 0,2098 | **0,4834** |
+
+Los pacientes que se van a casa son el **79 % de la cohorte** y son justamente el destinatario
+de un programa de seguimiento al alta. **La sensibilidad útil para el caso de uso real no es
+0,60 sino 0,48.**
+
+**3. Hay una disparidad por edad no justificada por el riesgo.** Razón de paridad de **0,569**:
+
+| Grupo de edad | n | Prevalencia real | Tasa de alerta | ROC-AUC |
+|---|---|---|---|---|
+| Menos de 50 | 3.078 | 11,50 % | 30,2 % | 0,713 |
+| 50 a 60 | 3.451 | 8,92 % | 29,2 % | 0,697 |
+| 60 a 70 | 4.519 | 12,35 % | 37,3 % | 0,670 |
+| 70 a 80 | 4.912 | 11,77 % | 40,6 % | 0,633 |
+| 80 o más | 3.910 | 11,89 % | **51,3 %** | **0,619** |
+
+La tasa de alerta sube 21 puntos con la edad mientras la prevalencia real se mueve menos de
+medio punto, y la capacidad de discriminar cae justo en el grupo sobre el que más se alerta.
+
+Por **género** la razón de paridad es 0,905, dentro de lo aceptable. Por **grupo racial** es
+0,786, pero la baja la produce el grupo `Asian` (143 casos); entre los dos grupos con tamaño
+suficiente (`Caucasian` y `AfricanAmerican`) la razón es 0,987. No es lo mismo decir "no hay
+sesgo" que decir "no hay datos para medirlo".
+
+El informe completo está en `reports/Fase_3_Informe_Final_Grupo04.pdf` (15 páginas).
+
 ---
 
 ## Limitaciones
 
-- Los datos corresponden a 1999–2008 y a hospitales de Estados Unidos.
+- **La sensibilidad útil es 0,48, no 0,60**, en la población a la que iría dirigido el
+  programa (pacientes dados de alta a su casa).
+- **Hay una disparidad por edad no justificada por el riesgo real** (razón de paridad 0,569).
+- **La precisión es baja**: con el umbral elegido, 5 de cada 6 alertas son falsas, y la meta de
+  precisión 0,20 no se alcanza en ningún umbral compatible con la sensibilidad pedida.
+- Los datos corresponden a 1999–2008 y a hospitales de Estados Unidos. No hay evidencia de
+  validez en el sistema de salud colombiano.
+- Faltan los determinantes más importantes del reingreso: soporte familiar, acceso efectivo a
+  la medicación, adherencia y continuidad del cuidado ambulatorio.
 - No permiten observar reingresos ocurridos fuera de la red de atención, ni distinguir
   reingresos programados de evitables.
 - `race` se reserva para revisar diferencias entre subgrupos y se excluye del modelo principal;
   esto no elimina el sesgo que puedan transmitir otras variables.
-- Es un prototipo académico. No es una herramienta de decisión clínica.
+- No se evaluó la estabilidad temporal: la partición es por paciente, no por periodo.
+- **Es un prototipo académico. No es una herramienta de decisión clínica.**
 
 ---
 
