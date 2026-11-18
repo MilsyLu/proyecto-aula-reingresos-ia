@@ -1,7 +1,8 @@
 # Datos pesados: se descargan de UCI, no se versionan
 data/raw/diabetic_data.csv
 data/processed/
-models/
+# El modelo pesa 356 KB y la aplicacion desplegada lo necesita: se versiona
+# models/
 
 # Python
 __pycache__/
