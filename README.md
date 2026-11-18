@@ -79,7 +79,11 @@ proyecto-reingresos/
 │   ├── Fase_1_...pdf                        documento de la Fase 1
 │   ├── Fase_2_Informe_Tecnico_Grupo04.pdf   informe técnico de la Fase 2
 │   ├── Fase_3_Informe_Final_Grupo04.pdf     informe final (15 páginas)
-│   ├── predicciones_prueba.csv              19.870 filas para el tablero
+│   ├── Guia_Tablero_PowerBI.md              cómo armar el tablero paso a paso
+│   ├── Guion_Video_3min.md                  guion del video de presentación
+│   ├── Guion_Sustentacion.md                guion de la sustentación + preguntas
+│   ├── tablero_powerbi.csv                  datos listos para Power BI
+│   ├── predicciones_prueba.csv              19.870 filas del conjunto de prueba
 │   └── *.csv / *.json  métricas y resultados de cada notebook
 ├── requirements.txt
 └── README.md
@@ -221,6 +225,17 @@ suficiente (`Caucasian` y `AfricanAmerican`) la razón es 0,987. No es lo mismo 
 sesgo" que decir "no hay datos para medirlo".
 
 El informe completo está en `reports/Fase_3_Informe_Final_Grupo04.pdf` (15 páginas).
+
+### Entregables de la Fase 3
+
+| Entregable | Dónde |
+|---|---|
+| Aplicación desplegada | https://reingresos-grupo04.streamlit.app/ |
+| Informe final (15 pág.) | `reports/Fase_3_Informe_Final_Grupo04.pdf` · también en `.docx` |
+| Tablero de Power BI | datos en `reports/tablero_powerbi.csv` · guía en `reports/Guia_Tablero_PowerBI.md` |
+| Guion del video | `reports/Guion_Video_3min.md` |
+| Guion de la sustentación | `reports/Guion_Sustentacion.md` |
+| Auditoría de equidad | `notebooks/05_equidad_sensibilidad.ipynb` |
 
 ---
 
