@@ -46,6 +46,7 @@ estilo.aplicar("claro")
 PAGINAS = [
     ("Estimar riesgo", "estimar"),
     ("Cargar archivo", "lote"),
+    ("Conocer los datos", "exploracion"),
     ("Desempeño del modelo", "desempeno"),
     ("Equidad y límites", "equidad"),
     ("Ficha del modelo", "ficha"),
@@ -81,6 +82,9 @@ if modulo == "estimar":
 elif modulo == "lote":
     from paginas import lote
     lote.render()
+elif modulo == "exploracion":
+    from paginas import exploracion
+    exploracion.render()
 elif modulo == "desempeno":
     from paginas import desempeno
     desempeno.render()

@@ -1,0 +1,212 @@
+variable,clave,centro,desde,hasta,casos,reingresos,tasa
+Días de estancia,time_in_hospital,1.458,0.987,1.929,13824,1160,0.08391203703703703
+Días de estancia,time_in_hospital,2.3930000000000002,1.929,2.857,16891,1704,0.10088212657628323
+Días de estancia,time_in_hospital,3.3215000000000003,2.857,3.786,17432,1883,0.10801973382285453
+Días de estancia,time_in_hospital,4.25,3.786,4.714,13684,1641,0.11992107570885706
+Días de estancia,time_in_hospital,5.1785,4.714,5.643,9749,1196,0.12267924915375936
+Días de estancia,time_in_hospital,6.106999999999999,5.643,6.571,7355,946,0.12861998640380692
+Días de estancia,time_in_hospital,7.0355,6.571,7.5,5696,747,0.13114466292134833
+Días de estancia,time_in_hospital,7.9645,7.5,8.429,4271,623,0.1458674783423086
+Días de estancia,time_in_hospital,8.893,8.429,9.357,2879,411,0.14275790204932268
+Días de estancia,time_in_hospital,9.8215,9.357,10.286,2262,335,0.14809902740937222
+Días de estancia,time_in_hospital,10.75,10.286,11.214,1770,192,0.10847457627118644
+Días de estancia,time_in_hospital,11.6785,11.214,12.143,1383,193,0.13955169920462762
+Días de estancia,time_in_hospital,12.607,12.143,13.071,1152,149,0.1293402777777778
+Días de estancia,time_in_hospital,13.535499999999999,13.071,14.0,995,134,0.13467336683417086
+Pruebas de laboratorio,num_lab_procedures,4.2095,0.869,7.55,6165,587,0.09521492295214923
+Pruebas de laboratorio,num_lab_procedures,10.825,7.55,14.1,4021,421,0.10470032330266103
+Pruebas de laboratorio,num_lab_procedures,17.375,14.1,20.65,4119,419,0.10172371934935664
+Pruebas de laboratorio,num_lab_procedures,23.924999999999997,20.65,27.2,5807,585,0.10074048562080248
+Pruebas de laboratorio,num_lab_procedures,30.475,27.2,33.75,7603,841,0.11061423122451663
+Pruebas de laboratorio,num_lab_procedures,37.025,33.75,40.3,13898,1523,0.10958411282198878
+Pruebas de laboratorio,num_lab_procedures,43.575,40.3,46.85,13820,1644,0.11895803183791606
+Pruebas de laboratorio,num_lab_procedures,50.125,46.85,53.4,13368,1534,0.11475164572112508
+Pruebas de laboratorio,num_lab_procedures,56.675,53.4,59.95,10368,1271,0.12258873456790123
+Pruebas de laboratorio,num_lab_procedures,63.225,59.95,66.5,9620,1222,0.12702702702702703
+Pruebas de laboratorio,num_lab_procedures,69.775,66.5,73.05,5913,707,0.119567055640115
+Pruebas de laboratorio,num_lab_procedures,76.32499999999999,73.05,79.6,2582,301,0.11657629744384199
+Pruebas de laboratorio,num_lab_procedures,82.875,79.6,86.15,1375,180,0.13090909090909092
+Pruebas de laboratorio,num_lab_procedures,89.42500000000001,86.15,92.7,408,43,0.1053921568627451
+Pruebas de laboratorio,num_lab_procedures,95.975,92.7,99.25,210,26,0.12380952380952381
+Pruebas de laboratorio,num_lab_procedures,102.525,99.25,105.8,41,6,0.14634146341463414
+Pruebas de laboratorio,num_lab_procedures,109.07499999999999,105.8,112.35,15,3,0.2
+Pruebas de laboratorio,num_lab_procedures,115.625,112.35,118.9,5,0,0.0
+Pruebas de laboratorio,num_lab_procedures,122.17500000000001,118.9,125.45,2,0,0.0
+Pruebas de laboratorio,num_lab_procedures,128.725,125.45,132.0,3,1,0.3333333333333333
+Procedimientos,num_procedures,0.4255,-0.006,0.857,45679,5142,0.11256813853192933
+Procedimientos,num_procedures,1.2854999999999999,0.857,1.714,20250,2523,0.12459259259259259
+Procedimientos,num_procedures,2.1425,1.714,2.571,12373,1417,0.1145235593631294
+Procedimientos,num_procedures,3.0,2.571,3.429,9203,1008,0.10952950124959253
+Procedimientos,num_procedures,3.8575,3.429,4.286,4049,461,0.11385527290689058
+Procedimientos,num_procedures,4.714499999999999,4.286,5.143,2988,290,0.09705488621151272
+Procedimientos,num_procedures,5.5715,5.143,6.0,4801,473,0.09852114142886899
+Medicamentos administrados,num_medications,2.96,0.92,5.0,4938,376,0.07614418793033617
+Medicamentos administrados,num_medications,7.0,5.0,9.0,15129,1427,0.09432216273382246
+Medicamentos administrados,num_medications,11.0,9.0,13.0,22805,2438,0.10690638017978514
+Medicamentos administrados,num_medications,15.0,13.0,17.0,21411,2502,0.11685582177385456
+Medicamentos administrados,num_medications,19.0,17.0,21.0,15118,1945,0.12865458393967455
+Medicamentos administrados,num_medications,23.0,21.0,25.0,9014,1205,0.13368094075881962
+Medicamentos administrados,num_medications,27.0,25.0,29.0,5103,672,0.13168724279835392
+Medicamentos administrados,num_medications,31.0,29.0,33.0,2570,310,0.12062256809338522
+Medicamentos administrados,num_medications,35.0,33.0,37.0,1359,209,0.15378955114054452
+Medicamentos administrados,num_medications,39.0,37.0,41.0,724,93,0.12845303867403315
+Medicamentos administrados,num_medications,43.0,41.0,45.0,424,49,0.11556603773584906
+Medicamentos administrados,num_medications,47.0,45.0,49.0,277,38,0.1371841155234657
+Medicamentos administrados,num_medications,51.0,49.0,53.0,187,14,0.0748663101604278
+Medicamentos administrados,num_medications,55.0,53.0,57.0,126,12,0.09523809523809523
+Medicamentos administrados,num_medications,59.0,57.0,61.0,78,12,0.15384615384615385
+Medicamentos administrados,num_medications,63.0,61.0,65.0,46,3,0.06521739130434782
+Medicamentos administrados,num_medications,67.0,65.0,69.0,24,4,0.16666666666666666
+Medicamentos administrados,num_medications,71.0,69.0,73.0,5,4,0.8
+Medicamentos administrados,num_medications,75.0,73.0,77.0,3,0,0.0
+Medicamentos administrados,num_medications,79.0,77.0,81.0,2,1,0.5
+Consultas externas (año previo),number_outpatient,1.0290000000000001,-0.042,2.1,94852,10719,0.11300763294395479
+Consultas externas (año previo),number_outpatient,3.1500000000000004,2.1,4.2,3074,416,0.13532856213402733
+Consultas externas (año previo),number_outpatient,5.25,4.2,6.3,808,103,0.12747524752475248
+Consultas externas (año previo),number_outpatient,7.35,6.3,8.4,250,29,0.116
+Consultas externas (año previo),number_outpatient,9.45,8.4,10.5,139,18,0.12949640287769784
+Consultas externas (año previo),number_outpatient,11.55,10.5,12.6,70,11,0.15714285714285714
+Consultas externas (año previo),number_outpatient,13.649999999999999,12.6,14.7,58,11,0.1896551724137931
+Consultas externas (año previo),number_outpatient,15.75,14.7,16.8,33,2,0.06060606060606061
+Consultas externas (año previo),number_outpatient,17.85,16.8,18.9,13,1,0.07692307692307693
+Consultas externas (año previo),number_outpatient,19.95,18.9,21.0,15,1,0.06666666666666667
+Consultas externas (año previo),number_outpatient,22.05,21.0,23.1,7,2,0.2857142857142857
+Consultas externas (año previo),number_outpatient,24.15,23.1,25.2,4,0,0.0
+Consultas externas (año previo),number_outpatient,26.25,25.2,27.3,5,0,0.0
+Consultas externas (año previo),number_outpatient,28.35,27.3,29.4,3,0,0.0
+Consultas externas (año previo),number_outpatient,32.55,31.5,33.6,2,0,0.0
+Consultas externas (año previo),number_outpatient,34.650000000000006,33.6,35.7,3,0,0.0
+Consultas externas (año previo),number_outpatient,36.75,35.7,37.8,3,0,0.0
+Consultas externas (año previo),number_outpatient,38.849999999999994,37.8,39.9,2,0,0.0
+Consultas externas (año previo),number_outpatient,40.95,39.9,42.0,2,1,0.5
+Visitas a urgencias (año previo),number_emergency,1.8619999999999999,-0.076,3.8,98413,11047,0.11225143019723004
+Visitas a urgencias (año previo),number_emergency,5.699999999999999,3.8,7.6,724,202,0.27900552486187846
+Visitas a urgencias (año previo),number_emergency,9.5,7.6,11.4,140,45,0.32142857142857145
+Visitas a urgencias (año previo),number_emergency,13.3,11.4,15.2,28,7,0.25
+Visitas a urgencias (año previo),number_emergency,17.1,15.2,19.0,14,5,0.35714285714285715
+Visitas a urgencias (año previo),number_emergency,20.9,19.0,22.8,12,6,0.5
+Visitas a urgencias (año previo),number_emergency,24.700000000000003,22.8,26.6,3,0,0.0
+Visitas a urgencias (año previo),number_emergency,28.5,26.6,30.4,2,1,0.5
+Visitas a urgencias (año previo),number_emergency,36.1,34.2,38.0,1,0,0.0
+Visitas a urgencias (año previo),number_emergency,43.7,41.8,45.6,1,0,0.0
+Visitas a urgencias (año previo),number_emergency,47.5,45.6,49.4,1,0,0.0
+Visitas a urgencias (año previo),number_emergency,55.1,53.2,57.0,1,0,0.0
+Visitas a urgencias (año previo),number_emergency,62.699999999999996,60.8,64.6,2,1,0.5
+Visitas a urgencias (año previo),number_emergency,74.1,72.2,76.0,1,0,0.0
+Hospitalizaciones previas (año previo),number_inpatient,0.5145000000000001,-0.021,1.05,85229,8206,0.09628178202255101
+Hospitalizaciones previas (año previo),number_inpatient,1.5750000000000002,1.05,2.1,7300,1309,0.17931506849315068
+Hospitalizaciones previas (año previo),number_inpatient,2.625,2.1,3.15,3271,688,0.21033323142769794
+Hospitalizaciones previas (año previo),number_inpatient,3.675,3.15,4.2,1574,380,0.241423125794155
+Hospitalizaciones previas (año previo),number_inpatient,4.725,4.2,5.25,791,253,0.3198482932996207
+Hospitalizaciones previas (año previo),number_inpatient,5.775,5.25,6.3,474,165,0.34810126582278483
+Hospitalizaciones previas (año previo),number_inpatient,6.824999999999999,6.3,7.35,262,95,0.36259541984732824
+Hospitalizaciones previas (año previo),number_inpatient,7.875,7.35,8.4,145,67,0.46206896551724136
+Hospitalizaciones previas (año previo),number_inpatient,8.925,8.4,9.45,109,47,0.43119266055045874
+Hospitalizaciones previas (año previo),number_inpatient,9.975,9.45,10.5,59,26,0.4406779661016949
+Hospitalizaciones previas (año previo),number_inpatient,11.025,10.5,11.55,49,33,0.673469387755102
+Hospitalizaciones previas (año previo),number_inpatient,12.075,11.55,12.6,32,17,0.53125
+Hospitalizaciones previas (año previo),number_inpatient,13.125,12.6,13.65,18,10,0.5555555555555556
+Hospitalizaciones previas (año previo),number_inpatient,14.175,13.65,14.7,10,4,0.4
+Hospitalizaciones previas (año previo),number_inpatient,15.225,14.7,15.75,9,9,1.0
+Hospitalizaciones previas (año previo),number_inpatient,16.275,15.75,16.8,6,2,0.3333333333333333
+Hospitalizaciones previas (año previo),number_inpatient,17.325000000000003,16.8,17.85,1,1,1.0
+Hospitalizaciones previas (año previo),number_inpatient,18.375,17.85,18.9,1,0,0.0
+Hospitalizaciones previas (año previo),number_inpatient,19.424999999999997,18.9,19.95,2,1,0.5
+Hospitalizaciones previas (año previo),number_inpatient,20.475,19.95,21.0,1,1,1.0
+Diagnósticos registrados,number_diagnoses,1.4615,0.985,1.938,219,13,0.0593607305936073
+Diagnósticos registrados,number_diagnoses,2.4065,1.938,2.875,1021,62,0.06072477962781587
+Diagnósticos registrados,number_diagnoses,3.3434999999999997,2.875,3.812,2824,209,0.07400849858356941
+Diagnósticos registrados,number_diagnoses,4.281,3.812,4.75,5499,457,0.08310601927623204
+Diagnósticos registrados,number_diagnoses,5.218999999999999,4.75,5.688,11301,1041,0.0921157419697372
+Diagnósticos registrados,number_diagnoses,6.156499999999999,5.688,6.625,9986,1050,0.10514720608852393
+Diagnósticos registrados,number_diagnoses,7.093500000000001,6.625,7.562,10215,1115,0.10915320606950563
+Diagnósticos registrados,number_diagnoses,8.031,7.562,8.5,10359,1249,0.12057148373395116
+Diagnósticos registrados,number_diagnoses,8.969000000000001,8.5,9.438,47810,6101,0.12760928676009203
+Diagnósticos registrados,number_diagnoses,9.906500000000001,9.438,10.375,16,3,0.1875
+Diagnósticos registrados,number_diagnoses,10.843499999999999,10.375,11.312,11,3,0.2727272727272727
+Diagnósticos registrados,number_diagnoses,11.780999999999999,11.312,12.25,8,1,0.125
+Diagnósticos registrados,number_diagnoses,12.719000000000001,12.25,13.188,16,3,0.1875
+Diagnósticos registrados,number_diagnoses,13.656500000000001,13.188,14.125,6,1,0.16666666666666666
+Diagnósticos registrados,number_diagnoses,14.593499999999999,14.125,15.062,10,2,0.2
+Diagnósticos registrados,number_diagnoses,15.530999999999999,15.062,16.0,42,4,0.09523809523809523
+Edad,edad_num,9.455,4.91,14.0,160,3,0.01875
+Edad,edad_num,18.5,14.0,23.0,690,40,0.057971014492753624
+Edad,edad_num,27.5,23.0,32.0,1649,236,0.14311704063068525
+Edad,edad_num,36.5,32.0,41.0,3764,424,0.1126461211477152
+Edad,edad_num,45.5,41.0,50.0,9607,1024,0.10658894556052878
+Edad,edad_num,54.5,50.0,59.0,17060,1667,0.09771395076201642
+Edad,edad_num,63.5,59.0,68.0,22059,2493,0.11301509587923296
+Edad,edad_num,72.5,68.0,77.0,25331,3054,0.12056373613359125
+Edad,edad_num,81.5,77.0,86.0,16434,2065,0.12565413167822806
+Edad,edad_num,90.5,86.0,95.0,2589,308,0.11896485129393589
+Servicios previos (derivada),servicios_previos,1.96,-0.08,4.0,93028,9816,0.10551661865244873
+Servicios previos (derivada),servicios_previos,6.0,4.0,8.0,4658,1008,0.21640188922284243
+Servicios previos (derivada),servicios_previos,10.0,8.0,12.0,1065,295,0.27699530516431925
+Servicios previos (derivada),servicios_previos,14.0,12.0,16.0,345,115,0.3333333333333333
+Servicios previos (derivada),servicios_previos,18.0,16.0,20.0,144,56,0.3888888888888889
+Servicios previos (derivada),servicios_previos,22.0,20.0,24.0,40,10,0.25
+Servicios previos (derivada),servicios_previos,26.0,24.0,28.0,23,7,0.30434782608695654
+Servicios previos (derivada),servicios_previos,30.0,28.0,32.0,13,2,0.15384615384615385
+Servicios previos (derivada),servicios_previos,34.0,32.0,36.0,13,3,0.23076923076923078
+Servicios previos (derivada),servicios_previos,38.0,36.0,40.0,5,0,0.0
+Servicios previos (derivada),servicios_previos,42.0,40.0,44.0,3,1,0.3333333333333333
+Servicios previos (derivada),servicios_previos,46.0,44.0,48.0,1,0,0.0
+Servicios previos (derivada),servicios_previos,50.0,48.0,52.0,1,0,0.0
+Servicios previos (derivada),servicios_previos,62.0,60.0,64.0,1,0,0.0
+Servicios previos (derivada),servicios_previos,66.0,64.0,68.0,2,1,0.5
+Servicios previos (derivada),servicios_previos,78.0,76.0,80.0,1,0,0.0
+Tuvo ingreso previo (0/1),tuvo_ingreso_previo,0.2495,-0.001,0.5,66245,5690,0.08589327496414824
+Tuvo ingreso previo (0/1),tuvo_ingreso_previo,0.75,0.5,1.0,33098,5624,0.16991963260619977
+Medicamentos por día (derivada),meds_por_dia,1.1101999999999999,0.0414,2.179,16822,1938,0.11520627749375817
+Medicamentos por día (derivada),meds_por_dia,3.2270000000000003,2.179,4.275,37402,4515,0.12071546976097534
+Medicamentos por día (derivada),meds_por_dia,5.323,4.275,6.371,21366,2453,0.11480857437049517
+Medicamentos por día (derivada),meds_por_dia,7.4190000000000005,6.371,8.467,9912,1089,0.10986682808716706
+Medicamentos por día (derivada),meds_por_dia,9.5145,8.467,10.562,5672,567,0.09996473906911142
+Medicamentos por día (derivada),meds_por_dia,11.61,10.562,12.658,2868,282,0.09832635983263599
+Medicamentos por día (derivada),meds_por_dia,13.706,12.658,14.754,1871,173,0.09246392303580973
+Medicamentos por día (derivada),meds_por_dia,15.802,14.754,16.85,1270,119,0.09370078740157481
+Medicamentos por día (derivada),meds_por_dia,17.898000000000003,16.85,18.946,832,84,0.10096153846153846
+Medicamentos por día (derivada),meds_por_dia,19.994,18.946,21.042,706,43,0.060906515580736544
+Medicamentos por día (derivada),meds_por_dia,22.090000000000003,21.042,23.138,278,29,0.10431654676258993
+Medicamentos por día (derivada),meds_por_dia,24.1855,23.138,25.233,146,11,0.07534246575342465
+Medicamentos por día (derivada),meds_por_dia,26.281,25.233,27.329,82,3,0.036585365853658534
+Medicamentos por día (derivada),meds_por_dia,28.377000000000002,27.329,29.425,54,2,0.037037037037037035
+Medicamentos por día (derivada),meds_por_dia,30.473,29.425,31.521,24,0,0.0
+Medicamentos por día (derivada),meds_por_dia,32.569,31.521,33.617,20,4,0.2
+Medicamentos por día (derivada),meds_por_dia,34.664500000000004,33.617,35.712,8,1,0.125
+Medicamentos por día (derivada),meds_por_dia,36.760000000000005,35.712,37.808,4,1,0.25
+Medicamentos por día (derivada),meds_por_dia,38.856,37.808,39.904,2,0,0.0
+Medicamentos por día (derivada),meds_por_dia,40.952,39.904,42.0,4,0,0.0
+Pruebas por día (derivada),labs_por_dia,2.32375,-0.0205,4.668,14618,1656,0.11328499110685457
+Pruebas por día (derivada),labs_por_dia,6.965999999999999,4.668,9.264,26584,3412,0.12834787842311166
+Pruebas por día (derivada),labs_por_dia,11.5625,9.264,13.861,20825,2430,0.11668667466986794
+Pruebas por día (derivada),labs_por_dia,16.159,13.861,18.457,12785,1491,0.11662104028157998
+Pruebas por día (derivada),labs_por_dia,20.755499999999998,18.457,23.054,8640,914,0.10578703703703704
+Pruebas por día (derivada),labs_por_dia,25.351999999999997,23.054,27.65,4094,345,0.08426966292134831
+Pruebas por día (derivada),labs_por_dia,29.948,27.65,32.246,3225,320,0.09922480620155039
+Pruebas por día (derivada),labs_por_dia,34.5445,32.246,36.843,2160,178,0.0824074074074074
+Pruebas por día (derivada),labs_por_dia,39.141000000000005,36.843,41.439,1850,153,0.0827027027027027
+Pruebas por día (derivada),labs_por_dia,43.7375,41.439,46.036,1651,150,0.09085402786190187
+Pruebas por día (derivada),labs_por_dia,48.334,46.036,50.632,842,79,0.09382422802850356
+Pruebas por día (derivada),labs_por_dia,52.930499999999995,50.632,55.229,762,70,0.09186351706036745
+Pruebas por día (derivada),labs_por_dia,57.527,55.229,59.825,468,40,0.08547008547008547
+Pruebas por día (derivada),labs_por_dia,62.123000000000005,59.825,64.421,410,38,0.09268292682926829
+Pruebas por día (derivada),labs_por_dia,66.71950000000001,64.421,69.018,250,22,0.088
+Pruebas por día (derivada),labs_por_dia,71.316,69.018,73.614,90,9,0.1
+Pruebas por día (derivada),labs_por_dia,75.9125,73.614,78.211,60,5,0.08333333333333333
+Pruebas por día (derivada),labs_por_dia,80.509,78.211,82.807,15,2,0.13333333333333333
+Pruebas por día (derivada),labs_por_dia,85.1055,82.807,87.404,8,0,0.0
+Pruebas por día (derivada),labs_por_dia,89.702,87.404,92.0,6,0,0.0
+Medicamentos activos (derivada),num_meds_activos,0.4255,-0.006,0.857,22624,2233,0.09870049504950495
+Medicamentos activos (derivada),num_meds_activos,1.2854999999999999,0.857,1.714,46030,5791,0.12580925483380404
+Medicamentos activos (derivada),num_meds_activos,2.1425,1.714,2.571,21595,2342,0.10845103033109516
+Medicamentos activos (derivada),num_meds_activos,3.0,2.571,3.429,7707,810,0.10509926041261192
+Medicamentos activos (derivada),num_meds_activos,3.8575,3.429,4.286,1324,136,0.1027190332326284
+Medicamentos activos (derivada),num_meds_activos,4.714499999999999,4.286,5.143,58,0,0.0
+Medicamentos activos (derivada),num_meds_activos,5.5715,5.143,6.0,5,2,0.4
+Hubo cambio de medicación (0/1),hubo_cambio_med,0.2495,-0.001,0.5,53221,5769,0.108397061310385
+Hubo cambio de medicación (0/1),hubo_cambio_med,0.75,0.5,1.0,46122,5545,0.12022462165560904
+Se midió HbA1c (0/1),a1c_medida,0.2495,-0.001,0.5,82509,9641,0.11684785902144008
+Se midió HbA1c (0/1),a1c_medida,0.75,0.5,1.0,16834,1673,0.09938220268504218
+Se midió glucosa (0/1),glu_medida,0.2495,-0.001,0.5,94191,10657,0.11314244460723423
+Se midió glucosa (0/1),glu_medida,0.75,0.5,1.0,5152,657,0.12752329192546583

@@ -1,0 +1,36 @@
+{
+ "patrones_originales": 101766,
+ "pacientes_originales": 71518,
+ "columnas_originales": 50,
+ "excluidos": 2423,
+ "patrones": 99343,
+ "pacientes": 69990,
+ "positivos": 11314,
+ "prevalencia": 0.11388824577474005,
+ "predictores": 50,
+ "numericas": 17,
+ "categoricas": 33,
+ "pacientes_con_una": 53649,
+ "pacientes_con_varias": 16341,
+ "max_hospitalizaciones": 40,
+ "particion": {
+  "entrenamiento": {
+   "filas": 59605,
+   "pacientes": 41988,
+   "positivos": 6789,
+   "prevalencia": 0.11389984061739787
+  },
+  "prueba": {
+   "filas": 19870,
+   "pacientes": 14020,
+   "positivos": 2263,
+   "prevalencia": 0.11389028686462004
+  },
+  "validacion": {
+   "filas": 19868,
+   "pacientes": 13982,
+   "positivos": 2262,
+   "prevalencia": 0.11385141936782767
+  }
+ }
+}

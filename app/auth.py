@@ -25,8 +25,8 @@ PERMISOS = {
         "Estimar riesgo", "Ficha del modelo",
     },
     "coordinador": {
-        "Estimar riesgo", "Cargar archivo", "Desempeño del modelo",
-        "Equidad y límites", "Ficha del modelo",
+        "Estimar riesgo", "Cargar archivo", "Conocer los datos",
+        "Desempeño del modelo", "Equidad y límites", "Ficha del modelo",
     },
 }
 

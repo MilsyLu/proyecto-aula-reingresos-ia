@@ -1,0 +1,34 @@
+variable,clave,n,faltantes,distintos,moda,frecuencia_moda,porcentaje_moda
+Género,gender,99343,0,3,Female,53454,53.807515376020454
+Tipo de ingreso,admission_type_id,99343,0,8,1,52371,52.71735300927091
+Tipo de egreso,discharge_disposition_id,99343,0,21,1,60234,60.632354569521766
+Origen del ingreso,admission_source_id,99343,0,17,7,55850,56.2193612031044
+Especialidad que atiende,medical_specialty,50727,48616,72,InternalMedicine,14237,14.33115569290237
+Glucosa en suero,max_glu_serum,5152,94191,3,Norm,2545,2.5618312311889113
+Hemoglobina glicosilada,A1Cresult,16834,82509,3,>8,8137,8.190813645651932
+metformin,metformin,99343,0,4,No,79499,80.02476269087909
+repaglinide,repaglinide,99343,0,4,No,97825,98.47196078233998
+nateglinide,nateglinide,99343,0,4,No,98654,99.30644333269582
+chlorpropamide,chlorpropamide,99343,0,4,No,99258,99.91443785671864
+glimepiride,glimepiride,99343,0,4,No,94221,94.84412590721037
+acetohexamide,acetohexamide,99343,0,2,No,99342,99.99899338654963
+glipizide,glipizide,99343,0,4,No,86812,87.38612685342702
+glyburide,glyburide,99343,0,4,No,88820,89.40740666176782
+tolbutamide,tolbutamide,99343,0,2,No,99322,99.97886111754225
+pioglitazone,pioglitazone,99343,0,4,No,92088,92.69701941757346
+rosiglitazone,rosiglitazone,99343,0,4,No,93039,93.6543088088743
+acarbose,acarbose,99343,0,4,No,99038,99.69298289763748
+miglitol,miglitol,99343,0,4,No,99305,99.96174868888598
+troglitazone,troglitazone,99343,0,2,No,99340,99.9969801596489
+tolazamide,tolazamide,99343,0,3,No,99304,99.96074207543562
+Insulina,insulin,99343,0,4,No,46379,46.685725214660316
+glyburide-metformin,glyburide-metformin,99343,0,4,No,98645,99.29738381164249
+glipizide-metformin,glipizide-metformin,99343,0,2,No,99330,99.9869140251452
+glimepiride-pioglitazone,glimepiride-pioglitazone,99343,0,2,No,99342,99.99899338654963
+metformin-rosiglitazone,metformin-rosiglitazone,99343,0,2,No,99341,99.99798677309926
+metformin-pioglitazone,metformin-pioglitazone,99343,0,2,No,99342,99.99899338654963
+Cambio de medicación,change,99343,0,2,No,53221,53.5729744420845
+Toma medicación para diabetes,diabetesMed,99343,0,2,Yes,76719,77.22637729885346
+Diagnóstico principal (grupo),grupo_diag_1,99343,0,10,Circulatorio,29681,29.87729382040003
+Diagnóstico secundario (grupo),grupo_diag_2,99343,0,10,Circulatorio,31158,31.36406188659493
+Diagnóstico adicional (grupo),grupo_diag_3,99343,0,10,Circulatorio,29600,29.79575813092015
