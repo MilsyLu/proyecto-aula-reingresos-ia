@@ -1,4 +1,7 @@
 [theme]
+# sin esto Streamlit hereda el modo oscuro del sistema y los campos
+# salen negros sobre el fondo claro de la aplicacion
+base = "light"
 primaryColor = "#1F3B63"
 backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#F7F6F3"
@@ -6,4 +9,7 @@ textColor = "#15202B"
 font = "sans serif"
 
 [server]
+# el cargador rechaza antes, pero sin esto la caja anuncia 200 MB
+maxUploadSize = 30
+runOnSave = true
 headless = true

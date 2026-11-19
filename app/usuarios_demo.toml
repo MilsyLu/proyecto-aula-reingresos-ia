@@ -1,0 +1,12 @@
+# Cuentas de DEMOSTRACION del prototipo.
+#
+# No son credenciales reales y no protegen ningun dato sensible: la aplicacion
+# solo expone resultados agregados del conjunto de prueba, que es publico.
+#
+# Para usar cuentas reales, pegue una seccion [usuarios] con esta misma forma
+# en los secretos de la aplicacion en Streamlit Cloud. Lo que este alli manda
+# sobre este archivo.
+
+[usuarios]
+clinico = { nombre = "Dra. Laura Mendoza", rol = "clinico", area = "Medicina Interna", sal = "ce86091a8e1a07d8", hash = "43c5236a5c96374495e12eb52cfba0a67aa22c51f2f62acec273fa8566de7470", clave_demo = "Asistencial2026" }
+coordinador = { nombre = "Ing. Andres Rojas", rol = "coordinador", area = "Programa de seguimiento al alta", sal = "53340e4e18a6a177", hash = "5c615d750ad2fd94e06a8696a6e00a759a0adc089fe2a9ba2cbede50e3e67d8a", clave_demo = "Coordina2026" }
