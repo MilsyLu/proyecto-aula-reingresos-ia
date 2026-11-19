@@ -29,22 +29,28 @@ el archivo.
 
 ## Laboratorio de Machine Learning (rama de desarrollo)
 
-La sección **Laboratorio de modelos**, disponible para coordinación, permite
-cargar un CSV **etiquetado** con `readmitted` o `y` y el identificador
-`patient_nbr`. La aplicación muestra la calidad de los datos y sus
-transformaciones, divide por paciente y entrena tres algoritmos: mayoritario,
-regresión logística y una **red neuronal MLP** con tamaño configurable.
+El **Laboratorio de modelos** entrena y compara **dos modelos de clasificación
+distintos** sobre el mismo conjunto de datos: Gradient Boosting y una red
+neuronal MLP. Cada uno utiliza su propia preparación de características,
+configuraciones y produce métricas, matriz de confusión y predicciones
+individuales de prueba.
 
-Elige el algoritmo y el umbral utilizando validación, y presenta métricas
-y matriz de confusión sobre prueba independiente. Es un **experimento separado**:
-el modelo oficial sigue siendo Gradient Boosting y no se modifica.
+La elección se basa en la **Average Precision de validación**, antes de
+consultar el conjunto de prueba. La aplicación muestra ambos resultados y
+explica por qué uno es preferible. También incluye ajuste acotado de
+hiperparámetros, gráfica de pérdida de la MLP y revisión de sobreajuste.
 
-No se presentan las doce fases del ciclo como formularios aislados. La
-definición del problema y recolección originales se apoyan en los informes
-y notebooks; en la interfaz se demuestra el flujo desde la carga de datos
-hasta la evaluación, y la aplicación ya existente evidencia el despliegue.
+Para entrenar se requiere un CSV etiquetado (`readmitted` o `y`) y
+`patient_nbr`, porque las hospitalizaciones de un mismo paciente deben
+permanecer en la misma partición. Los experimentos NO reemplazan el modelo
+histórico de Gradient Boosting usado en las pantallas de clientes.
 
-Ver [guía técnica del laboratorio](docs/laboratorio_ml.md).
+La definición del problema y recolección histórica permanecen documentadas
+en los notebooks; el laboratorio demuestra la preparación, partición,
+entrenamiento, comparación, evaluación y generalización interna sin
+simular que las doce fases se repiten en cada predicción.
+
+Ver [documentación del laboratorio](docs/laboratorio_ml.md).
 
 ---
 
