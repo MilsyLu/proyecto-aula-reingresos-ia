@@ -189,6 +189,36 @@ class CargueDeArchivos(unittest.TestCase):
         # con el esquema completo no hace falta la tarjeta de cobertura
         self.assertNotIn("Cobertura del modelo", todo)
 
+    def test_columnas_en_espanol_se_reconocen(self):
+        """El modelo se entrenó en inglés, pero el usuario escribe en español."""
+        from src.cargue_flexible import diagnosticar
+
+        datos = pd.DataFrame({
+            "Edad": [65, 72],
+            "Sexo": ["Female", "Male"],
+            "Días de estancia": [4, 9],
+            "Número de medicamentos": [12, 20],
+            "Hospitalizaciones previas": [0, 3],
+            "Visitas a urgencias": [1, 0],
+            "Cantidad de procedimientos": [1, 3],
+            "Diagnósticos registrados": [8, 9],
+            "Pruebas de laboratorio": [44, 50],
+            "Tipo de egreso": [1, 3],
+            "Especialidad médica": ["InternalMedicine", "Surgery"],
+        })
+        informe = diagnosticar(datos)
+        self.assertEqual(len(informe["reconocidas"]), len(datos.columns))
+        self.assertGreater(informe["cobertura"], 0.7)
+
+    def test_el_relleno_no_estorba(self):
+        """'Días de estancia' y 'dias_estancia' deben ser la misma columna."""
+        from src.cargue_flexible import clave
+
+        for uno, otro in [("Días de estancia", "dias_estancia"),
+                          ("Número de medicamentos", "medicamentos"),
+                          ("Cantidad total de procedimientos", "procedimientos")]:
+            self.assertEqual(clave(uno), clave(otro), f"{uno} vs {otro}")
+
     def test_ningun_icono_invalido(self):
         """Streamlit solo acepta un emoji o ':material/...:' en icon=."""
         import re

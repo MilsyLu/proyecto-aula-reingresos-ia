@@ -82,9 +82,100 @@ ALIAS = {
     "diabetes_med": "diabetesMed",
 }
 
+# --- nombres en español -----------------------------------------------------
+# El modelo se entrenó con columnas en inglés, pero quien usa esto escribe en
+# español. Sin esta tabla, un archivo perfectamente válido con encabezados como
+# "Días de estancia" no reconocería ni una sola columna.
+ALIAS.update({
+    # demografía
+    "edad": "age", "anios": "age", "años": "age", "edad_paciente": "age",
+    "sexo": "gender", "genero": "gender", "género": "gender",
+    # uso previo de servicios
+    "hospitalizaciones_previas": "number_inpatient",
+    "ingresos_previos": "number_inpatient",
+    "ingresos_anteriores": "number_inpatient",
+    "admisiones_previas": "number_inpatient",
+    "internaciones_previas": "number_inpatient",
+    "visitas_urgencias": "number_emergency",
+    "urgencias": "number_emergency",
+    "consultas_urgencias": "number_emergency",
+    "atenciones_urgencias": "number_emergency",
+    "consultas_externas": "number_outpatient",
+    "consultas_ambulatorias": "number_outpatient",
+    "citas_externas": "number_outpatient",
+    # esta hospitalización
+    "dias_estancia": "time_in_hospital",
+    "estancia": "time_in_hospital",
+    "estancia_hospitalaria": "time_in_hospital",
+    "dias_hospitalizacion": "time_in_hospital",
+    "dias_internacion": "time_in_hospital",
+    "duracion_estancia": "time_in_hospital",
+    "medicamentos": "num_medications",
+    "medicamentos_administrados": "num_medications",
+    "farmacos": "num_medications",
+    "procedimientos": "num_procedures",
+    "procedimientos_realizados": "num_procedures",
+    "diagnosticos": "number_diagnoses",
+    "diagnosticos_registrados": "number_diagnoses",
+    "pruebas_laboratorio": "num_lab_procedures",
+    "examenes_laboratorio": "num_lab_procedures",
+    "laboratorios": "num_lab_procedures",
+    "pruebas_lab": "num_lab_procedures",
+    # administrativas
+    "tipo_ingreso": "admission_type_id",
+    "tipo_admision": "admission_type_id",
+    "tipo_egreso": "discharge_disposition_id",
+    "tipo_alta": "discharge_disposition_id",
+    "destino_alta": "discharge_disposition_id",
+    "egreso": "discharge_disposition_id",
+    "origen_ingreso": "admission_source_id",
+    "fuente_ingreso": "admission_source_id",
+    "procedencia": "admission_source_id",
+    "especialidad": "medical_specialty",
+    "especialidad_medica": "medical_specialty",
+    "servicio": "medical_specialty",
+    # laboratorio y medicación
+    "hemoglobina_glicosilada": "A1Cresult",
+    "hemoglobina_glicada": "A1Cresult",
+    "glucosa": "max_glu_serum",
+    "glicemia": "max_glu_serum",
+    "glucemia": "max_glu_serum",
+    "cambio_medicacion": "change",
+    "cambio_medicamento": "change",
+    "hubo_cambio_medicacion": "change",
+    "medicamento_diabetes": "diabetesMed",
+    "toma_medicamento_diabetes": "diabetesMed",
+    # diagnósticos
+    "diagnostico_principal": "diag_1",
+    "diagnostico_1": "diag_1",
+    "diagnostico_secundario": "diag_2",
+    "diagnostico_2": "diag_2",
+    "diagnostico_adicional": "diag_3",
+    "diagnostico_3": "diag_3",
+    # los 23 antidiabéticos
+    "metformina": "metformin", "insulina": "insulin",
+    "repaglinida": "repaglinide", "nateglinida": "nateglinide",
+    "clorpropamida": "chlorpropamide", "glimepirida": "glimepiride",
+    "acetohexamida": "acetohexamide", "glipizida": "glipizide",
+    "glibenclamida": "glyburide", "gliburida": "glyburide",
+    "tolbutamida": "tolbutamide", "pioglitazona": "pioglitazone",
+    "rosiglitazona": "rosiglitazone", "acarbosa": "acarbose",
+    "troglitazona": "troglitazone", "tolazamida": "tolazamide",
+})
+
 # columnas que claramente no son predictores y nunca deben confundirse con uno
 IGNORAR = {"patient_id", "encounter_id", "patient_nbr", "id", "index",
            "readmitted", "readmission", "readmission_risk", "y", "target", "label"}
+
+
+# Palabras de relleno que no distinguen una columna de otra. Quitarlas hace que
+# "Días de estancia", "dias_estancia" y "Número total de días de estancia" acaben
+# siendo la misma clave, que es lo que un usuario espera.
+RELLENO = {
+    "de", "del", "la", "el", "los", "las", "en", "por", "para", "al", "a",
+    "num", "nro", "no", "numero", "cantidad", "total", "cant", "count",
+    "number", "of", "the", "n",
+}
 
 
 def normalizar(nombre: str) -> str:
@@ -94,18 +185,27 @@ def normalizar(nombre: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", texto.lower()).strip("_")
 
 
+def clave(nombre: str) -> str:
+    """Como normalizar, pero además sin las palabras de relleno."""
+    partes = [t for t in normalizar(nombre).split("_") if t and t not in RELLENO]
+    return "_".join(partes) or normalizar(nombre)
+
+
 def mapear_columnas(df: pd.DataFrame, esperadas) -> tuple[pd.DataFrame, dict]:
     """Renombra lo que se reconozca. Devuelve el marco y qué se reconoció."""
-    esperadas_norm = {normalizar(c): c for c in esperadas}
-    alias_norm = {normalizar(k): v for k, v in ALIAS.items()}
+    esperadas_estricto = {normalizar(c): c for c in esperadas}
+    esperadas_flexible = {clave(c): c for c in esperadas}
+    alias_estricto = {normalizar(k): v for k, v in ALIAS.items()}
+    alias_flexible = {clave(k): v for k, v in ALIAS.items()}
 
     renombres, reconocidas = {}, {}
     for columna in df.columns:
-        clave = normalizar(columna)
-        if clave in IGNORAR or columna in IGNORAR:
+        estricta, flexible = normalizar(columna), clave(columna)
+        if estricta in IGNORAR or columna in IGNORAR:
             continue
-        destino = esperadas_norm.get(clave) or alias_norm.get(clave)
-        if destino and destino not in renombres.values():
+        destino = (esperadas_estricto.get(estricta) or alias_estricto.get(estricta)
+                   or esperadas_flexible.get(flexible) or alias_flexible.get(flexible))
+        if destino and destino not in renombres.values() and destino not in reconocidas:
             if destino != columna:
                 renombres[columna] = destino
             reconocidas[destino] = columna
