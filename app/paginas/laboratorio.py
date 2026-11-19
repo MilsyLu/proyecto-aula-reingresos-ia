@@ -19,6 +19,7 @@ from src.laboratorio_ml import (
     DatosEntrenamientoInvalidos, entrenar_experimento, obtener_etiquetas,
 )
 from src.procesamiento_lotes import ArchivoIncompatible, preparar_lote
+from src.interpretacion_ml import resumen_comprensible, informe_texto
 
 LIMITE_FILAS = 12000
 LIMITE_MB = 30
@@ -224,6 +225,50 @@ def _resultado(resultado, firma):
         )
 
 
+
+def _explicacion_sencilla(resultado):
+    """Interpreta los dos modelos sin datos inventados."""
+    info = resumen_comprensible(resultado)
+    st.divider()
+    st.header("¿Cómo entender estos resultados?")
+    st.markdown(
+        "Esta sección traduce los resultados del entrenamiento a lenguaje "
+        "sencillo. Las cifras vienen del experimento ejecutado."
+    )
+    st.subheader("¿Cuál se eligió y por qué?")
+    st.write(info["seleccion"])
+    st.subheader("¿Qué mostraron los datos que no se usaron para elegir?")
+    st.write(info["prueba"])
+    st.caption(
+        f'Los dos modelos evaluaron {info["filas_prueba"]:,} registros '
+        "de prueba. Esos datos no se utilizaron para elegir el ganador."
+    )
+    st.subheader("¿Qué pasó con las alertas?")
+    st.markdown(
+        "Una alerta es una señal de riesgo, no una certeza de reingreso. "
+        "Mire tanto los casos detectados como las falsas alertas."
+    )
+    columnas = st.columns(2)
+    for panel, fila in zip(columnas, info["decisiones"]):
+        with panel:
+            st.markdown("**" + fila["nombre"] + "**")
+            st.write(fila["texto"])
+            a, b = st.columns(2)
+            a.metric("Reingresos detectados", fila["recall"])
+            b.metric("Alertas correctas", fila["precision"])
+    st.subheader("Diccionario: qué significa cada indicador")
+    for titulo, significado in info["glosario"]:
+        with st.expander(titulo):
+            st.write(significado)
+    st.subheader("Qué conclusión comunicar")
+    st.info(info["advertencia"])
+    st.download_button(
+        "Descargar explicación completa",
+        informe_texto(resultado).encode("utf-8-sig"),
+        "explicacion_resultados_modelos.txt", mime="text/plain",
+        key="lab_explicacion_texto",
+    )
+
 def render():
     st.title("Laboratorio de modelos")
     _contexto()
@@ -320,6 +365,7 @@ def render():
     guardado = st.session_state.get("lab_resultado")
     if guardado and guardado["firma"] == firma:
         _resultado(guardado["resultado"], firma)
+        _explicacion_sencilla(guardado["resultado"])
 
     st.divider()
     with st.expander("Del experimento al aplicativo desplegado"):
