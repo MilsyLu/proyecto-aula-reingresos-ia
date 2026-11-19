@@ -109,16 +109,20 @@ def _tema_claro() -> str:
   [data-testid="stWidgetLabel"] p {{ font-size: 0.78rem; margin-bottom: 0.1rem; }}
   [data-testid="stTabs"] button {{ padding: 0.3rem 0.7rem; font-size: 0.88rem; }}
 
-  /* El tema de la portada esconde la barra lateral. Si ese bloque de estilos
-     sigue en la pagina al iniciar sesion, la barra no vuelve sola: hay que
-     mostrarla a la fuerza desde aqui. */
-  [data-testid="stSidebar"] {{
+  /* Las dos reglas de la barra lateral (esta y la de la portada) estan
+     condicionadas a si el vídeo de la portada esta o no en la pagina. Asi da
+     igual que Streamlit deje un bloque de estilos viejo pegado: la regla que
+     manda es siempre la que corresponde a lo que hay en pantalla. */
+  body:not(:has(#fondo-video)) [data-testid="stSidebar"] {{
       display: flex !important;
       visibility: visible !important;
+      min-width: 240px !important;
+      transform: none !important;
+  }}
+  [data-testid="stSidebar"] {{
       background: #FFFFFF;
       border-right: 1px solid {BORDE};
   }}
-  [data-testid="stSidebarCollapsedControl"] {{ display: block !important; }}
   [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {{ font-size: 1.05rem; }}
 
   .stButton > button, .stDownloadButton > button, [data-testid="stFormSubmitButton"] > button {{
@@ -193,6 +197,11 @@ def _tema_portada() -> str:
   /* z-index negativo: Streamlit mete este bloque DENTRO del contenedor del
      contenido, y un elemento posicionado con z-index >= 0 se pintaria encima
      del formulario. En negativo queda detras, que es donde debe estar. */
+  body:has(#fondo-video) [data-testid="stSidebar"],
+  body:has(#fondo-video) [data-testid="stSidebarCollapsedControl"] {{
+      display: none !important;
+  }}
+
   #fondo-video {{
       position: fixed; inset: 0; z-index: -2; overflow: hidden;
   }}
