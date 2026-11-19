@@ -8,6 +8,7 @@ Universidad Popular del Cesar - Ingenieria de Sistemas - 2026
 Prototipo academico. No es una herramienta de decision clinica.
 """
 import json
+import hashlib
 import io
 import sys
 from pathlib import Path
@@ -22,6 +23,7 @@ if str(BASE) not in sys.path:
     sys.path.insert(0, str(BASE))
 
 from src.procesamiento_lotes import ArchivoIncompatible, preparar_lote, predecir_lote
+from src.analisis_calidad import resumen_calidad, resumen_numericas, distribucion_objetivo
 MODELO_RUTA = BASE / "models" / "gradient_boosting_ajustado.joblib"
 REPORTES = BASE / "reports"
 
@@ -247,14 +249,54 @@ elif pagina == "Procesamiento CSV":
                     f"Esquema detectado: {resumen['formato']}. "
                     "El numero de fila del reporte corresponde al CSV con cabecera."
                 )
-                st.subheader("Diagnostico de calidad")
-                faltantes = pd.Series(resumen["faltantes_por_columna"])
-                faltantes = faltantes[faltantes > 0].sort_values(ascending=False)
+                st.subheader("Exploracion y calidad del dataset (EDA)")
+                calidad = resumen_calidad(datos)
+                numericas_eda, atipicos_eda = resumen_numericas(datos)
+                objetivo_eda = distribucion_objetivo(datos)
+                a, b, c = st.columns(3)
+                a.metric("Columnas", calidad["columnas"])
+                b.metric("Celdas sin dato", f'{calidad["celdas_faltantes"]:,}')
+                c.metric("Filas duplicadas exactas", f'{calidad["duplicados"]:,}')
+                st.caption(
+                    "Los duplicados y valores extremos solo se informan: una "
+                    "hospitalizacion no debe eliminarse automaticamente."
+                )
+                st.dataframe(calidad["tabla"], use_container_width=True, hide_index=True)
+                faltantes = calidad["tabla"].query("faltantes > 0")
                 if faltantes.empty:
-                    st.success("No se encontraron valores faltantes en el archivo.")
+                    st.success("No se encontraron valores faltantes.")
                 else:
-                    st.dataframe(faltantes.rename("Faltantes").to_frame(),
-                                 use_container_width=True)
+                    st.bar_chart(faltantes.set_index("columna")["porcentaje_faltante"],
+                                 x_label="Columna", y_label="% faltante")
+                if not numericas_eda.empty:
+                    st.markdown("#### Variables numericas")
+                    st.dataframe(numericas_eda.round(2), use_container_width=True,
+                                 hide_index=True)
+                    campo = st.selectbox("Distribucion de variable numerica",
+                                         numericas_eda["variable"].tolist())
+                    serie = pd.to_numeric(datos[campo], errors="coerce").dropna()
+                    st.bar_chart(serie.round().value_counts().sort_index().rename("Filas"),
+                                 x_label=campo, y_label="Cantidad")
+                    st.markdown("#### Posibles valores atipicos (IQR)")
+                    st.dataframe(atipicos_eda, use_container_width=True,
+                                 hide_index=True)
+                    st.caption(
+                        "La regla IQR es exploratoria: no elimina registros ni "
+                        "diagnostica errores en las observaciones."
+                    )
+                if not objetivo_eda.empty:
+                    st.markdown("#### Distribucion de la variable objetivo")
+                    st.dataframe(objetivo_eda, hide_index=True, use_container_width=True)
+                    st.bar_chart(objetivo_eda.set_index("categoria")["registros"])
+                    st.caption(
+                        "La etiqueta real se presenta solo como descripcion; "
+                        "nunca se utiliza para construir la prediccion."
+                    )
+                st.download_button(
+                    "Descargar reporte de calidad",
+                    calidad["tabla"].to_csv(index=False).encode("utf-8-sig"),
+                    "reporte_calidad.csv", mime="text/csv",
+                )
                 if not descartes.empty:
                     st.subheader("Registros excluidos")
                     st.dataframe(descartes.head(100), use_container_width=True,
@@ -266,23 +308,36 @@ elif pagina == "Procesamiento CSV":
                     )
                 if X_lote.empty:
                     st.warning("Ningun registro valido para predecir.")
-                elif st.button("Predecir registros validos", type="primary"):
-                    with st.spinner("Calculando probabilidades..."):
-                        predicciones = predecir_lote(modelo, X_lote, UMBRAL)
-                    st.success(f"Predicciones generadas: {len(predicciones):,}")
-                    st.metric("Alertas de seguimiento",
-                              int((predicciones["alerta"] == "Seguimiento").sum()))
-                    st.dataframe(predicciones.head(200), use_container_width=True,
-                                 hide_index=True)
-                    st.download_button(
-                        "Descargar CSV con predicciones",
-                        predicciones.to_csv(index=False).encode("utf-8-sig"),
-                        "predicciones_reingreso.csv", mime="text/csv"
-                    )
-                    st.caption(
-                        "No se modifica el modelo ni se calcula su rendimiento "
-                        "sin disponer de resultados reales verificados."
-                    )
+                else:
+                    identidad = hashlib.sha256(archivo.getvalue()).hexdigest()
+                    if st.button("Predecir registros validos", type="primary"):
+                        try:
+                            with st.spinner("Calculando probabilidades..."):
+                                predicciones = predecir_lote(modelo, X_lote, UMBRAL)
+                            st.session_state["lote_resultado"] = {
+                                "identidad": identidad,
+                                "predicciones": predicciones,
+                            }
+                        except (ValueError, TypeError) as error:
+                            st.error(f"No fue posible generar predicciones: {error}")
+                    resultado = st.session_state.get("lote_resultado")
+                    if resultado and resultado["identidad"] == identidad:
+                        predicciones = resultado["predicciones"]
+                        st.success(f"Predicciones generadas: {len(predicciones):,}")
+                        st.metric("Alertas de seguimiento",
+                                  int((predicciones["alerta"] == "Seguimiento").sum()))
+                        st.dataframe(predicciones.head(200), use_container_width=True,
+                                     hide_index=True)
+                        st.download_button(
+                            "Descargar CSV con predicciones",
+                            predicciones.to_csv(index=False).encode("utf-8-sig"),
+                            "predicciones_reingreso.csv", mime="text/csv",
+                        )
+                        st.caption(
+                            "El resultado se conserva mientras el archivo actual no "
+                            "cambie. No se modifica el modelo ni se evalua su "
+                            "rendimiento sin resultados reales verificados."
+                        )
 
 # =========================================================== 2. DESEMPENO
 elif pagina == "Desempeno del modelo":
