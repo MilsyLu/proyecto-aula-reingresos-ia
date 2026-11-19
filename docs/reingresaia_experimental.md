@@ -17,7 +17,9 @@ técnicas a quienes solo consultan riesgos.
 **1. Predicción de riesgo** (personal asistencial y coordinación):
 - Consultar paciente: formulario y estimación con modelo oficial.
 - Analizar archivo CSV: predicciones masivas y priorización, solo coordinación.
-- Sobre el modelo: ficha y limitaciones, disponible para ambos perfiles.
+- Sobre el modelo: explicación breve y preguntas frecuentes en lenguaje sencillo,
+  disponible para ambos perfiles. La ficha técnica completa se reserva para
+  la evidencia del laboratorio.
 
 **2. Laboratorio de IA** (solo coordinación):
 - Experimento guiado: datos, preparación, entrenamiento, comparación
