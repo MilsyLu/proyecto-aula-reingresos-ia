@@ -82,3 +82,31 @@ Inicie sesión como coordinador, abra **Laboratorio de modelos**, cargue el
 CSV original `diabetic_data.csv` y ejecute la comparación. Descargue
 `comparacion_gb_mlp.csv`, `busqueda_gb_mlp.csv` y los dos archivos con
 probabilidades de prueba. Use datos públicos o anonimizados.
+
+
+## Lectura de resultados para personas sin conocimientos de IA
+
+Al finalizar el entrenamiento y la comparación aparece automáticamente
+**¿Cómo entender estos resultados?**, una sección que usa los valores obtenidos
+en la ejecución (no cifras de ejemplo ni respuestas generadas por una API).
+
+Explica en español:
+
+- Por qué se eligió uno de los dos modelos: **mayor Average Precision (AP)
+  en validación**; una diferencia pequeña se presenta con cautela.
+- Qué ocurrió cuando ambos se aplicaron a los mismos registros de prueba
+  y por qué la prueba **no debe usarse para cambiar el ganador**.
+- Cuántas alertas acertó y falló cada uno: verdaderos positivos,
+  falsos negativos, falsos positivos y verdaderos negativos.
+- Qué significan AP, recall, precisión, ROC-AUC, umbral, sobreajuste,
+  las particiones y los dos algoritmos.
+- Qué se puede comunicar y qué no: la recomendación es experimental,
+  no causal, no constituye un diagnóstico y no cambia el modelo oficial.
+
+La interpretación puede descargarse como
+`explicacion_resultados_modelos.txt` y cuenta con pruebas unitarias en
+`tests/test_interpretacion_ml.py`.
+
+Si el modelo ganador de validación rinde peor en la prueba, se informa
+explícitamente esta incertidumbre. La explicación no falsea los datos para
+justificar la elección.
