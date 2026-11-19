@@ -13,7 +13,7 @@ from __future__ import annotations
 import streamlit as st
 
 import datos
-from datos import AZUL, GRIS, formato
+from datos import formato
 
 REPOSITORIO = "https://github.com/MilsyLu/proyecto-aula-reingresos-ia"
 
@@ -119,29 +119,36 @@ def _tabla_metas():
 def _ficha():
     m = datos.metricas_finales()
     umbral = datos.umbral_oficial()
+    total = datos.entero(m["VP"] + m["FN"] + m["FP"] + m["VN"])
 
-    a, b = st.columns(2)
+    a, b, c = st.columns([1, 1, 1.15], gap="medium")
     with a:
-        st.markdown(f"""
-#### Qué hace
-Estima la probabilidad de que una hospitalización de un paciente con diabetes
-termine en un **reingreso antes de 30 días**.
-
-#### Datos
-- **Fuente:** Diabetes 130-US Hospitals 1999-2008, UCI (dataset 296)
-- **Cohorte:** 99.343 hospitalizaciones, 69.990 pacientes
-- **Prevalencia:** 11,39 %
-- **Partición:** 60/20/20 **por paciente**, con `StratifiedGroupKFold`
-
-#### Modelo
-- `HistGradientBoostingClassifier`
-- 50 predictores: 17 numéricos, 33 categóricos
-- Elegido entre **30 combinaciones** de hiperparámetros
-- Umbral de decisión: **{formato(umbral, 4)}**, fijado en validación
-        """)
+        st.markdown(
+            "**Qué hace**\n\n"
+            "Estima la probabilidad de que una hospitalización de un paciente con "
+            "diabetes termine en un **reingreso antes de 30 días**.\n\n"
+            "**Datos**\n"
+            "- Diabetes 130-US Hospitals 1999-2008, UCI (dataset 296)\n"
+            "- 99.343 hospitalizaciones · 69.990 pacientes\n"
+            "- Prevalencia: 11,39 %\n"
+            "- Partición 60/20/20 **por paciente** (`StratifiedGroupKFold`)")
     with b:
-        st.markdown(f"""
-#### Desempeño en prueba
+        st.markdown(
+            "**Modelo**\n"
+            "- `HistGradientBoostingClassifier`\n"
+            "- 50 predictores: 17 numéricos, 33 categóricos\n"
+            "- Elegido entre **30 combinaciones** de hiperparámetros\n"
+            f"- Umbral de decisión **{formato(umbral, 4)}**, fijado en validación\n\n"
+            "**Matriz de confusión**")
+        st.caption(
+            f"Sobre {total} hospitalizaciones nunca vistas: "
+            f"**{datos.entero(m['VP'])}** reingresos detectados · "
+            f"**{datos.entero(m['FN'])}** escapados · "
+            f"**{datos.entero(m['FP'])}** alertas sin reingreso · "
+            f"**{datos.entero(m['VN'])}** altas tranquilas.")
+    with c:
+        st.markdown(f"""**Desempeño en prueba**
+
 | Métrica | Valor | IC 95 % |
 |---|---|---|
 | Average precision | {formato(m["AP"], 4)} | {INTERVALOS["AP"]} |
@@ -149,76 +156,59 @@ termine en un **reingreso antes de 30 días**.
 | Sensibilidad | {formato(m["recall"], 4)} | {INTERVALOS["recall"]} |
 | Precisión | {formato(m["precision"], 4)} | |
 | Brier | {formato(m["Brier"], 4)} | |
+""")
 
-#### Matriz de confusión
-Sobre {datos.entero(m["VP"] + m["FN"] + m["FP"] + m["VN"])} hospitalizaciones que el
-modelo nunca vio: **{datos.entero(m["VP"])}** reingresos detectados,
-**{datos.entero(m["FN"])}** que se le escaparon, **{datos.entero(m["FP"])}** alertas
-sin reingreso y **{datos.entero(m["VN"])}** altas correctamente tranquilas.
-        """)
+    izq, der = st.columns([1.15, 1], gap="medium")
+    with izq:
+        st.markdown("**Metas de la Fase 1**")
+        st.dataframe(_tabla_metas(), hide_index=True, width="stretch")
+        st.caption(
+            "Ningún umbral cumple las dos últimas metas a la vez: subir la precisión "
+            "obliga a bajar la sensibilidad. Se documenta tal cual.")
+    with der:
+        st.markdown(
+            "**Qué no hace**\n"
+            "- **No alerta igual a todo el mundo.** La sensibilidad de 0,60 cae a "
+            "0,48 en las altas a casa, el 79 % de los casos.\n"
+            "- **No descansa sobre la clínica.** Dos variables administrativas "
+            "concentran el 43,5 % del desempeño.\n"
+            "- **No trata igual a todas las edades.** Razón de paridad 0,569: "
+            "alerta más sobre los mayores.\n"
+            "- **No conoce el presente.** Estados Unidos, 1999-2008.\n"
+            "- **No decide nada.** Solo puede **añadir** seguimiento, nunca "
+            "restringir atención.")
 
-    st.markdown("#### Metas de la Fase 1")
-    st.dataframe(_tabla_metas(), hide_index=True, width="stretch")
     st.caption(
-        "Ningún umbral cumple las dos últimas metas a la vez: subir la precisión "
-        "obliga a bajar la sensibilidad. Se documenta tal cual, sin alterar el "
-        "conjunto de prueba para que el resultado luzca mejor.")
-
-    # --------------------------------------------------------- qué no hace
-    st.markdown("---")
-    st.markdown("#### Qué no hace")
-    st.markdown(
-        "- **No alerta igual a todo el mundo.** La sensibilidad global de 0,60 cae "
-        "a 0,48 en los pacientes dados de alta a casa, que son el 79 % de los casos. "
-        "Donde más se usaría, peor funciona.\n"
-        "- **No descansa sobre la clínica.** Dos variables administrativas concentran "
-        "el 43,5 % del desempeño. El modelo aprendió del circuito hospitalario tanto "
-        "como del paciente.\n"
-        "- **No trata igual a todas las edades.** La razón de paridad por edad es de "
-        "0,569: alerta más sobre los mayores sin que su riesgo real sea mayor.\n"
-        "- **No conoce el presente.** Los datos son de hospitales de Estados Unidos "
-        "entre 1999 y 2008. Otro país, otra época, otra práctica clínica.\n"
-        "- **No decide nada.** La salida solo puede **añadir** seguimiento a un "
-        "paciente, nunca restringirle atención.")
-
-    st.markdown("---")
-    st.markdown(
-        "**Equipo:** Michel Custodes · Iván Güette · Maira Torres "
-        "&nbsp;&nbsp;|&nbsp;&nbsp; Universidad Popular del Cesar, "
-        "Ingeniería de Sistemas, 2026\n\n"
-        f"**Repositorio:** {REPOSITORIO}")
+        "Equipo: Michel Custodes · Iván Güette · Maira Torres  |  Universidad "
+        "Popular del Cesar, Ingeniería de Sistemas, 2026  |  "
+        f"Repositorio: {REPOSITORIO}")
 
 
 # ---------------------------------------------------------------- 12 fases
 def _como_se_construyo():
-    st.markdown(
-        "Esta sección conecta el programa entregado con las doce fases de "
-        "desarrollo del modelo explicadas en clase. Una parte se ejecutó "
-        "durante la investigación (notebooks) y otra funciona en vivo "
-        "mediante el formulario y el procesamiento CSV.")
-    st.info(
-        "Consultar una fase no vuelve a entrenar el modelo. Para reproducir "
-        "un experimento, ejecute los notebooks en orden con el dataset UCI.")
+    st.caption(
+        "Las doce fases del desarrollo del modelo, con su evidencia. Una parte se "
+        "ejecutó en los notebooks y otra funciona en vivo en el formulario y el "
+        "procesamiento CSV. Consultar una fase no vuelve a entrenar nada: para "
+        "reproducir un experimento, ejecute los notebooks en orden con el dataset UCI.")
 
-    for numero, nombre, explicacion, archivos, evidencia in FASES:
-        with st.expander(f"{numero} · {nombre} — {evidencia}"):
-            st.write(explicacion)
-            st.caption("Evidencia en el repositorio: " + archivos)
+    columnas = st.columns(3, gap="medium")
+    for indice, (numero, nombre, explicacion, archivos, evidencia) in enumerate(FASES):
+        with columnas[indice // 4]:
+            with st.expander(f"{numero} · {nombre}"):
+                st.write(explicacion)
+                st.caption(f"Estado: {evidencia}")
+                st.caption("Evidencia en el repositorio: " + archivos)
 
     st.caption(
-        "Los CSV nuevos sin etiquetas conocidas sirven para inferencia, no "
-        "para medir precisión ni para reentrenar. Las doce etapas no se "
-        "ejecutan todas en cada predicción.")
+        "Los CSV nuevos sin etiquetas sirven para inferencia, no para medir "
+        "precisión ni reentrenar. Las doce etapas no se ejecutan en cada predicción.")
 
 
 # ---------------------------------------------------------------- contrato
 def render():
-    st.title("Ficha del modelo")
-    st.markdown(
-        f'<p style="color:{GRIS};margin-top:-0.6rem">'
-        f'Qué es el modelo, cuánto rinde y <span style="color:{AZUL}">cómo se '
-        'llegó hasta aquí</span>.</p>',
-        unsafe_allow_html=True)
+    st.subheader("Ficha del modelo")
+    st.caption("Qué es el modelo, cuánto rinde y cómo se llegó hasta aquí.")
 
     ficha, construccion = st.tabs(["Ficha del modelo", "Cómo se construyó"])
     with ficha:
