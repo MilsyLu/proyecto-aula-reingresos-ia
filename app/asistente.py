@@ -15,18 +15,42 @@ escrita para cuando alguien conecte datos reales.
 """
 from __future__ import annotations
 
+import http.client
 import json
 import os
-import urllib.error
-import urllib.request
+import socket
+import ssl
 
 import streamlit as st
 
 # Si el primero está sobrecargado (error 503, pasa a ratos) se prueba el siguiente.
 # Para una demostración en vivo esto importa más que elegir el modelo perfecto.
-MODELOS = ["gemini-flash-lite-latest", "gemini-flash-latest", "gemini-3.6-flash"]
-RAIZ = "https://generativelanguage.googleapis.com/v1beta/models"
-TIEMPO_LIMITE = 40
+MODELOS = ["gemini-flash-lite-latest", "gemini-flash-latest"]
+SERVIDOR = "generativelanguage.googleapis.com"
+RUTA = "/v1beta/models/{modelo}:generateContent"
+TIEMPO_LIMITE = 25
+
+
+class _ConexionIPv4(http.client.HTTPSConnection):
+    """Conexión que resuelve el servidor solo por IPv4.
+
+    En Streamlit Cloud la llamada se quedaba colgada hasta agotar el tiempo: el
+    contenedor resuelve googleapis.com a una dirección IPv6 y no tiene ruta para
+    salir por ahí, así que el intento no falla, simplemente no vuelve. Forzando
+    IPv4 la conexión se establece de inmediato.
+
+    El nombre del servidor se conserva para el SNI y la validación del
+    certificado; lo único que cambia es la familia de direcciones.
+    """
+
+    def connect(self):
+        familia, tipo, protocolo, _, direccion = socket.getaddrinfo(
+            self.host, self.port, socket.AF_INET, socket.SOCK_STREAM)[0]
+        bruto = socket.socket(familia, tipo, protocolo)
+        bruto.settimeout(self.timeout)
+        bruto.connect(direccion)
+        contexto = self._context or ssl.create_default_context()
+        self.sock = contexto.wrap_socket(bruto, server_hostname=self.host)
 
 INSTRUCCIONES = """Eres el asistente de una aplicación académica que estima el riesgo
 de que un paciente diabético vuelva a ser hospitalizado antes de 30 días.
@@ -108,19 +132,24 @@ def responder(estimacion, pregunta: str) -> tuple[bool, str]:
     datos, ultimo = None, "No se pudo contactar a Gemini."
 
     for modelo_nombre in MODELOS:
-        peticion = urllib.request.Request(
-            f"{RAIZ}/{modelo_nombre}:generateContent", data=carga, headers=cabeceras)
+        conexion = None
         try:
-            with urllib.request.urlopen(peticion, timeout=TIEMPO_LIMITE) as respuesta:
-                datos = json.loads(respuesta.read())
-            break
-        except urllib.error.HTTPError as error:
-            # el codigo basta para diagnosticar; el cuerpo puede repetir la clave
-            ultimo = f"Gemini respondió con un error {error.code}."
-            if error.code not in (429, 500, 502, 503, 504):
+            conexion = _ConexionIPv4(SERVIDOR, 443, timeout=TIEMPO_LIMITE)
+            conexion.request("POST", RUTA.format(modelo=modelo_nombre), carga, cabeceras)
+            respuesta = conexion.getresponse()
+            crudo = respuesta.read()
+            if respuesta.status == 200:
+                datos = json.loads(crudo)
+                break
+            # solo el codigo: el cuerpo del error puede repetir la clave
+            ultimo = f"Gemini respondió con un error {respuesta.status}."
+            if respuesta.status not in (429, 500, 502, 503, 504):
                 break
         except Exception as error:
             ultimo = f"No se pudo contactar a Gemini ({type(error).__name__})."
+        finally:
+            if conexion is not None:
+                conexion.close()
 
     if datos is None:
         return False, ultimo
