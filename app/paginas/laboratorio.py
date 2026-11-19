@@ -89,8 +89,8 @@ def _exploracion(crudos, X, descartes, resumen):
             st.dataframe(tabla.round(2), hide_index=True, width="stretch")
             campo = st.selectbox("Explorar distribución", tabla["variable"].tolist(),
                                   key="lab_variable")
-            serie = pd.to_numeric(crudos[campo], errors="coerce")\
-                .replace([np.inf, -np.inf], np.nan).dropna()
+            serie = (pd.to_numeric(crudos[campo], errors="coerce")
+                     .replace([np.inf, -np.inf], np.nan).dropna())
             if not serie.empty:
                 conteos, bordes = np.histogram(serie.to_numpy(), bins=20)
                 histograma = pd.DataFrame({
