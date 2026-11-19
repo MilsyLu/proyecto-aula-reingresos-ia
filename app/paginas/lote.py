@@ -17,7 +17,7 @@ import datos
 import estilo
 from datos import AZUL, GRIS, TERRACOTA, VERDE, entero, formato
 from src.analisis_calidad import resumen_calidad
-from src.cargue_flexible import preparar_tolerante
+from src.cargue_flexible import ALIAS, preparar_tolerante
 from src.procesamiento_lotes import (ArchivoIncompatible, categorias_no_vistas,
                                      predecir_lote, preparar_lote)
 
@@ -95,9 +95,10 @@ def _calidad(datos_crudos, X, descartes, diagnostico, modelo):
     columnas[0].metric("Filas recibidas", entero(diagnostico["recibidas"]))
     columnas[1].metric("Listas para predecir", entero(diagnostico["validas"]))
     columnas[2].metric("Descartadas", entero(diagnostico["excluidas"]))
+    nombre_formato = {"uci": "Archivo original", "preparado": "Ya preparado",
+                      "parcial": "Parcial"}
     columnas[3].metric("Formato detectado",
-                       "Archivo original" if diagnostico["formato"] == "uci"
-                       else "Ya preparado")
+                       nombre_formato.get(diagnostico["formato"], "Parcial"))
 
     desconocidas = {col: val for col, val in
                     categorias_no_vistas(modelo, X, X.columns).items() if val}
@@ -111,7 +112,7 @@ def _calidad(datos_crudos, X, descartes, diagnostico, modelo):
             f"confiar en sus predicciones.<br>{detalle}")
     else:
         st.success("Todas las categorías del archivo coinciden con las que el modelo "
-                   "aprendió. No hay valores desconocidos.", icon="✓")
+                   "aprendió. No hay valores desconocidos.")
 
     if not descartes.empty:
         with st.expander(f"Por qué se descartaron {entero(len(descartes))} filas"):
@@ -259,6 +260,21 @@ def render():
     st.divider()
     if informe is not None:
         _tarjeta_cobertura(informe)
+        if not informe["reconocidas"]:
+            # sin una sola columna reconocida, todas las filas tomarian los mismos
+            # valores tipicos y el modelo devolveria el mismo numero para todas:
+            # eso no es una prediccion, es un adorno
+            st.error(
+                "No se reconoció **ninguna** columna de este archivo, así que el modelo "
+                "no tendría nada con qué distinguir a un paciente de otro: le daría el "
+                "mismo riesgo a todos. No se estima nada. "
+                "Revise que el archivo traiga las hospitalizaciones en filas y los datos "
+                "en columnas, y que los nombres de las columnas estén en la primera fila.")
+            with st.expander("Qué nombres de columna reconoce la aplicación"):
+                st.caption("Basta con que alguna coincida; no distingue mayúsculas, "
+                           "acentos ni guiones.")
+                st.code(", ".join(sorted(set(ALIAS))), language=None)
+            return
     _calidad(crudos, X, descartes, diagnostico, modelo)
 
     if X.empty:
