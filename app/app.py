@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Aplicación Streamlit: dos áreas simples, permisos por rol y módulos reutilizables.
+"""ReingresaIA: experiencia de predicción y laboratorio de IA.
 
-La navegación principal funciona incluso con el panel lateral plegado.
+Solo existen dos áreas principales. Los componentes de entrenamiento y
+predicción se mantienen separados y protegidos por los roles existentes.
 """
 from __future__ import annotations
 
@@ -16,16 +17,15 @@ for ruta in (str(AQUI), str(BASE)):
     if ruta not in sys.path:
         sys.path.insert(0, ruta)
 
-import auth                     # noqa: E402
-import estilo                   # noqa: E402
-from paginas import portada     # noqa: E402
+import auth  # noqa: E402
+import estilo  # noqa: E402
+from paginas import portada  # noqa: E402
 
-# Usamos el estado de la sesión, no CSS display:none, para iniciar sin
-# navegación en portada y permitir reabrir el panel dentro de la app.
 sesion = auth.sesion()
 st.set_page_config(
-    page_title="Reingresos a 30 días | Grupo 04",
-    page_icon="🏥", layout="wide",
+    page_title="ReingresaIA | Riesgo de reingreso a 30 días",
+    page_icon="🏥",
+    layout="wide",
     initial_sidebar_state="expanded" if sesion else "collapsed",
 )
 
@@ -36,60 +36,61 @@ if not sesion:
 
 estilo.aplicar("claro")
 
-# Solo dos áreas principales. Las opciones especializadas viven dentro
-# del área correspondiente, evitando una barra con seis pantallas sueltas.
-CLIENTE = "Resultados para el cliente"
-ADMIN = "Laboratorio y evaluación"
+CLIENTE = "Predicción de riesgo"
+ADMIN = "Laboratorio de IA"
 areas = [CLIENTE] + ([ADMIN] if auth.es_coordinador() else [])
 
 with st.sidebar:
-    st.markdown("### Proyecto Reingresos")
-    st.caption("Inteligencia Artificial · Grupo 04")
-    st.markdown(
-        "**" + sesion.get("nombre", "Usuario") + "**"
-    )
+    st.markdown("## 🏥 ReingresaIA")
+    st.caption("Predicción de reingresos a 30 días")
+    st.divider()
+    st.caption("SESIÓN ACTIVA")
+    st.markdown("**" + sesion.get("nombre", "Usuario") + "**")
     st.caption(auth.NOMBRE_ROL.get(sesion["rol"], sesion["rol"]))
     st.divider()
-    st.caption(
-        "Puede cerrar este panel sin perder la navegación: "
-        "las dos áreas están disponibles en la parte superior."
-    )
+    st.caption("La navegación principal permanece arriba aunque cierre este panel.")
     if st.button("Cerrar sesión", width="stretch", key="cerrar_sesion"):
         auth.cerrar()
         st.rerun()
 
-st.caption("Predicción académica de reingresos hospitalarios a 30 días")
+st.markdown(
+    '<div class="reia-encabezado">'
+    '<div class="reia-marca">REINGRESAIA · GRUPO 04</div>'
+    '<div class="reia-subtitulo">Análisis inteligente de reingresos hospitalarios a 30 días</div>'
+    '</div>',
+    unsafe_allow_html=True,
+)
 if len(areas) == 1:
     area = CLIENTE
 else:
     area = st.segmented_control(
-        "¿Qué desea consultar?",
-        options=areas,
-        default=CLIENTE,
+        "Área de trabajo", options=areas, default=CLIENTE,
         key="area_principal",
-    )
+    ) or CLIENTE
     if area not in areas:
         area = CLIENTE
 
 if area == CLIENTE:
     auth.exige("Estimar riesgo")
-    st.markdown(
-        "Consulte el riesgo estimado de una hospitalización. "
-        "Los resultados se producen con el modelo oficial ya publicado."
+    st.markdown("### Predicción de riesgo")
+    st.caption(
+        "Consulte una hospitalización y obtenga una estimación comprensible. "
+        "Se utiliza el modelo oficial previamente entrenado."
     )
-    cliente_opciones = ["Consultar un paciente"]
+    opciones = ["Consultar paciente"]
     if auth.es_coordinador():
-        cliente_opciones.append("Procesar varios pacientes")
-    cliente_opciones.append("Entender el modelo")
+        opciones.append("Analizar archivo CSV")
+    opciones.append("Sobre el modelo")
     seleccion = st.segmented_control(
-        "Tipo de consulta", options=cliente_opciones,
-        default=cliente_opciones[0], key="cliente_seccion",
-    )
-    if seleccion == "Procesar varios pacientes":
+        "¿Qué necesita hacer?", options=opciones, default=opciones[0],
+        key="cliente_seccion",
+    ) or opciones[0]
+
+    if seleccion == "Analizar archivo CSV":
         auth.exige("Cargar archivo")
         from paginas import lote
         lote.render()
-    elif seleccion == "Entender el modelo":
+    elif seleccion == "Sobre el modelo":
         auth.exige("Ficha del modelo")
         from paginas import ficha
         ficha.render()
@@ -98,38 +99,38 @@ if area == CLIENTE:
         estimar.render()
 else:
     auth.exige("Laboratorio de modelos")
-    st.markdown(
-        "Esta área muestra cómo se procesan los datos, cómo se entrenan y "
-        "comparan dos modelos, y qué evidencia respalda los resultados."
+    st.markdown("### Laboratorio de IA")
+    st.caption(
+        "Explore los datos, entrene Gradient Boosting y una red neuronal, "
+        "compare sus resultados y comprenda cuál se recomienda."
     )
-    admin_opciones = [
-        "Entrenar y comparar",
-        "Resultados del modelo oficial",
-        "Equidad y límites",
-        "Cómo se construyó",
-    ]
+    opciones = ["Experimento guiado", "Evidencia del proyecto"]
     seleccion = st.segmented_control(
-        "Explorar el proceso", options=admin_opciones,
-        default=admin_opciones[0], key="admin_seccion",
-    )
-    if seleccion == "Entrenar y comparar":
+        "Contenido del laboratorio", options=opciones,
+        default=opciones[0], key="admin_seccion",
+    ) or opciones[0]
+
+    if seleccion == "Experimento guiado":
         from paginas import laboratorio
         laboratorio.render()
-    elif seleccion == "Resultados del modelo oficial":
-        auth.exige("Desempeño del modelo")
-        from paginas import desempeno
-        desempeno.render()
-    elif seleccion == "Equidad y límites":
-        auth.exige("Equidad y límites")
-        from paginas import equidad
-        equidad.render()
     else:
-        auth.exige("Ficha del modelo")
-        from paginas import ficha
-        ficha.render()
+        t1, t2, t3 = st.tabs([
+            "Modelo oficial", "Equidad y límites", "Metodología"
+        ])
+        with t1:
+            auth.exige("Desempeño del modelo")
+            from paginas import desempeno
+            desempeno.render()
+        with t2:
+            auth.exige("Equidad y límites")
+            from paginas import equidad
+            equidad.render()
+        with t3:
+            auth.exige("Ficha del modelo")
+            from paginas import ficha
+            ficha.render()
 
-st.divider()
 st.caption(
-    "Universidad Popular del Cesar · Grupo 04 · "
-    "Prototipo académico: no validado para tomar decisiones clínicas."
+    "Universidad Popular del Cesar · Proyecto académico. "
+    "Prototipo no validado para decisiones clínicas."
 )
