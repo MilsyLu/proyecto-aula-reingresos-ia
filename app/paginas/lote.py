@@ -17,11 +17,26 @@ import datos
 import estilo
 from datos import AZUL, GRIS, TERRACOTA, VERDE, entero, formato
 from src.analisis_calidad import resumen_calidad
-from src.cargue_flexible import ALIAS, es_salida_propia, preparar_tolerante
+from src import cargue_flexible
+from src.cargue_flexible import ALIAS, preparar_tolerante
 from src.procesamiento_lotes import (ArchivoIncompatible, categorias_no_vistas,
                                      predecir_lote, preparar_lote)
 
 LIMITE_MB = 30
+
+
+def es_salida_propia(df):
+    """Puente tolerante a que el servidor tenga el módulo viejo en memoria.
+
+    Streamlit no vuelve a importar los módulos locales cuando recarga, así que
+    justo después de un despliegue puede quedar en memoria una versión sin las
+    funciones nuevas. Importar el nombre directamente reventaba la página entera
+    con un ImportError; preguntando por el atributo, en el peor caso se pierde
+    este aviso y lo demás sigue funcionando.
+    """
+    funcion = getattr(cargue_flexible, "es_salida_propia", None)
+    return funcion(df) if funcion else None
+
 
 
 def _descargar(df, nombre, etiqueta):
