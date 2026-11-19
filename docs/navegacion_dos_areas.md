@@ -10,12 +10,14 @@ abierta la barra lateral.
 
 - **Consultar un paciente:** formulario de riesgo, explicación del modelo
   operativo y asistente opcional (se conserva `app/paginas/estimar.py`).
+- **Entender el modelo:** ficha informativa y metodología del modelo
+  actual (disponible también para personal asistencial).
 - **Procesar varios pacientes:** carga CSV y priorización de seguimiento
   (`app/paginas/lote.py`). Esta subopción conserva el permiso
   existente: solo aparece para coordinación.
 
-El perfil asistencial solo accede a la consulta individual y ficha del
-modelo a través de las funcionalidades autorizadas actualmente. La sección
+El perfil asistencial accede a la consulta individual y a la ficha del
+modelo, sin abrir las funciones de coordinación. La sección
 de entrenamiento no se expone al usuario asistencial.
 
 ### Laboratorio y evaluación
