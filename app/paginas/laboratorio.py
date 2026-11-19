@@ -90,7 +90,18 @@ def _exploracion(crudos, X, descartes, resumen):
             campo = st.selectbox("Explorar distribución", tabla["variable"].tolist(),
                                   key="lab_variable")
             serie = pd.to_numeric(crudos[campo], errors="coerce").dropna()
-            st.bar_chart(serie.value_counts(bins=20).sort_index().rename("Registros"))
+            if not serie.empty:
+                conteos, bordes = np.histogram(serie.to_numpy(), bins=20)
+                histograma = pd.DataFrame({
+                    "Intervalo": [
+                        f"{bordes[i]:.1f} – {bordes[i + 1]:.1f}"
+                        for i in range(len(conteos))
+                    ],
+                    "Registros": conteos,
+                })
+                st.bar_chart(histograma.set_index("Intervalo"))
+            else:
+                st.info("No hay observaciones numéricas válidas para graficar.")
             st.markdown("**Valores atípicos potenciales (método IQR)**")
             st.dataframe(extremos, hide_index=True, width="stretch")
             st.caption("Es una alerta exploratoria, no una orden para eliminar casos.")
