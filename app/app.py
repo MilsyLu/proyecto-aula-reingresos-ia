@@ -87,8 +87,8 @@ def metricas_en(df, umbral):
 st.sidebar.markdown(f"### <span style='color:{AZUL}'>Reingresos a 30 dias</span>",
                     unsafe_allow_html=True)
 st.sidebar.caption("Proyecto de aula de IA - Grupo 04\nUniversidad Popular del Cesar")
-pagina = st.sidebar.radio("Ir a", ["Estimar riesgo", "Procesamiento CSV", "Desempeno del modelo",
-                                   "Equidad y limites", "Ficha del modelo"],
+pagina = st.sidebar.radio("Ir a", ["Estimar riesgo", "Procesamiento CSV", "Ciclo de ML (12 fases)",
+                                   "Desempeno del modelo", "Equidad y limites", "Ficha del modelo"],
                           label_visibility="collapsed")
 st.sidebar.markdown("---")
 st.sidebar.warning("Prototipo academico. No es una herramienta de decision clinica.")
@@ -338,6 +338,92 @@ elif pagina == "Procesamiento CSV":
                             "cambie. No se modifica el modelo ni se evalua su "
                             "rendimiento sin resultados reales verificados."
                         )
+
+# ============================================== CICLO DE VIDA (12 FASES)
+elif pagina == "Ciclo de ML (12 fases)":
+    st.title("Las 12 fases del ciclo de Machine Learning")
+    st.markdown(
+        "Esta seccion conecta el programa entregado con las doce fases de "
+        "desarrollo del modelo explicadas en clase. Una parte se ejecuto "
+        "durante la investigacion (notebooks) y otra funciona en vivo "
+        "mediante el formulario y el procesamiento CSV."
+    )
+    st.info(
+        "Consultar una fase no vuelve a entrenar el modelo. Para reproducir "
+        "un experimento, ejecute los notebooks en orden con el dataset UCI."
+    )
+    fases = [
+        ("01", "Definir el problema",
+         "Clasificacion binaria: reingreso antes de 30 dias (<30). "
+         "La metrica principal es Average Precision por el desbalance de clases.",
+         "README.md y reports/Fase_1_Proyecto_IA_Grupo04_Reingresos.pdf",
+         "Documentada"),
+        ("02", "Recoleccion de datos",
+         "Dataset UCI Diabetes 130-US Hospitals (1999-2008). "
+         "Puede cargarse un nuevo CSV en Procesamiento CSV.",
+         "data/raw/IDs_mapping.csv; notebooks/01_preprocesamiento_particion.ipynb",
+         "Carga interactiva"),
+        ("03", "Exploracion y analisis (EDA)",
+         "Resumen, faltantes, duplicados, distribuciones y valores extremos "
+         "en archivos nuevos; EDA original en notebook 00.",
+         "notebooks/00_EDA_fase1.ipynb; src/analisis_calidad.py",
+         "EDA interactivo"),
+        ("04", "Limpieza y preparacion",
+         "Se validan esquemas y registros; se mantiene la imputacion "
+         "del pipeline entrenado y se registran las exclusiones.",
+         "notebooks/01_preprocesamiento_particion.ipynb; src/procesamiento_lotes.py",
+         "Procesamiento interactivo"),
+        ("05", "Ingenieria de caracteristicas",
+         "12 caracteristicas derivadas, incluyendo uso previo, "
+         "medicamentos por dia y grupos diagnosticos ICD-9.",
+         "notebooks/01_preprocesamiento_particion.ipynb; src/procesamiento_lotes.py",
+         "Procesamiento interactivo"),
+        ("06", "Dividir los datos",
+         "Particion 60/20/20 agrupada por paciente para evitar fugas "
+         "entre entrenamiento, validacion y prueba.",
+         "notebooks/01_preprocesamiento_particion.ipynb",
+         "Experimento documentado"),
+        ("07", "Seleccionar el algoritmo",
+         "Se compararon clasificador mayoritario, regresion logistica "
+         "y Gradient Boosting; se eligio el ultimo.",
+         "notebooks/02_modelos_baseline.ipynb; reports/metricas_03_comparacion.csv",
+         "Experimento documentado"),
+        ("08", "Entrenar el modelo",
+         "HistGradientBoostingClassifier entrenado y guardado como "
+         "pipeline para inferencia.",
+         "notebooks/03_hiperparametros.ipynb; models/gradient_boosting_ajustado.joblib",
+         "Modelo disponible"),
+        ("09", "Ajustar hiperparametros",
+         "30 configuraciones con RandomizedSearchCV y "
+         "validacion cruzada agrupada por paciente.",
+         "notebooks/03_hiperparametros.ipynb; reports/mejores_hiperparametros.json",
+         "Experimento documentado"),
+        ("10", "Evaluar el modelo",
+         "Se reportan AP, ROC-AUC, recall, precision, "
+         "matriz de confusion y Brier en datos de prueba.",
+         "notebooks/04_evaluacion_comparada.ipynb; reports/metricas_04_final.csv",
+         "Resultados visibles"),
+        ("11", "Validar generalizacion",
+         "Separacion por paciente, validacion cruzada y "
+         "auditoria de equidad/sensibilidad. No constituye validacion "
+         "clinica externa en datos actuales.",
+         "notebooks/05_equidad_sensibilidad.ipynb; reports/metricas_05_sensibilidad.csv",
+         "Validacion interna"),
+        ("12", "Desplegar el modelo",
+         "Aplicacion Streamlit con prediccion manual, "
+         "prediccion masiva y consulta de metricas.",
+         "app/app.py; README.md",
+         "Prototipo integrado"),
+    ]
+    for numero, nombre, explicacion, archivos, evidencia in fases:
+        with st.expander(f"{numero} · {nombre} — {evidencia}"):
+            st.write(explicacion)
+            st.caption("Evidencia en el repositorio: " + archivos)
+    st.caption(
+        "Los CSV nuevos sin etiquetas conocidas sirven para inferencia, no "
+        "para medir precision o reentrenar. Las doce etapas no se ejecutan "
+        "todas en cada prediccion."
+    )
 
 # =========================================================== 2. DESEMPENO
 elif pagina == "Desempeno del modelo":
