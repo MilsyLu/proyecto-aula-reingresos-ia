@@ -80,17 +80,19 @@ if area == CLIENTE:
     cliente_opciones = ["Consultar un paciente"]
     if auth.es_coordinador():
         cliente_opciones.append("Procesar varios pacientes")
-    if len(cliente_opciones) == 1:
-        seleccion = cliente_opciones[0]
-    else:
-        seleccion = st.segmented_control(
-            "Tipo de consulta", options=cliente_opciones,
-            default=cliente_opciones[0], key="cliente_seccion",
-        )
+    cliente_opciones.append("Entender el modelo")
+    seleccion = st.segmented_control(
+        "Tipo de consulta", options=cliente_opciones,
+        default=cliente_opciones[0], key="cliente_seccion",
+    )
     if seleccion == "Procesar varios pacientes":
         auth.exige("Cargar archivo")
         from paginas import lote
         lote.render()
+    elif seleccion == "Entender el modelo":
+        auth.exige("Ficha del modelo")
+        from paginas import ficha
+        ficha.render()
     else:
         from paginas import estimar
         estimar.render()
