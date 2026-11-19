@@ -46,20 +46,36 @@ class LaboratorioMLTest(unittest.TestCase):
         resultado = entrenar_experimento(
             self.X, self.y, self.pacientes,
             numericas=["time_in_hospital", "num_medications"],
-            categoricas=["gender"],
-            neuronas=8, iteraciones=30,
+            categoricas=["gender"], neuronas=8, iteraciones=30, busqueda=1,
         )
-        modelos = set(resultado["comparacion"]["modelo"])
-        self.assertEqual(modelos, {
-            "Mayoritario", "Regresion logistica", "Red neuronal MLP"
-        })
+        nombres = {"Gradient Boosting", "Red neuronal MLP"}
+        self.assertEqual(set(resultado["comparacion"]["modelo"]), nombres)
+        self.assertEqual(set(resultado["modelos"]), nombres)
+        self.assertEqual(set(resultado["predicciones_prueba"]), nombres)
+        self.assertIn(resultado["elegido"], nombres)
         self.assertEqual(resultado["particiones"]["registros"].sum(), len(self.X))
-        self.assertTrue(0 <= resultado["prueba"]["AP"] <= 1)
-        self.assertTrue(0 <= resultado["umbral"] <= 1)
-        self.assertEqual(
-            sum(resultado["prueba"][k] for k in ("VP", "FN", "FP", "VN")),
-            len(resultado["predicciones_prueba"]),
+        tabla = resultado["comparacion"]
+        mejor = tabla.sort_values("AP_validacion", ascending=False).iloc[0]["modelo"]
+        self.assertEqual(resultado["elegido"], mejor)
+        self.assertEqual(int(tabla["seleccionado"].sum()), 1)
+        for _, fila in tabla.iterrows():
+            self.assertTrue(0 <= fila["AP_prueba"] <= 1)
+            self.assertTrue(0 <= fila["umbral"] <= 1)
+            self.assertEqual(
+                sum(int(fila[k]) for k in ("VP", "FN", "FP", "VN")),
+                len(resultado["predicciones_prueba"][fila["modelo"]]),
+            )
+        self.assertGreater(len(resultado["curvas"]["Red neuronal MLP"]), 0)
+
+    def test_ajuste_independiente(self):
+        resultado = entrenar_experimento(
+            self.X, self.y, self.pacientes,
+            numericas=["time_in_hospital", "num_medications"],
+            categoricas=["gender"], neuronas=8, iteraciones=30, busqueda=2,
         )
+        self.assertEqual(resultado["busqueda"].groupby("modelo").size().to_dict(), {
+            "Gradient Boosting": 2, "Red neuronal MLP": 2,
+        })
 
 
 if __name__ == "__main__":
