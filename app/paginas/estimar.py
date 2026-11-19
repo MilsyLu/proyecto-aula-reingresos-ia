@@ -6,6 +6,7 @@ import streamlit as st
 
 import datos
 import estilo
+import asistente
 import modelo
 from datos import AZUL, GRIS, TERRACOTA, VERDE, formato
 
@@ -138,6 +139,8 @@ def _explicacion(base, efectos):
             f'{formato(base * 100)} % a {formato(efecto["riesgo_sin_el"] * 100)} %.'
             f'</div></div>', unsafe_allow_html=True)
 
+    _asistente()
+
     with st.expander("¿De dónde sale esta explicación?"):
         st.markdown(
             "No usa SHAP ni ninguna aproximación. Para cada dato del formulario se "
@@ -147,6 +150,50 @@ def _explicacion(base, efectos):
             "Lo que no hace: repartir el riesgo total entre las variables. Los efectos "
             "no suman el riesgo porque el modelo no es aditivo — hay interacciones "
             "entre variables que ninguna descomposición simple recoge.")
+
+
+def _asistente():
+    estimacion = st.session_state.get("ultima_estimacion")
+    if not estimacion:
+        return
+
+    st.markdown("### Pregúntele al asistente")
+    if not asistente.disponible():
+        st.info(
+            "El asistente está apagado porque no hay una clave de Gemini configurada. "
+            "Para encenderlo, agregue `GEMINI_API_KEY` en los secretos de la aplicación. "
+            "Todo lo demás funciona sin él.")
+        return
+
+    st.caption("Traduce el resultado a lenguaje corriente. No da consejo clínico.")
+    atajos = st.columns(len(asistente.SUGERENCIAS))
+    for columna, sugerencia in zip(atajos, asistente.SUGERENCIAS):
+        if columna.button(sugerencia, width="stretch"):
+            st.session_state["pregunta_asistente"] = sugerencia
+
+    pregunta = st.chat_input("Escriba su pregunta sobre este resultado…")
+    if pregunta:
+        st.session_state["pregunta_asistente"] = pregunta
+
+    pendiente = st.session_state.pop("pregunta_asistente", None)
+    if pendiente:
+        with st.spinner("Consultando…"):
+            ok, texto = asistente.responder(estimacion, pendiente)
+        st.session_state["conversacion"] = {"pregunta": pendiente, "respuesta": texto,
+                                            "ok": ok}
+
+    charla = st.session_state.get("conversacion")
+    if charla:
+        with st.chat_message("user"):
+            st.write(charla["pregunta"])
+        with st.chat_message("assistant"):
+            if charla["ok"]:
+                st.write(charla["respuesta"])
+                st.caption("Respuesta generada por un modelo de lenguaje a partir de "
+                           "las cifras de esta pantalla. Puede equivocarse: las cifras "
+                           "de arriba son la fuente.")
+            else:
+                st.warning(charla["respuesta"])
 
 
 def render():
