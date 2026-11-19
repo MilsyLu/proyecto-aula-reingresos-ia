@@ -130,8 +130,9 @@ def preparar_lote(df, numericas, categoricas):
     for col in numericas:
         trabajo[col] = pd.to_numeric(trabajo[col], errors="coerce")
     for col in ["num_medications", "num_lab_procedures", "num_procedures", "number_diagnoses"]:
-        invalida = trabajo[col].notna() & (trabajo[col] < 0)
-        motivo.loc[invalida & motivo.eq("")] = f"Valor negativo en {col}"
+        if col in trabajo:
+            invalida = trabajo[col].notna() & (trabajo[col] < 0)
+            motivo.loc[invalida & motivo.eq("")] = f"Valor negativo en {col}"
     for col in categoricas:
         trabajo[col] = trabajo[col].astype(str)
 
