@@ -27,6 +27,27 @@ el archivo.
 
 ---
 
+## Laboratorio de Machine Learning (rama de desarrollo)
+
+La sección **Laboratorio de modelos**, disponible para coordinación, permite
+cargar un CSV **etiquetado** con `readmitted` o `y` y el identificador
+`patient_nbr`. La aplicación muestra la calidad de los datos y sus
+transformaciones, divide por paciente y entrena tres algoritmos: mayoritario,
+regresión logística y una **red neuronal MLP** con tamaño configurable.
+
+Elige el algoritmo y el umbral utilizando validación, y presenta métricas
+y matriz de confusión sobre prueba independiente. Es un **experimento separado**:
+el modelo oficial sigue siendo Gradient Boosting y no se modifica.
+
+No se presentan las doce fases del ciclo como formularios aislados. La
+definición del problema y recolección originales se apoyan en los informes
+y notebooks; en la interfaz se demuestra el flujo desde la carga de datos
+hasta la evaluación, y la aplicación ya existente evidencia el despliegue.
+
+Ver [guía técnica del laboratorio](docs/laboratorio_ml.md).
+
+---
+
 ## Qué hace este proyecto
 
 Estima la probabilidad de que un paciente con diabetes **vuelva a ser hospitalizado antes de
