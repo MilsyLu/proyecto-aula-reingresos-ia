@@ -1,92 +1,84 @@
-# Laboratorio de modelos — recorrido aplicado del ciclo de Machine Learning
+# Laboratorio ML: comparación de dos modelos de predicción de reingresos
 
-Esta sección sirve para demostrar el proceso de desarrollo de modelos de la
-materia **Inteligencia Artificial**, sin convertir las 12 fases de las
-diapositivas en 12 formularios separados. Las primeras etapas ya se abordaron
-en los notebooks y documentos del proyecto; las operaciones interactivas
-comienzan con un CSV etiquetado.
+## Objetivo
 
-## Interfaz: cinco pasos, doce fases documentadas
+Demostrar el flujo de aprendizaje supervisado con **dos modelos que
+realmente se entrenan** sobre el mismo CSV y las mismas particiones:
 
-| Vista del usuario | Evidencia del ciclo de ML |
-| --- | --- |
-| Contexto del proyecto | Definición del problema y recolección de datos (1–2) ya desarrolladas |
-| Seleccionar, explorar y preparar | EDA, limpieza e ingeniería de características (3–5) |
-| Configurar y entrenar | Partición por paciente, selección de algoritmo, entrenamiento y configuración MLP (6–9) |
-| Interpretar resultados | Evaluación y comprobaciones de generalización interna (10–11) |
-| Utilizar el sistema | Aplicación de inferencia/despliegue existente (12) |
+1. **HistGradientBoostingClassifier** (modelo de árboles, misma familia que
+   el modelo oficial del proyecto, con parámetros experimentales).
+2. **MLPClassifier** (red neuronal feed-forward de scikit-learn).
 
-**La sección no afirma que las doce fases se ejecutan en cada predicción.**
-Algunos pasos son decisiones metodológicas previas y la evaluación clínica
-externa todavía no existe.
+Cada modelo tiene su propia preparación, búsqueda de configuraciones,
+matriz de confusión, métricas y predicciones exportables. Se elige el mejor
+**antes de evaluar prueba**: el criterio es mayor **Average Precision (AP)
+en validación**, porque los reingresos son minoritarios.
 
-## Modelo oficial y experimento: NO son lo mismo
+No se compara una MLP nueva con las cifras históricas de otro conjunto
+de datos: eso sería metodológicamente incorrecto. Ambos modelos nuevos
+usan **exactamente las mismas filas**, y el modelo oficial histórico se
+presenta separadamente como un artefacto ya publicado.
 
-- **Oficial:** `models/gradient_boosting_ajustado.joblib`, ya entrenado,
-  seleccionado y evaluado en los notebooks. Las páginas `Estimar riesgo`
-  y `Cargar archivo` siguen usándolo.
-- **Experimental:** cada ejecución nueva compara `DummyClassifier`,
-  `LogisticRegression` y `MLPClassifier` (una red neuronal supervisada).
-  La elección se realiza con **Average Precision en validación**, y el
-  umbral se fija también en validación. La prueba se usa para el reporte final
-  de esa ejecución, nunca para elegir el algoritmo.
-- No se escribe ni reemplaza el archivo `.joblib` oficial.
-- El experimento se conserva únicamente en la sesión de Streamlit.
-- La capa oculta (8–64 neuronas) y el máximo de iteraciones (30–120) son
-  configurables; no se afirma que se haga una búsqueda exhaustiva de
-  hiperparámetros. El proyecto ya documentó una búsqueda sobre
-  Gradient Boosting en `notebooks/03_hiperparametros.ipynb`.
+## Relación con las 12 fases de la asignatura
 
-## Datos requeridos
+| Etapa observable | Evidencias que se muestran |
+|---|---|
+| Contexto y procedencia | Problema y fuente UCI ya definidos por el equipo (fases 1–2) |
+| Carga y exploración | CSV etiquetado, estadísticas, faltantes, atípicos (fases 2–3) |
+| Preparación | Exclusiones documentadas y 12 características derivadas (fases 4–5) |
+| Partición | Separación aproximada 60/20/20 por paciente, sin fuga (fase 6) |
+| Dos procesos de entrenamiento | Elección entre GB y MLP, entrenamiento real (fases 7–8) |
+| Búsqueda de configuraciones | 1 a 3 combinaciones por algoritmo, seleccionadas en validación (fase 9) |
+| Comparación y errores | Dos resultados de prueba, tablas y matrices de confusión (fase 10) |
+| Robustez | Brecha de AP train/validation, curva de pérdida de MLP y límites (fase 11) |
+| Entrega al cliente | Producto Streamlit existente, usando por ahora el modelo oficial (fase 12) |
 
-- CSV original del proyecto UCI con `readmitted` y `patient_nbr`, o
-  CSV preparado con las 50 características, una etiqueta binaria `y`
-  y el identificador `patient_nbr`.
-- `readmitted` debe ser `<30`, `>30` o `NO`.
-- La etiqueta `y` debe contener únicamente `0` y `1`.
-- El cargue admite hasta **30 MB**. Para mantener tiempos y memoria
-  razonables, el experimento toma una muestra aleatoria reproducible de
-  hasta **12.000 hospitalizaciones**, si hay más registros válidos.
-- Se requieren al menos 120 registros válidos, 30 pacientes distintos
-  y ambas clases (también en las tres particiones). Si no se cumplen,
-  se muestra un error explicativo.
+## Seguridad experimental
 
-## Prevención de fugas y criterios
+- Solo se aceptan CSV con etiquetas reales `readmitted` o `y` y
+  `patient_nbr` para no mezclar hospitalizaciones de una persona entre conjuntos.
+- Hasta 30 MB por archivo, 12.000 filas por experimento y máximo tres
+  configuraciones por modelo. La reducción a 12.000 filas es una muestra
+  reproducible, y sus métricas **no se confunden** con las del modelo oficial.
+- El esquema y las exclusiones provienen de `src/procesamiento_lotes.py`.
+- GB usa numéricas sin escalar, codificación ordinal y categorías nativas
+  del clasificador. MLP usa imputación, estandarización y one-hot.
+- Todos los transformadores se ajustan **solo con entrenamiento**.
+- Cada algoritmo prueba configuraciones en validación; la AP decide cuál
+  es su mejor configuración. Luego se compara el mejor GB con la mejor MLP
+  en esa misma validación. El umbral se fija por modelo en validación para
+  intentar recall >= 0,60.
+- **Después** de congelar la selección se obtienen las métricas de prueba
+  para ambos modelos. El resultado de prueba nunca revierte esa decisión.
+- Curvas: AP de entrenamiento/validación/prueba, brecha de sobreajuste y
+  pérdida de optimización de la MLP. La pérdida MLP no es una curva de
+  validación y no debe describirse como tal.
+- El parámetro de 1–3 configuraciones es una búsqueda **acotada**, no una
+  búsqueda exhaustiva ni una validación cruzada anidada.
+- No se guardan ni sustituyen automáticamente modelos entrenados en
+  `models/`. Las predicciones de clientes continúan usando
+  `gradient_boosting_ajustado.joblib`.
 
-1. Aplicar las mismas transformaciones de características y criterios de
-   exclusión que el notebook de preprocesamiento.
-2. Dividir por paciente mediante `StratifiedGroupKFold`, aproximadamente
-   **60/20/20**; las proporciones reales se muestran en la interfaz.
-3. Ajustar imputación, escalado y codificación categórica únicamente en
-   entrenamiento, dentro de cada `Pipeline`.
-4. Comparar los tres clasificadores usando **AP en validación**.
-5. Elegir el umbral en validación para buscar sensibilidad mínima 0,60.
-6. Calcular matriz de confusión, AP, ROC-AUC, precisión y sensibilidad en
-   prueba, una sola vez, tras seleccionar modelo y umbral.
-7. Conservar el conjunto de prueba histórico original y las métricas oficiales.
-8. Comunicar que una evaluación interna no implica validez en hospitales
-   colombianos ni seguridad para decisiones clínicas.
+## Justificación de cara al cliente
 
-No se elimina una fila únicamente por ser duplicada o atípica. Los datos
-subidos no se utilizan para modificar el archivo del modelo oficial.
+La pantalla recomienda el algoritmo de mayor AP de validación y expone la
+precisión, sensibilidad, ROC-AUC y errores por separado. El objetivo es
+fundamentar una futura selección para el cliente, **no promoverla
+automáticamente**. Para actualizar el modelo operativo habría que probarlo
+con una evaluación independiente, verificar sesgos y aprobar la nueva
+versión. Ningún modelo está validado para decisiones clínicas actuales.
 
-## Ejecutar y probar
-
-Desde la raíz del repositorio:
+## Ejecución
 
 ```bash
+git switch feature/aplicativo-ml
+git pull origin feature/aplicativo-ml
 pip install -r requirements.txt
-streamlit run app/app.py
 python -m unittest discover -s tests -v
+streamlit run app/app.py
 ```
 
-Iniciar sesión con el **rol coordinador**; el laboratorio no está disponible
-para el rol asistencial.
-
-Prueba funcional: cargar `diabetic_data.csv` original, revisar la tabla de
-calidad, escoger 24 neuronas y 65 iteraciones, ejecutar el entrenamiento,
-revisar la comparación y descargar el resultado. Cambiar un hiperparámetro
-invalida la visualización del experimento anterior para esa configuración.
-
-Los resultados de ejemplo son exploratorios y pueden variar según el
-dataset, las versiones de dependencias y las semillas de aleatoriedad.
+Inicie sesión como coordinador, abra **Laboratorio de modelos**, cargue el
+CSV original `diabetic_data.csv` y ejecute la comparación. Descargue
+`comparacion_gb_mlp.csv`, `busqueda_gb_mlp.csv` y los dos archivos con
+probabilidades de prueba. Use datos públicos o anonimizados.
