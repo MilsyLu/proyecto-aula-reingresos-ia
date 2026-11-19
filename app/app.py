@@ -8,6 +8,8 @@ Universidad Popular del Cesar - Ingenieria de Sistemas - 2026
 Prototipo academico. No es una herramienta de decision clinica.
 """
 import json
+import io
+import sys
 from pathlib import Path
 
 import joblib
@@ -16,6 +18,10 @@ import pandas as pd
 import streamlit as st
 
 BASE = Path(__file__).resolve().parent.parent
+if str(BASE) not in sys.path:
+    sys.path.insert(0, str(BASE))
+
+from src.procesamiento_lotes import ArchivoIncompatible, preparar_lote, predecir_lote
 MODELO_RUTA = BASE / "models" / "gradient_boosting_ajustado.joblib"
 REPORTES = BASE / "reports"
 
@@ -79,7 +85,7 @@ def metricas_en(df, umbral):
 st.sidebar.markdown(f"### <span style='color:{AZUL}'>Reingresos a 30 dias</span>",
                     unsafe_allow_html=True)
 st.sidebar.caption("Proyecto de aula de IA - Grupo 04\nUniversidad Popular del Cesar")
-pagina = st.sidebar.radio("Ir a", ["Estimar riesgo", "Desempeno del modelo",
+pagina = st.sidebar.radio("Ir a", ["Estimar riesgo", "Procesamiento CSV", "Desempeno del modelo",
                                    "Equidad y limites", "Ficha del modelo"],
                           label_visibility="collapsed")
 st.sidebar.markdown("---")
@@ -206,6 +212,77 @@ if pagina == "Estimar riesgo":
             "conjunto de entrenamiento (mediana para numeros, categoria mas frecuente "
             "para texto). El formulario recoge las variables mas influyentes, no las 50."
         )
+
+
+# ========================================================= 2. PROCESAMIENTO CSV
+elif pagina == "Procesamiento CSV":
+    st.title("Procesamiento masivo de hospitalizaciones")
+    st.markdown(
+        "Cargue un archivo CSV con el esquema original **Diabetes 130-US Hospitals** "
+        "o con las **50 variables ya preparadas** del modelo. El sistema valida el "
+        "archivo, muestra sus problemas de calidad y estima el riesgo por fila."
+    )
+    st.warning(
+        "Prototipo academico: use datos anonimizados. Los archivos se procesan "
+        "en memoria, sin almacenamiento permanente. No es una decision clinica."
+    )
+    archivo = st.file_uploader("Seleccionar CSV", type=["csv"])
+    if archivo is not None:
+        if archivo.size > 30 * 1024 * 1024:
+            st.error("El archivo supera el limite de 30 MB para esta version.")
+        else:
+            try:
+                datos = pd.read_csv(io.BytesIO(archivo.getvalue()),
+                                    na_values=["?"], low_memory=False)
+                X_lote, descartes, resumen = preparar_lote(datos, NUM, CAT)
+            except (ArchivoIncompatible, pd.errors.ParserError,
+                    UnicodeDecodeError, ValueError, KeyError) as error:
+                st.error(f"No se pudo procesar el archivo: {error}")
+            else:
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Filas recibidas", f"{resumen['recibidas']:,}")
+                c2.metric("Validas para prediccion", f"{resumen['validas']:,}")
+                c3.metric("Excluidas", f"{resumen['excluidas']:,}")
+                st.caption(
+                    f"Esquema detectado: {resumen['formato']}. "
+                    "El numero de fila del reporte corresponde al CSV con cabecera."
+                )
+                st.subheader("Diagnostico de calidad")
+                faltantes = pd.Series(resumen["faltantes_por_columna"])
+                faltantes = faltantes[faltantes > 0].sort_values(ascending=False)
+                if faltantes.empty:
+                    st.success("No se encontraron valores faltantes en el archivo.")
+                else:
+                    st.dataframe(faltantes.rename("Faltantes").to_frame(),
+                                 use_container_width=True)
+                if not descartes.empty:
+                    st.subheader("Registros excluidos")
+                    st.dataframe(descartes.head(100), use_container_width=True,
+                                 hide_index=True)
+                    st.download_button(
+                        "Descargar reporte de exclusiones",
+                        descartes.to_csv(index=False).encode("utf-8-sig"),
+                        "exclusiones.csv", mime="text/csv"
+                    )
+                if X_lote.empty:
+                    st.warning("Ningun registro valido para predecir.")
+                elif st.button("Predecir registros validos", type="primary"):
+                    with st.spinner("Calculando probabilidades..."):
+                        predicciones = predecir_lote(modelo, X_lote, UMBRAL)
+                    st.success(f"Predicciones generadas: {len(predicciones):,}")
+                    st.metric("Alertas de seguimiento",
+                              int((predicciones["alerta"] == "Seguimiento").sum()))
+                    st.dataframe(predicciones.head(200), use_container_width=True,
+                                 hide_index=True)
+                    st.download_button(
+                        "Descargar CSV con predicciones",
+                        predicciones.to_csv(index=False).encode("utf-8-sig"),
+                        "predicciones_reingreso.csv", mime="text/csv"
+                    )
+                    st.caption(
+                        "No se modifica el modelo ni se calcula su rendimiento "
+                        "sin disponer de resultados reales verificados."
+                    )
 
 # =========================================================== 2. DESEMPENO
 elif pagina == "Desempeno del modelo":
