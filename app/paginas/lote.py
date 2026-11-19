@@ -45,8 +45,8 @@ def _cobertura(probabilidades, capacidad):
     return elegidos / total, elegidos
 
 
-def _cobertura(informe):
-    """Cuánto del modelo alcanza a cubrir el archivo que subieron."""
+def _tarjeta_cobertura(informe):
+    """Dibuja cuánto del modelo alcanza a cubrir el archivo que subieron."""
     pct = informe["cobertura"] * 100
     reconocidas, rellenadas = informe["reconocidas"], informe["rellenadas"]
 
@@ -258,7 +258,7 @@ def render():
 
     st.divider()
     if informe is not None:
-        _cobertura(informe)
+        _tarjeta_cobertura(informe)
     _calidad(crudos, X, descartes, diagnostico, modelo)
 
     if X.empty:
