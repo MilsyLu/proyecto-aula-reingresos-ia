@@ -29,6 +29,55 @@ class ArchivoIncompatible(ValueError):
     """El archivo no contiene los campos necesarios para inferencia."""
 
 
+def a_texto(serie):
+    """Convierte una categórica a texto sin que un vacío vuelva 6 en '6.0'.
+
+    El entrenamiento guardó los códigos administrativos como enteros y les aplicó
+    ``astype(str)``, de modo que el codificador solo conoce '1', '2', ... Si el CSV
+    cargado trae un solo vacío en esas columnas, pandas las infiere como ``float64``
+    y ``astype(str)`` produce '6.0', que el codificador no reconoce y manda a -1 en
+    silencio: la predicción se degrada sin que nadie se entere.
+    """
+    if pd.api.types.is_numeric_dtype(serie):
+        enteros = pd.to_numeric(serie, errors="coerce").round().astype("Int64")
+        texto = enteros.astype(str).astype(object)
+        return texto.where(enteros.notna(), np.nan)
+    texto = serie.astype(str).astype(object)
+    # el vacio se deja vacio a proposito: el pipeline lo rellena con 'Ausente',
+    # que es la categoria que el modelo aprendio. Escribir 'nan' aqui produciria
+    # una categoria desconocida que el codificador manda a -1 sin avisar.
+    return texto.where(serie.notna(), np.nan)
+
+
+def categorias_no_vistas(modelo, X, categoricas):
+    """Valores categóricos que el modelo nunca vio durante el entrenamiento.
+
+    El codificador usa ``handle_unknown='use_encoded_value'``, así que una categoría
+    desconocida se vuelve -1 sin lanzar ningún error. Es el fallo más probable de un
+    cargue masivo y el más difícil de notar, por eso se reporta de forma explícita.
+    """
+    try:
+        preparacion = modelo.named_steps["prep"]
+        rama = {nombre: (transformador, columnas)
+                for nombre, transformador, columnas in preparacion.transformers_}
+        transformador, columnas = rama["categoricas"]
+        codificador = transformador.named_steps["ordinal"]
+        conocidas = {col: set(valores)
+                     for col, valores in zip(columnas, codificador.categories_)}
+    except (AttributeError, KeyError, TypeError):
+        return {}
+
+    hallazgos = {}
+    for columna in categoricas:
+        if columna not in X.columns or columna not in conocidas:
+            continue
+        presentes = X[columna].astype(str)
+        desconocidas = presentes[~presentes.isin(conocidas[columna])]
+        if not desconocidas.empty:
+            hallazgos[columna] = desconocidas.value_counts().head(10).to_dict()
+    return hallazgos
+
+
 def agrupar_diagnostico(codigo):
     """Agrupación ICD-9 idéntica a la usada en el entrenamiento."""
     if pd.isna(codigo):
@@ -135,7 +184,7 @@ def preparar_lote(df, numericas, categoricas):
             invalida = trabajo[col].notna() & (trabajo[col] < 0)
             motivo.loc[invalida & motivo.eq("")] = f"Valor negativo en {col}"
     for col in categoricas:
-        trabajo[col] = trabajo[col].astype(str)
+        trabajo[col] = a_texto(trabajo[col])
 
     validas = motivo.eq("")
     columnas = list(numericas) + list(categoricas)

@@ -2,9 +2,11 @@
 import unittest
 import pandas as pd
 
+import numpy as np
+
 from src.procesamiento_lotes import (
-    ArchivoIncompatible, agrupar_diagnostico, detectar_formato,
-    preparar_lote, predecir_lote,
+    ArchivoIncompatible, a_texto, agrupar_diagnostico, categorias_no_vistas,
+    detectar_formato, preparar_lote, predecir_lote,
 )
 
 
@@ -49,6 +51,39 @@ class LotesTest(unittest.TestCase):
         self.assertEqual(agrupar_diagnostico("250.83"), "Diabetes")
         self.assertEqual(agrupar_diagnostico("V55"), "Otros")
         self.assertEqual(agrupar_diagnostico(None), "Desconocido")
+
+    def test_un_vacio_no_convierte_el_codigo_en_decimal(self):
+        """Un solo vacio hacia que pandas leyera la columna como float y el
+        codigo 6 llegara al modelo como '6.0', una categoria que no conoce."""
+        serie = pd.Series([6, 1, None, 3])
+        salida = a_texto(serie)
+        self.assertEqual(list(salida.dropna()), ["6", "1", "3"])
+        self.assertTrue(salida.isna().iloc[2])
+
+    def test_el_vacio_de_texto_se_deja_vacio(self):
+        """El pipeline entrenado rellena los vacios con 'Ausente'. Si aqui se
+        escribiera 'nan', el codificador lo mandaria a -1 sin avisar."""
+        salida = a_texto(pd.Series(["Cardiology", None, "Surgery"]))
+        self.assertTrue(salida.isna().iloc[1])
+        self.assertNotIn("nan", [str(v) for v in salida.dropna()])
+
+    def test_categorias_no_vistas_detecta_lo_desconocido(self):
+        class Enc:
+            categories_ = [np.array(["1", "2", "3"])]
+
+        class Paso:
+            named_steps = {"ordinal": Enc()}
+            steps = [("ordinal", Enc())]
+
+        class Prep:
+            transformers_ = [("categoricas", Paso(), ["codigo"])]
+
+        class Modelo:
+            named_steps = {"prep": Prep()}
+
+        X = pd.DataFrame({"codigo": ["1", "9", "9", "2"]})
+        self.assertEqual(categorias_no_vistas(Modelo(), X, ["codigo"]),
+                         {"codigo": {"9": 2}})
 
 
 if __name__ == "__main__":
