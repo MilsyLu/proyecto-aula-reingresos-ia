@@ -110,10 +110,16 @@ def _tema_claro() -> str:
   [data-testid="stWidgetLabel"] p {{ font-size: 0.78rem; margin-bottom: 0.1rem; }}
   [data-testid="stTabs"] button {{ padding: 0.3rem 0.7rem; font-size: 0.88rem; }}
 
+  /* El tema de la portada esconde la barra lateral. Si ese bloque de estilos
+     sigue en la pagina al iniciar sesion, la barra no vuelve sola: hay que
+     mostrarla a la fuerza desde aqui. */
   [data-testid="stSidebar"] {{
+      display: flex !important;
+      visibility: visible !important;
       background: #FFFFFF;
       border-right: 1px solid {BORDE};
   }}
+  [data-testid="stSidebarCollapsedControl"] {{ display: block !important; }}
   [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {{ font-size: 1.05rem; }}
 
   .stButton > button, .stDownloadButton > button, [data-testid="stFormSubmitButton"] > button {{
