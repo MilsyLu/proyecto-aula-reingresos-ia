@@ -163,6 +163,28 @@ ALIAS.update({
     "troglitazona": "troglitazone", "tolazamida": "tolazamide",
 })
 
+# Archivos que la propia aplicación genera para descargar. Es facilísimo volver a
+# subir uno por error — están en la misma pantalla, a un clic del cargador — y sin
+# esto el mensaje de "no se reconoció ninguna columna" deja al usuario adivinando.
+SALIDAS_PROPIAS = {
+    frozenset(["columna", "tipo", "faltantes", "porcentaje_faltante",
+               "valores_distintos"]): "el reporte de calidad",
+    frozenset(["fila_original", "motivo"]): "el detalle de exclusiones",
+    frozenset(["fila_csv", "probabilidad", "alerta"]): "las predicciones",
+    frozenset(["Prioridad", "fila_del_archivo", "riesgo_estimado",
+               "con_umbral_oficial"]): "la lista de seguimiento",
+}
+
+
+def es_salida_propia(df):
+    """Si el archivo es uno de los que esta misma aplicación produce, dice cuál."""
+    columnas = set(df.columns)
+    for firma, nombre in SALIDAS_PROPIAS.items():
+        if firma.issubset(columnas):
+            return nombre
+    return None
+
+
 # columnas que claramente no son predictores y nunca deben confundirse con uno
 IGNORAR = {"patient_id", "encounter_id", "patient_nbr", "id", "index",
            "readmitted", "readmission", "readmission_risk", "y", "target", "label"}

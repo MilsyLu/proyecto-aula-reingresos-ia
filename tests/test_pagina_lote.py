@@ -189,6 +189,18 @@ class CargueDeArchivos(unittest.TestCase):
         # con el esquema completo no hace falta la tarjeta de cobertura
         self.assertNotIn("Cobertura del modelo", todo)
 
+    def test_subir_un_reporte_de_la_propia_app_se_avisa(self):
+        """Los botones de descarga están a un clic del cargador: pasa."""
+        reporte = pd.DataFrame({
+            "columna": ["age", "gender"], "tipo": ["int64", "str"],
+            "faltantes": [0, 0], "porcentaje_faltante": [0.0, 0.0],
+            "valores_distintos": [5, 2]})
+        diario = correr_pagina(reporte.to_csv(index=False).encode("utf-8"))
+        todo = textos(diario)
+
+        self.assertIn("el reporte de calidad", todo)
+        self.assertNotIn("A quién llamar primero", todo)
+
     def test_columnas_en_espanol_se_reconocen(self):
         """El modelo se entrenó en inglés, pero el usuario escribe en español."""
         from src.cargue_flexible import diagnosticar

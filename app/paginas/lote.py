@@ -17,7 +17,7 @@ import datos
 import estilo
 from datos import AZUL, GRIS, TERRACOTA, VERDE, entero, formato
 from src.analisis_calidad import resumen_calidad
-from src.cargue_flexible import ALIAS, preparar_tolerante
+from src.cargue_flexible import ALIAS, es_salida_propia, preparar_tolerante
 from src.procesamiento_lotes import (ArchivoIncompatible, categorias_no_vistas,
                                      predecir_lote, preparar_lote)
 
@@ -260,6 +260,13 @@ def render():
     st.divider()
     if informe is not None:
         _tarjeta_cobertura(informe)
+        propio = es_salida_propia(crudos)
+        if propio:
+            st.error(
+                f"Este archivo no es de pacientes: es **{propio}** que generó esta misma "
+                "aplicación. Es fácil equivocarse, porque los botones de descarga están "
+                "en esta pantalla. Suba el archivo con las hospitalizaciones.")
+            return
         if not informe["reconocidas"]:
             # sin una sola columna reconocida, todas las filas tomarian los mismos
             # valores tipicos y el modelo devolveria el mismo numero para todas:
