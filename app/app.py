@@ -23,12 +23,15 @@ import auth                     # noqa: E402
 import estilo                   # noqa: E402
 from paginas import portada     # noqa: E402
 
+# La barra lateral se esconde en la portada y se muestra al entrar. Se hace con
+# el propio estado de Streamlit y no con CSS: esconderla con `display: none`
+# dejaba la regla pegada en la página y la barra no volvía al iniciar sesión.
+sesion = auth.sesion()
 st.set_page_config(page_title="Riesgo de reingreso a 30 días",
                    page_icon="🏥", layout="wide",
-                   initial_sidebar_state="expanded")
+                   initial_sidebar_state="expanded" if sesion else "collapsed")
 
 # --------------------------------------------------------------- sin sesión
-sesion = auth.sesion()
 if not sesion:
     estilo.aplicar("portada")
     portada.render()

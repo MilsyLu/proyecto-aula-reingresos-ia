@@ -69,13 +69,12 @@ def _tema_claro() -> str:
      la informacion de un vistazo y el minimo de scroll. Todo lo de abajo
      aprieta el espaciado por defecto de Streamlit, que es muy generoso. */
   [data-testid="stMainBlockContainer"], [data-testid="stAppViewBlockContainer"] {{
-      padding-top: 1.1rem !important;
-      padding-bottom: 1.2rem !important;
-      max-width: 1400px !important;
+      padding-top: 1.2rem;
+      padding-bottom: 1.5rem;
+      max-width: 1320px;
   }}
-  [data-testid="stVerticalBlock"] {{ gap: 0.45rem; }}
-  [data-testid="stHorizontalBlock"] {{ gap: 0.7rem; }}
-  [data-testid="stElementContainer"] {{ margin-bottom: 0; }}
+  [data-testid="stVerticalBlock"] {{ gap: 0.6rem; }}
+  [data-testid="stHorizontalBlock"] {{ gap: 0.9rem; align-items: flex-start; }}
 
   h1 {{ color: {AZUL}; font-weight: 700; letter-spacing: -0.02em;
        font-size: 1.55rem; margin: 0 0 0.25rem; padding: 0; }}
@@ -180,7 +179,6 @@ def _tema_portada() -> str:
       background: {NOCHE};
       color: #FFFFFF;
   }}
-  [data-testid="stSidebar"] {{ display: none; }}
   /* Streamlit pone sus propias reglas con mas peso: hay que insistir */
   [data-testid="stMainBlockContainer"], [data-testid="stAppViewBlockContainer"] {{
       max-width: 430px !important;
