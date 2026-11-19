@@ -92,8 +92,8 @@ if area == CLIENTE:
         lote.render()
     elif seleccion == "Sobre el modelo":
         auth.exige("Ficha del modelo")
-        from paginas import ficha
-        ficha.render()
+        from paginas import ayuda_cliente
+        ayuda_cliente.render()
     else:
         from paginas import estimar
         estimar.render()
