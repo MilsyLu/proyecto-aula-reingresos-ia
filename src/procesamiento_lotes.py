@@ -99,7 +99,7 @@ def preparar_lote(df, numericas, categoricas):
             trabajo[columna] = pd.to_numeric(trabajo[columna], errors="coerce")
 
     estancia = trabajo["time_in_hospital"]
-    invalida = estancia.isna() | (estancia <= 0)
+    invalida = estancia.isna() | (estancia <= 0) | ~np.isfinite(estancia)
     motivo.loc[invalida] = "Estancia hospitalaria ausente o no positiva"
     if "discharge_disposition_id" in trabajo:
         egreso = pd.to_numeric(trabajo["discharge_disposition_id"], errors="coerce")
@@ -129,6 +129,7 @@ def preparar_lote(df, numericas, categoricas):
 
     for col in numericas:
         trabajo[col] = pd.to_numeric(trabajo[col], errors="coerce")
+        trabajo[col] = trabajo[col].replace([np.inf, -np.inf], np.nan)
     for col in ["num_medications", "num_lab_procedures", "num_procedures", "number_diagnoses"]:
         if col in trabajo:
             invalida = trabajo[col].notna() & (trabajo[col] < 0)
