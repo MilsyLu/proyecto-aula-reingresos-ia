@@ -24,8 +24,8 @@ def render():
         '<div class="insignia">Universidad Popular del Cesar · Grupo 04</div>',
         unsafe_allow_html=True)
     st.markdown(
-        '<div class="marca">Riesgo de reingreso<br>a 30 días'
-        '<small>Priorización del seguimiento al alta en pacientes diabéticos</small></div>',
+        '<div class="marca">ReingresaIA'
+        '<small>Predicción de reingresos hospitalarios a 30 días<br>Resultados claros y modelos evaluados</small></div>',
         unsafe_allow_html=True)
 
     with st.form("entrar"):

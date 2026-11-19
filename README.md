@@ -3,6 +3,14 @@
 Proyecto de aula de Inteligencia Artificial — **Grupo 04**
 Universidad Popular del Cesar · Ingeniería de Sistemas · Séptimo semestre · 2026
 
+> **Versión experimental ReingresaIA:** la rama
+> [`experiment/reingresaia-ui`](https://github.com/MilsyLu/proyecto-aula-reingresos-ia/tree/experiment/reingresaia-ui)
+> aplica una identidad visual propia y organiza el aplicativo en dos áreas:
+> **Predicción de riesgo** y **Laboratorio de IA**. El laboratorio ofrece un
+> recorrido guiado por cinco etapas y deja la evidencia técnica desplegable.
+> La aplicación pública enlazada abajo no necesariamente ejecuta esta rama.
+> [Ver guía del experimento](docs/reingresaia_experimental.md).
+
 **Integrantes:** Michel Custodes · Iván Güette · Maira Torres
 
 ### 🔗 Aplicación en vivo: **https://reingresos-grupo04.streamlit.app/**
@@ -24,6 +32,33 @@ Las credenciales de demostración aparecen en la pantalla de entrada y están en
 `app/usuarios_demo.toml`. Para usar cuentas reales, pegue una sección `[usuarios]` con esa
 misma forma en los secretos de la aplicación en Streamlit Cloud: lo que esté ahí manda sobre
 el archivo.
+
+---
+
+## Laboratorio de Machine Learning (rama de desarrollo)
+
+El **Laboratorio de modelos** entrena y compara **dos modelos de clasificación
+distintos** sobre el mismo conjunto de datos: Gradient Boosting y una red
+neuronal MLP. Cada uno utiliza su propia preparación de características,
+configuraciones y produce métricas, matriz de confusión y predicciones
+individuales de prueba.
+
+La elección se basa en la **Average Precision de validación**, antes de
+consultar el conjunto de prueba. La aplicación muestra ambos resultados y
+explica por qué uno es preferible. También incluye ajuste acotado de
+hiperparámetros, gráfica de pérdida de la MLP y revisión de sobreajuste.
+
+Para entrenar se requiere un CSV etiquetado (`readmitted` o `y`) y
+`patient_nbr`, porque las hospitalizaciones de un mismo paciente deben
+permanecer en la misma partición. Los experimentos NO reemplazan el modelo
+histórico de Gradient Boosting usado en las pantallas de clientes.
+
+La definición del problema y recolección histórica permanecen documentadas
+en los notebooks; el laboratorio demuestra la preparación, partición,
+entrenamiento, comparación, evaluación y generalización interna sin
+simular que las doce fases se repiten en cada predicción.
+
+Ver [documentación del laboratorio](docs/laboratorio_ml.md).
 
 ---
 

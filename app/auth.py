@@ -27,6 +27,7 @@ PERMISOS = {
     "coordinador": {
         "Estimar riesgo", "Cargar archivo", "Conocer los datos",
         "Desempeño del modelo", "Equidad y límites", "Ficha del modelo",
+        "Laboratorio de modelos",
     },
 }
 
@@ -76,7 +77,7 @@ def iniciar(datos):
 
 
 def cerrar():
-    for clave in ("sesion", "lote_resultado", "ultima_estimacion", "conversacion"):
+    for clave in ("sesion", "lote_resultado", "lab_resultado", "lab_datos", "lab_etapa", "lab_firma_archivo", "ultima_estimacion", "conversacion"):
         st.session_state.pop(clave, None)
 
 

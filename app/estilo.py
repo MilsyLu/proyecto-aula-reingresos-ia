@@ -50,7 +50,8 @@ def _incrustar(nombre: str) -> str:
 
 OCULTAR_CROMO = """
 <style>
-  [data-testid="stHeader"] { background: transparent; height: 0; }
+  [data-testid="stHeader"] { background: transparent; }
+  [data-testid="stSidebarCollapsedControl"] { display: flex !important; visibility: visible !important; }
   [data-testid="stToolbar"], [data-testid="stDecoration"], #MainMenu, footer { display: none; }
   [data-testid="stMain"] { padding-top: 0; }
 </style>
@@ -75,6 +76,14 @@ def _tema_claro() -> str:
   }}
   [data-testid="stVerticalBlock"] {{ gap: 0.6rem; }}
   [data-testid="stHorizontalBlock"] {{ gap: 0.9rem; align-items: flex-start; }}
+
+  /* Cabecera compacta, sin ocultar los controles de navegación de Streamlit. */
+  [data-testid="stHeader"] {{ min-height: 3rem !important; }}
+  /* Controles de las dos áreas principales y su subnavegación. */
+  [data-testid="stSegmentedControl"] {{
+      background: #FFFFFF; border: 1px solid {BORDE};
+      border-radius: 13px; padding: 0.35rem; margin-bottom: 0.7rem;
+  }}
 
   h1 {{ color: {AZUL}; font-weight: 700; letter-spacing: -0.02em;
        font-size: 1.55rem; margin: 0 0 0.25rem; padding: 0; }}
@@ -141,6 +150,25 @@ def _tema_claro() -> str:
       overflow: hidden;
   }}
 
+  /* Encabezado ReingresaIA sin saturar las pantallas interiores. */
+  .reia-encabezado {{
+      padding: 0.9rem 1.25rem; background: #FFFFFF;
+      border: 1px solid {BORDE}; border-radius: 14px; margin-bottom: 1rem;
+  }}
+  .reia-marca {{
+      color: {AZUL}; font-size: 1.15rem; font-weight: 750;
+      letter-spacing: 0.03em;
+  }}
+  .reia-subtitulo {{
+      color: {GRIS}; font-size: 0.84rem; margin-top: 0.3rem;
+  }}
+  /* Los paneles y los bloques de preguntas deben ser legibles en móvil. */
+  [data-testid="stSegmentedControl"] button {{ border-radius: 9px; }}
+  [data-testid="stTabs"] button {{ font-size: 0.9rem; }}
+  [data-testid="stSidebarCollapsedControl"] {{
+      visibility: visible !important; display: flex !important;
+  }}
+
   /* el aviso de prototipo: visible pero sin gritar */
   .aviso-prototipo {{
       background: #FFF8F2;
@@ -183,6 +211,8 @@ def _tema_portada() -> str:
       background: {NOCHE};
       color: #FFFFFF;
   }}
+  /* La barra lateral se tapa con una regla condicionada a la portada,
+     nunca con un display:none suelto que luego no se puede revertir. */
   /* Streamlit pone sus propias reglas con mas peso: hay que insistir */
   [data-testid="stMainBlockContainer"], [data-testid="stAppViewBlockContainer"] {{
       max-width: 430px !important;
