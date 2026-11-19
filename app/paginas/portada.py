@@ -43,11 +43,17 @@ def render():
 
     demo = _cuentas_demo()
     if demo:
-        filas = "<br>".join(
-            f"<b>{u}</b> / {c} &nbsp;·&nbsp; {'coordinación' if r == 'coordinador' else 'asistencial'}"
+        # con etiquetas explicitas: separarlas con barras se presta a confundir
+        # cual es el usuario y cual la contrasena
+        filas = "".join(
+            f'<div class="cuenta-demo">'
+            f'<div class="cuenta-rol">{"Coordinación del programa" if r == "coordinador" else "Personal asistencial"}</div>'
+            f'<div><span>Usuario</span> <code>{u}</code></div>'
+            f'<div><span>Contraseña</span> <code>{c}</code></div>'
+            f'</div>'
             for u, c, r in demo)
         st.markdown(
-            f'<div class="pie-portada">Cuentas de demostración<br>{filas}'
-            '<br><br>Prototipo académico. No es una herramienta de decisión clínica '
-            'y no contiene datos de pacientes reales.</div>',
+            f'<div class="pie-portada"><b>Cuentas de demostración</b>{filas}'
+            '<div style="margin-top:0.9rem">Prototipo académico. No es una herramienta '
+            'de decisión clínica y no contiene datos de pacientes reales.</div></div>',
             unsafe_allow_html=True)

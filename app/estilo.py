@@ -229,10 +229,41 @@ def _tema_portada() -> str:
       border: none; color: #FFFFFF; font-weight: 600;
       border-radius: 30px; padding: 0.55rem 1.3rem; width: 100%;
   }}
-  .pie-portada {{
-      color: #6f7183; font-size: 0.76rem; margin-top: 1.4rem; line-height: 1.6;
+  /* el boton de mostrar la contrasena quedaba gris oscuro sobre fondo oscuro */
+  [data-testid="stForm"] [data-testid="stIconMaterial"],
+  [data-testid="stTextInputRootElement"] button,
+  [data-testid="stTextInputRootElement"] svg {{
+      color: #c7c8da !important;
+      fill: #c7c8da !important;
+      opacity: 1 !important;
   }}
-  .pie-portada b {{ color: {NOCHE_TEXTO}; font-weight: 500; }}
+  [data-testid="stTextInputRootElement"] button {{
+      background: transparent !important;
+      border: none !important;
+  }}
+  [data-testid="stTextInputRootElement"] button:hover [data-testid="stIconMaterial"] {{
+      color: #FFFFFF !important;
+  }}
+
+  .pie-portada {{
+      color: #8a8ca0; font-size: 0.78rem; margin-top: 1.5rem; line-height: 1.6;
+  }}
+  .pie-portada b {{ color: #d3d4e2; font-weight: 600;
+      display: block; margin-bottom: 0.55rem; letter-spacing: 0.01em; }}
+  .cuenta-demo {{
+      border: 1px solid #2f2e56; border-radius: 12px;
+      padding: 0.55rem 0.75rem; margin-bottom: 0.5rem;
+      background: rgba(12,10,43,0.55);
+  }}
+  .cuenta-rol {{
+      color: #9b9ba4; font-size: 0.68rem; text-transform: uppercase;
+      letter-spacing: 0.09em; font-weight: 600; margin-bottom: 0.3rem;
+  }}
+  .cuenta-demo span {{ display: inline-block; min-width: 78px; color: #8a8ca0; }}
+  .cuenta-demo code {{
+      color: #FFFFFF; background: rgba(255,255,255,0.08);
+      border-radius: 5px; padding: 1px 7px; font-size: 0.78rem;
+  }}
 </style>
 <div id="fondo-video">
   <video autoplay muted loop playsinline {cartel}>{fuente}</video>
