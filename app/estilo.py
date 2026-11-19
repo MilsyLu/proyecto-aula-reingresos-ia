@@ -50,7 +50,8 @@ def _incrustar(nombre: str) -> str:
 
 OCULTAR_CROMO = """
 <style>
-  [data-testid="stHeader"] { background: transparent; height: 0; }
+  [data-testid="stHeader"] { background: transparent; }
+  [data-testid="stSidebarCollapsedControl"] { display: flex !important; visibility: visible !important; }
   [data-testid="stToolbar"], [data-testid="stDecoration"], #MainMenu, footer { display: none; }
   [data-testid="stMain"] { padding-top: 0; }
 </style>
@@ -67,6 +68,16 @@ def _tema_claro() -> str:
   }}
   [data-testid="stMainBlockContainer"], [data-testid="stAppViewBlockContainer"] {{ padding-top: 2.2rem; max-width: 1180px; }}
 
+  /* Cabecera compacta, sin ocultar controles de navegación de Streamlit. */
+  [data-testid="stHeader"] {{ min-height: 3rem !important; }}
+  [data-testid="stSidebarCollapsedControl"] {{
+      display: flex !important; visibility: visible !important;
+  }}
+  /* Controles de las dos áreas principales y subnavegación. */
+  [data-testid="stSegmentedControl"] {{
+      background: #FFFFFF; border: 1px solid {BORDE};
+      border-radius: 13px; padding: 0.4rem; margin-bottom: 1rem;
+  }}
   h1 {{ color: {AZUL}; font-weight: 700; letter-spacing: -0.015em; font-size: 2.0rem; }}
   h2 {{ color: {AZUL}; font-weight: 600; font-size: 1.35rem; margin-top: 1.6rem; }}
   h3, h4 {{ color: {AZUL}; font-weight: 600; }}
