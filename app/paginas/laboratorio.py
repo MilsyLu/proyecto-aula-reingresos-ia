@@ -117,112 +117,118 @@ def _exploracion(crudos, X, descartes, resumen):
 
 
 def _resultado(resultado, firma):
-    st.subheader("Dos modelos, dos resultados")
-    tabla = resultado["comparacion"].copy()
-    elegido = resultado["elegido"]
-    st.success("Modelo recomendado por validación: " + elegido)
-    st.write(resultado["justificacion"])
+    """Primero la decisión, después los detalles técnicos bajo demanda."""
+    st.markdown("#### ¿Cuál modelo funcionó mejor?")
+    tabla = resultado["comparacion"].set_index("modelo")
+    ganador = resultado["elegido"]
+    st.success(f"Recomendación experimental: **{ganador}**")
+    st.markdown(resultado["justificacion"])
     st.caption(
-        "La selección depende de AP de validación, no del conjunto de prueba. "
-        "Después de decidir, se evalúan ambos modelos sobre los mismos casos reservados."
+        "La decisión se toma con validación. Ambos modelos se evaluaron "
+        "después en el mismo conjunto de prueba; estos números no "
+        "sustituyen los del modelo oficial."
     )
-    uno, dos = st.columns(2)
-    for panel, nombre in zip((uno, dos), ("Gradient Boosting", "Red neuronal MLP")):
-        fila = tabla.set_index("modelo").loc[nombre]
+    cols = st.columns(2)
+    for panel, nombre in zip(cols, ("Gradient Boosting", "Red neuronal MLP")):
+        fila = tabla.loc[nombre]
         with panel:
-            st.markdown("### " + nombre)
-            st.caption("Ganador de validación" if nombre == elegido else "Modelo alternativo")
+            st.markdown(f"##### {nombre}")
+            st.caption("Seleccionado" if nombre == ganador else "Alternativa")
             a, b = st.columns(2)
-            a.metric("AP validación", f'{fila["AP_validacion"]:.4f}')
-            b.metric("AP prueba", f'{fila["AP_prueba"]:.4f}')
-            c, d = st.columns(2)
-            c.metric("ROC-AUC prueba", f'{fila["ROC_AUC_prueba"]:.4f}')
-            d.metric("Recall prueba", f'{fila["recall_prueba"]:.4f}')
+            a.metric("AP validación", f'{fila["AP_validacion"]:.3f}')
+            b.metric("AP prueba", f'{fila["AP_prueba"]:.3f}')
             st.caption(
-                f'Precision: {fila["precision_prueba"]:.4f} · '
-                f'Umbral (validación): {fila["umbral"]:.4f}'
+                f'Reingresos detectados: {100 * fila["recall_prueba"]:.1f} % · '
+                f'Alertas acertadas: {100 * fila["precision_prueba"]:.1f} %'
             )
-            matriz = pd.DataFrame(
-                [[int(fila["VP"]), int(fila["FN"])],
-                 [int(fila["FP"]), int(fila["VN"])]],
-                index=["Reingreso real", "No reingreso"],
-                columns=["Alerta", "Sin alerta"],
-            )
-            st.dataframe(matriz, width="stretch")
-    st.markdown("#### Comparación en igualdad de condiciones")
-    st.dataframe(tabla.round(4), width="stretch", hide_index=True)
+    st.markdown("##### Comparación visual")
     st.bar_chart(
-        tabla.set_index("modelo")[["AP_entrenamiento", "AP_validacion", "AP_prueba"]].T
+        tabla[["AP_entrenamiento", "AP_validacion", "AP_prueba"]]
+        .rename(columns={
+            "AP_entrenamiento": "Entrenamiento",
+            "AP_validacion": "Validación",
+            "AP_prueba": "Prueba",
+        })
     )
     st.caption(
-        "Los dos modelos usan los mismos pacientes, los mismos objetivos y las "
-        "mismas particiones. La diferencia está en sus algoritmos y preparación."
+        "Valores mayores de Average Precision son preferibles; "
+        "si entrenamiento supera mucho a validación puede existir sobreajuste."
     )
-    with st.expander("Particiones y preparación de datos"):
-        st.dataframe(resultado["particiones"].round(4), width="stretch", hide_index=True)
+
+    with st.expander("Ver matrices de confusión y todas las métricas"):
+        for nombre in ("Gradient Boosting", "Red neuronal MLP"):
+            fila = tabla.loc[nombre]
+            st.markdown(f"**{nombre}**")
+            a, b, c = st.columns(3)
+            a.metric("ROC-AUC prueba", f'{fila["ROC_AUC_prueba"]:.3f}')
+            b.metric("Recall prueba", f'{fila["recall_prueba"]:.3f}')
+            c.metric("Precisión prueba", f'{fila["precision_prueba"]:.3f}')
+            st.dataframe(
+                pd.DataFrame(
+                    [[int(fila["VP"]), int(fila["FN"])],
+                     [int(fila["FP"]), int(fila["VN"])]],
+                    index=["Reingreso real", "No reingreso"],
+                    columns=["Alerta", "Sin alerta"],
+                ),
+                width="stretch",
+            )
+            st.caption(f'Umbral seleccionado en validación: {fila["umbral"]:.4f}')
+
+    with st.expander("Examinar configuraciones y aprendizaje"):
         st.markdown(
-            "**Gradient Boosting:** valores numéricos sin escalar y categorías "
-            "ordinales, siguiendo el enfoque del notebook 03. "
-            "**MLP:** imputación, estandarización y codificación one-hot. "
-            "Los transformadores se ajustan solo con entrenamiento."
+            "Las configuraciones se seleccionan por AP de validación. "
+            "Los transformadores de cada algoritmo se ajustan "
+            "únicamente con entrenamiento."
         )
-    with st.expander("Hiperparámetros, aprendizaje y sobreajuste", expanded=True):
-        st.markdown(
-            "Se probaron configuraciones distintas para cada algoritmo. "
-            "La mejor de cada familia se eligió por AP de validación."
-        )
-        st.dataframe(resultado["busqueda"].round(4),
-                     width="stretch", hide_index=True)
-        st.markdown("**Brecha entre entrenamiento y validación**")
-        st.bar_chart(
-            tabla.set_index("modelo")[["AP_entrenamiento", "AP_validacion"]]
-        )
-        st.caption(
-            "Una diferencia grande entre AP de entrenamiento y validación "
-            "puede revelar sobreajuste, pero no demuestra generalización externa."
+        st.dataframe(
+            resultado["busqueda"].round(4), width="stretch", hide_index=True
         )
         curva = resultado["curvas"].get("Red neuronal MLP")
         if curva is not None and not curva.empty:
-            st.markdown("**Curva de pérdida durante el entrenamiento de la MLP**")
+            st.markdown("**Pérdida durante el entrenamiento de la red neuronal**")
             st.line_chart(curva.set_index("iteracion"))
             st.caption(
-                "Esta curva es pérdida de entrenamiento, no una curva de "
-                "validación. La generalización se analiza en las métricas anteriores."
+                "Esta curva describe la optimización de la red, "
+                "no su generalización a nuevos hospitales."
             )
-    with st.expander("Justificación del modelo para el cliente", expanded=True):
-        st.markdown(
-            "Se prefiere el algoritmo con mayor **Average Precision en validación** "
-            "porque el reingreso es poco frecuente y la exactitud sola engaña. "
-            "Se comunican también sensibilidad, precisión, falsos positivos y negativos."
+
+    with st.expander("Trazabilidad: particiones y características"):
+        st.dataframe(
+            resultado["particiones"].round(4),
+            hide_index=True, width="stretch",
         )
-        st.info(
-            "La recomendación del laboratorio NO reemplaza el modelo del cliente. "
-            "Las pantallas de predicción continúan usando el Gradient Boosting "
-            "histórico guardado en models/gradient_boosting_ajustado.joblib. "
-            "Un cambio operativo requiere validación independiente y aprobación."
+        st.write(
+            "Gradient Boosting codifica las categorías ordinalmente, mientras "
+            "que la MLP utiliza codificación one-hot y estandarización. "
+            "Ambos comparten datos, etiquetas y particiones por paciente."
         )
-        st.caption(
-            "Estos datos provienen de hospitales estadounidenses de 1999 a 2008. "
-            "No se ha demostrado generalización clínica a Colombia."
-        )
-    st.download_button(
-        "Descargar comparativa de ambos modelos",
-        tabla.to_csv(index=False).encode("utf-8-sig"),
-        "comparacion_gb_mlp.csv", mime="text/csv", key="lab_comp",
-    )
-    st.download_button(
-        "Descargar búsqueda de hiperparámetros",
-        resultado["busqueda"].to_csv(index=False).encode("utf-8-sig"),
-        "busqueda_gb_mlp.csv", mime="text/csv", key="lab_tuning",
-    )
-    for nombre, archivo in (("Gradient Boosting", "prueba_gradient_boosting.csv"),
-                            ("Red neuronal MLP", "prueba_mlp.csv")):
+
+    with st.expander("Descargar evidencia técnica"):
         st.download_button(
-            "Descargar predicciones de prueba: " + nombre,
-            resultado["predicciones_prueba"][nombre].to_csv(
-                index=False).encode("utf-8-sig"),
-            archivo, mime="text/csv", key="lab_pred_" + nombre,
+            "Comparación de los dos modelos (.csv)",
+            resultado["comparacion"].to_csv(index=False).encode("utf-8-sig"),
+            "comparacion_gb_mlp.csv", mime="text/csv", key="lab_comp",
         )
+        st.download_button(
+            "Búsqueda de hiperparámetros (.csv)",
+            resultado["busqueda"].to_csv(index=False).encode("utf-8-sig"),
+            "busqueda_gb_mlp.csv", mime="text/csv", key="lab_tuning",
+        )
+        for nombre, archivo in (
+            ("Gradient Boosting", "prueba_gradient_boosting.csv"),
+            ("Red neuronal MLP", "prueba_mlp.csv"),
+        ):
+            st.download_button(
+                "Predicciones de prueba: " + nombre,
+                resultado["predicciones_prueba"][nombre].to_csv(
+                    index=False).encode("utf-8-sig"),
+                archivo, mime="text/csv", key="lab_pred_" + nombre,
+            )
+    st.info(
+        "El modelo recomendado aquí es experimental. El área Predicción "
+        "de riesgo continúa usando el Gradient Boosting oficial; "
+        "no se cambia automáticamente para el cliente."
+    )
 
 
 
