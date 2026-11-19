@@ -269,114 +269,246 @@ def _explicacion_sencilla(resultado):
         key="lab_explicacion_texto",
     )
 
-def render():
-    st.title("Laboratorio de modelos")
+
+ETAPAS = (
+    "1 · Datos", "2 · Preparación", "3 · Entrenamiento",
+    "4 · Comparación", "5 · Interpretación",
+)
+
+
+def _ir_a(etapa):
+    """La navegación se modifica mediante callbacks para evitar conflictos
+    con el estado de widgets ya creados en la misma ejecución de Streamlit."""
+    st.session_state["lab_etapa"] = etapa
+
+
+def _datos_disponibles():
+    return st.session_state.get("lab_datos")
+
+
+def _paso_datos():
+    st.markdown("#### Conozca el origen de los datos")
     _contexto()
     st.info(
-        "El sistema operativo de predicciones sigue usando Gradient Boosting. "
-        "En este laboratorio se entrenan **Gradient Boosting y una red neuronal MLP**, "
-        "cada uno con su preparación y parámetros, sin reemplazar al modelo oficial."
+        "El problema y la recolección histórica se documentaron previamente. "
+        "Este laboratorio empieza al cargar registros con el resultado real "
+        "del reingreso, para reproducir su entrenamiento."
     )
-    st.warning("Use únicamente datos públicos o anonimizados. No cargue archivos con información identificable de pacientes.")
-    st.subheader("Seleccionar datos")
-    st.markdown(
-        "Cargue un CSV original de UCI o un CSV preparado con las 50 "
-        "características del modelo. Para entrenar se requiere una columna "
-        "real **readmitted** o **y** y el identificador **patient_nbr**. "
-        "Un CSV sin etiquetas solo sirve para predicción y debe usarse en "
-        "**Cargar archivo**."
+    st.warning(
+        "Use solo información pública o anonimizada. No cargue datos personales "
+        "identificables de pacientes."
     )
     archivo = st.file_uploader(
-        "Archivo etiquetado (.csv)", type=["csv"], key="lab_csv"
+        "Cargar un CSV etiquetado", type=["csv"], key="lab_csv",
+        help="Se requieren readmitted o y (etiqueta real) y patient_nbr (identificador de grupo).",
     )
-    if archivo is None:
-        return
-    if archivo.size > LIMITE_MB * 1024 * 1024:
-        st.error(f"El archivo supera {LIMITE_MB} MB.")
-        return
-    try:
-        contenido = archivo.getvalue()
-        crudos = pd.read_csv(io.BytesIO(contenido), na_values=["?"], low_memory=False)
-        numericas, categoricas, _ = datos.cargar_columnas()
-        etiquetas = obtener_etiquetas(crudos)
-        if "patient_nbr" not in crudos.columns:
-            raise DatosEntrenamientoInvalidos(
-                "No existe patient_nbr: no se puede separar sin fuga entre pacientes."
+    st.caption(
+        "Admite archivos UCI o archivos preparados con las 50 variables; "
+        "máximo 30 MB. Un CSV sin resultado real debe procesarse "
+        "en Predicción de riesgo, no aquí."
+    )
+    if archivo is not None:
+        if archivo.size > LIMITE_MB * 1024 * 1024:
+            st.error(f"El archivo supera el límite de {LIMITE_MB} MB.")
+        else:
+            contenido = archivo.getvalue()
+            identidad = hashlib.sha256(contenido).hexdigest()
+            if st.session_state.get("lab_firma_archivo") != identidad:
+                try:
+                    crudos = pd.read_csv(
+                        io.BytesIO(contenido), na_values=["?"], low_memory=False
+                    )
+                    numericas, categoricas, _ = datos.cargar_columnas()
+                    etiquetas = obtener_etiquetas(crudos)
+                    if "patient_nbr" not in crudos:
+                        raise DatosEntrenamientoInvalidos(
+                            "Falta patient_nbr. No se puede evitar la mezcla de pacientes."
+                        )
+                    X, descartes, diagnostico = preparar_lote(
+                        crudos, numericas, categoricas
+                    )
+                    y = etiquetas.loc[X.index]
+                    pacientes = crudos.loc[X.index, "patient_nbr"]
+                    if pacientes.isna().any():
+                        raise DatosEntrenamientoInvalidos(
+                            "Hay identificadores de paciente sin valor."
+                        )
+                    if len(X) < 120:
+                        raise DatosEntrenamientoInvalidos(
+                            "Se requieren al menos 120 hospitalizaciones válidas."
+                        )
+                    # La muestra es reproducible y se utiliza para ambos modelos.
+                    total_validas = len(X)
+                    if total_validas > LIMITE_FILAS:
+                        X = X.sample(n=LIMITE_FILAS, random_state=42)
+                        y = y.loc[X.index]
+                        pacientes = pacientes.loc[X.index]
+                    st.session_state["lab_datos"] = {
+                        "crudos": crudos, "X": X, "descartes": descartes,
+                        "diagnostico": diagnostico, "y": y,
+                        "pacientes": pacientes, "numericas": numericas,
+                        "categoricas": categoricas, "identidad": identidad,
+                        "validas_originales": total_validas,
+                    }
+                    st.session_state["lab_firma_archivo"] = identidad
+                    st.session_state.pop("lab_resultado", None)
+                except (ArchivoIncompatible, DatosEntrenamientoInvalidos,
+                        KeyError, ValueError, UnicodeDecodeError,
+                        pd.errors.ParserError) as error:
+                    st.error(f"No se pudo preparar el archivo: {error}")
+                    return
+
+    paquete = _datos_disponibles()
+    if paquete:
+        d = paquete["diagnostico"]
+        a, b, c = st.columns(3)
+        a.metric("Registros recibidos", f'{d["recibidas"]:,}')
+        b.metric("Registros válidos", f'{d["validas"]:,}')
+        c.metric("Excluidos", f'{d["excluidas"]:,}')
+        if paquete["validas_originales"] > LIMITE_FILAS:
+            st.info(
+                f"Se seleccionó una muestra reproducible de {LIMITE_FILAS:,} "
+                "registros válidos para mantener viable la demostración. "
+                "Los resultados describen esta muestra."
             )
-        X, descartes, diagnostico = preparar_lote(crudos, numericas, categoricas)
-        y = etiquetas.loc[X.index]
-        pacientes = crudos.loc[X.index, "patient_nbr"]
-        if pacientes.isna().any():
-            raise DatosEntrenamientoInvalidos(
-                "Hay identificadores patient_nbr vacíos."
-            )
-    except (ArchivoIncompatible, DatosEntrenamientoInvalidos, KeyError,
-            ValueError, UnicodeDecodeError, pd.errors.ParserError) as error:
-        st.error(f"No se pudo preparar el experimento: {error}")
-        return
-    st.divider()
-    _exploracion(crudos, X, descartes, diagnostico)
-    if len(X) < 120:
-        st.warning("No hay suficientes registros válidos para entrenamiento.")
-        return
-    if len(X) > LIMITE_FILAS:
-        st.info(
-            f"Para proteger los recursos del prototipo se entrenará sobre una "
-            f"muestra reproducible de {LIMITE_FILAS:,} registros, tomada "
-            "antes de dividir por paciente. Los resultados describen esta muestra."
+        st.success("Datos disponibles para explorar, preparar y entrenar.")
+        st.button(
+            "Continuar: revisar y preparar datos", type="primary",
+            on_click=_ir_a, args=(ETAPAS[1],),
         )
-        X = X.sample(n=LIMITE_FILAS, random_state=42)
-        y = y.loc[X.index]
-        pacientes = pacientes.loc[X.index]
-    st.divider()
-    st.subheader("Configurar y entrenar")
+
+
+def _paso_preparacion(paquete):
+    st.markdown("#### Qué datos entran al entrenamiento")
+    st.markdown(
+        "Aquí se resumen faltantes, distribuciones, registros excluidos y "
+        "características que aprende cada algoritmo. "
+        "No se eliminan registros simplemente por parecer atípicos."
+    )
+    _exploracion(
+        paquete["crudos"], paquete["X"], paquete["descartes"],
+        paquete["diagnostico"],
+    )
+    with st.expander("Qué sucede después con las 50 características"):
+        st.markdown(
+            "Se utilizan las variables originales y las derivadas, como "
+            "servicios previos, medicación diaria y grupos diagnósticos. "
+            "**Gradient Boosting** conserva numéricas sin escalar y "
+            "codifica categorías ordinalmente. "
+            "La **MLP** imputa, estandariza y aplica one-hot. "
+            "Cada transformación se ajusta exclusivamente con entrenamiento."
+        )
+    st.button(
+        "Continuar: configurar modelos", type="primary",
+        on_click=_ir_a, args=(ETAPAS[2],),
+    )
+
+
+def _paso_entrenamiento(paquete):
+    st.markdown("#### Entrenar dos modelos sobre los mismos pacientes")
+    st.markdown(
+        "El programa divide el archivo en entrenamiento, validación y prueba "
+        "sin compartir pacientes. Se prueba más de una configuración "
+        "y elige el modelo mediante Average Precision en validación."
+    )
     with st.form("lab_entrenamiento"):
         a, b = st.columns(2)
         neuronas = a.slider(
-            "Neuronas en la capa oculta de la MLP", 8, 64, 24, 8
+            "Neuronas de la red MLP", 8, 64, 24, 8,
+            help="Número de neuronas de la primera capa oculta.",
         )
         iteraciones = b.slider(
-            "Máximo de iteraciones", 30, 120, 65, 5
+            "Máximo de iteraciones de MLP", 30, 120, 65, 5,
         )
         busqueda = st.select_slider(
-            "Configuraciones por algoritmo", options=[1, 2, 3], value=2,
-        )
-        st.caption(
-            "Se compara Gradient Boosting con una red MLP. Cada modelo utiliza "
-            "su preprocesamiento y se ajusta con AP de validación."
+            "Configuraciones por algoritmo",
+            options=[1, 2, 3], value=2,
+            help="Búsqueda acotada para la demostración, no exhaustiva.",
         )
         ejecutar = st.form_submit_button(
-            "Entrenar y evaluar experimento", type="primary"
+            "Entrenar y comparar los dos modelos", type="primary",
         )
-    firma = hashlib.sha256(contenido).hexdigest() + f":{neuronas}:{iteraciones}:{busqueda}"
+
+    firma = paquete["identidad"] + f":{neuronas}:{iteraciones}:{busqueda}"
+    guardado = st.session_state.get("lab_resultado")
     if ejecutar:
         try:
-            with st.spinner("Entrenando modelos del laboratorio..."):
+            with st.spinner("Preparando características y entrenando ambos modelos…"):
                 resultado = entrenar_experimento(
-                    X, y, pacientes, numericas, categoricas,
-                    neuronas=neuronas, iteraciones=iteraciones,
-                    busqueda=busqueda,
+                    paquete["X"], paquete["y"], paquete["pacientes"],
+                    paquete["numericas"], paquete["categoricas"],
+                    neuronas=neuronas, iteraciones=iteraciones, busqueda=busqueda,
                 )
             st.session_state["lab_resultado"] = {
-                "firma": firma, "resultado": resultado,
+                "firma": firma, "identidad": paquete["identidad"],
+                "resultado": resultado,
             }
+            guardado = st.session_state["lab_resultado"]
         except (DatosEntrenamientoInvalidos, ValueError) as error:
-            st.error(f"No se completó el entrenamiento: {error}")
-    guardado = st.session_state.get("lab_resultado")
+            st.error(f"El entrenamiento no se completó: {error}")
     if guardado and guardado["firma"] == firma:
-        _resultado(guardado["resultado"], firma)
-        _explicacion_sencilla(guardado["resultado"])
-
-    st.divider()
-    with st.expander("Del experimento al aplicativo desplegado"):
-        st.markdown(
-            "El modelo oficial ya se evaluó en el proyecto y se publicó "
-            "en la sección **Estimar riesgo** y **Cargar archivo**. "
-            "Este laboratorio demuestra el ciclo sin reemplazar el modelo "
-            "ni alterar el conjunto de prueba oficial."
+        st.success(
+            "Los dos modelos se entrenaron. El ganador experimental se "
+            "seleccionó sin utilizar los datos de prueba."
         )
-        st.caption(
-            "Evidencia adicional: notebooks/01_preprocesamiento_particion.ipynb "
-            "a 05_equidad_sensibilidad.ipynb; reports/metricas_04_final.csv; "
-            "models/gradient_boosting_ajustado.joblib."
+        tabla = guardado["resultado"]["comparacion"].set_index("modelo")
+        st.dataframe(
+            tabla[["AP_validacion", "AP_prueba"]].round(4), width="stretch",
+        )
+        st.button(
+            "Continuar: comparar resultados", type="primary",
+            on_click=_ir_a, args=(ETAPAS[3],),
+        )
+    elif guardado:
+        st.info(
+            "La configuración ha cambiado. Ejecute un nuevo entrenamiento "
+            "para actualizar los resultados."
+        )
+
+
+def render():
+    st.title("Experimento guiado")
+    st.caption(
+        "Cinco etapas para recorrer el proyecto: de los datos originales "
+        "a una comparación justificada de Gradient Boosting y una red neuronal."
+    )
+    etapa = st.segmented_control(
+        "Etapas del experimento", ETAPAS, default=ETAPAS[0],
+        key="lab_etapa",
+    ) or ETAPAS[0]
+    indice = ETAPAS.index(etapa)
+    st.progress((indice + 1) / len(ETAPAS))
+    st.caption(f"Etapa {indice + 1} de {len(ETAPAS)}")
+    paquete = _datos_disponibles()
+    guardado = st.session_state.get("lab_resultado")
+    if indice > 0 and not paquete:
+        st.info("Comience por la etapa Datos y cargue un CSV etiquetado.")
+        st.button("Ir a Datos", on_click=_ir_a, args=(ETAPAS[0],))
+        return
+    if indice >= 3 and (
+        not guardado or guardado["identidad"] != paquete["identidad"]
+    ):
+        st.info(
+            "Primero debe entrenar ambos modelos para obtener resultados "
+            "comparables. Abra la etapa Entrenamiento."
+        )
+        st.button("Ir a Entrenamiento", on_click=_ir_a, args=(ETAPAS[2],))
+        return
+
+    if indice == 0:
+        _paso_datos()
+    elif indice == 1:
+        _paso_preparacion(paquete)
+    elif indice == 2:
+        _paso_entrenamiento(paquete)
+    elif indice == 3:
+        _resultado(guardado["resultado"], guardado["firma"])
+        st.button(
+            "Continuar: entender los resultados", type="primary",
+            on_click=_ir_a, args=(ETAPAS[4],),
+        )
+    else:
+        _explicacion_sencilla(guardado["resultado"])
+        st.button(
+            "Volver a la comparación", on_click=_ir_a, args=(ETAPAS[3],),
         )
