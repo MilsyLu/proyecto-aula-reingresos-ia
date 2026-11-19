@@ -270,10 +270,40 @@ El informe completo está en `reports/Fase_3_Informe_Final_Grupo04.pdf` (15 pág
 |---|---|
 | Aplicación desplegada | https://reingresos-grupo04.streamlit.app/ — con inicio de sesión y dos roles |
 | Lista priorizada por capacidad | en la aplicación, sección **Cargar archivo** |
+| Cargue de archivos con cualquier esquema | `src/cargue_flexible.py` |
 | Explicación por paciente | en la aplicación, dentro de **Estimar riesgo** |
 | Informe final (15 pág.) | `reports/Fase_3_Informe_Final_Grupo04.pdf` · también en `.docx` |
 | Tablero de Power BI | datos en `reports/tablero_powerbi.csv` · guía en `reports/Guia_Tablero_PowerBI.md` |
 | Auditoría de equidad | `notebooks/05_equidad_sensibilidad.ipynb` |
+
+---
+
+## Sobre la precisión de 0,178
+
+La precisión **no es una propiedad fija del modelo**: es el valor que toma en el punto donde
+está puesto el umbral, que alerta sobre el 38 % de la población. Medido sobre el conjunto de
+prueba, con una tasa general de reingreso del 11,39 %:
+
+| Si se hace seguimiento a… | de ellos reingresan | veces la tasa base | cubre |
+|---|---|---|---|
+| 397 pacientes (2 %) | **43,1 %** | 3,78 × | 7,6 % |
+| 993 (5 %) | 31,9 % | 2,80 × | 14,0 % |
+| 1.987 (10 %) | 26,2 % | 2,30 × | 23,0 % |
+| 7.630 (38,4 %) | 17,8 % | 1,56 × | 60,0 % |
+
+El modelo **concentra el riesgo**; cuánto lo concentra depende de a cuánta gente alcance el
+programa. Por eso la aplicación pregunta por la capacidad en vez de fijar un umbral y ya.
+
+### Datasets alternativos evaluados y descartados
+
+Se probaron dos conjuntos de datos distintos antes de descartarlos, y en ambos casos la
+decisión se tomó midiendo, no opinando:
+
+- **`auphong2707/hospital-readmission-risk-data`** (Hugging Face). Trae determinantes sociales
+  que a UCI le faltan, pero su etiqueta viene en tercios exactos (3.333 / 3.333 / 3.333) y al
+  entrenar da **ROC-AUC 0,498**: azar puro. Es un conjunto sintético con etiquetas aleatorias.
+- **Una versión de 113 características y 101.766 muestras**: es el mismo conjunto de UCI, ya
+  codificado con one-hot. Cambiar a él no aporta nada.
 
 ---
 

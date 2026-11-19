@@ -88,3 +88,34 @@ def metricas_en(df, umbral):
         "tasa_alerta": (vp + fp) / len(df) if len(df) else 0.0,
         "exactitud": (vp + vn) / len(df) if len(df) else 0.0,
     }
+
+
+@st.cache_data(show_spinner=False)
+def ganancia_por_tramo():
+    """Cuánto concentra el riesgo el modelo según a cuánta gente se llame.
+
+    Responde la pregunta que la precisión sola no responde. "Precisión 0,178" no
+    es una propiedad fija del modelo: es el valor que toma cuando se alerta sobre
+    el 38 % de la población. Si el programa solo alcanza para el 2 %, entre esos
+    pacientes reingresa el 43 %.
+
+    Devuelve, para varios tamaños de lista: la tasa real de reingreso de los
+    elegidos, cuántas veces es la tasa general, y qué porción de todos los
+    reingresos queda dentro de la lista.
+    """
+    d = predicciones_prueba().sort_values("probabilidad", ascending=False)
+    base = d.reingreso_real.mean()
+    total = d.reingreso_real.sum()
+    filas = []
+    for fraccion in (0.02, 0.05, 0.10, 0.20, 0.30, 0.384, 0.50):
+        n = max(int(len(d) * fraccion), 1)
+        elegidos = d.head(n)
+        tasa = elegidos.reingreso_real.mean()
+        filas.append({
+            "fraccion": fraccion,
+            "pacientes": n,
+            "tasa": tasa,
+            "veces": tasa / base if base else 0.0,
+            "cobertura": elegidos.reingreso_real.sum() / total if total else 0.0,
+        })
+    return pd.DataFrame(filas), base

@@ -15,8 +15,9 @@ import streamlit as st
 
 import datos
 import estilo
-from datos import AZUL, GRIS, TERRACOTA, entero, formato
+from datos import AZUL, GRIS, TERRACOTA, VERDE, entero, formato
 from src.analisis_calidad import resumen_calidad
+from src.cargue_flexible import preparar_tolerante
 from src.procesamiento_lotes import (ArchivoIncompatible, categorias_no_vistas,
                                      predecir_lote, preparar_lote)
 
@@ -42,6 +43,51 @@ def _cobertura(probabilidades, capacidad):
         return 0.0, 0.0
     elegidos = orden[:capacidad].sum()
     return elegidos / total, elegidos
+
+
+def _cobertura(informe):
+    """Cuánto del modelo alcanza a cubrir el archivo que subieron."""
+    pct = informe["cobertura"] * 100
+    reconocidas, rellenadas = informe["reconocidas"], informe["rellenadas"]
+
+    if pct >= 80:
+        tono, titulo = VERDE, "El archivo cubre casi todo lo que el modelo necesita"
+    elif pct >= 40:
+        tono, titulo = "#B08A3E", "El archivo cubre solo una parte del modelo"
+    else:
+        tono, titulo = TERRACOTA, "El archivo cubre muy poco del modelo"
+
+    st.markdown(
+        f'<div class="tarjeta" style="border-left:4px solid {tono};margin-bottom:0.6rem">'
+        f'<div class="etiqueta" style="color:{tono}">Cobertura del modelo</div>'
+        f'<div style="font-size:1.9rem;font-weight:600;color:{tono};line-height:1.2">'
+        f'{formato(pct)} %</div>'
+        f'<div style="font-weight:600;margin-top:2px">{titulo}</div>'
+        f'<div style="color:{GRIS};font-size:0.85rem;margin-top:5px">'
+        f'Se reconocieron <b>{len(reconocidas)}</b> columnas y se completaron '
+        f'<b>{len(rellenadas)}</b> con el valor típico del entrenamiento. '
+        f'La cobertura no cuenta columnas: pesa cada una por cuánto aporta al modelo.'
+        f'</div></div>', unsafe_allow_html=True)
+
+    if pct < 80:
+        faltan = informe["faltan_importantes"][:4]
+        if faltan:
+            detalle = ", ".join(f"<b>{v}</b> ({formato(p * 100, 0)} %)" for v, p in faltan)
+            estilo.aviso_prototipo(
+                f"Lo que más falta: {detalle}. Mientras menos cubra el archivo, más se "
+                f"parecen las estimaciones entre sí, porque las variables ausentes toman "
+                f"el mismo valor en todas las filas. <b>Sirve para ordenar la lista, no "
+                f"para leer el porcentaje de un paciente como si fuera exacto.</b>")
+
+    with st.expander(f"Qué columnas se reconocieron ({len(reconocidas)})"):
+        if reconocidas:
+            tabla = pd.DataFrame(
+                [{"En su archivo": origen, "El modelo la usa como": destino}
+                 for destino, origen in sorted(reconocidas.items())])
+            st.dataframe(tabla, hide_index=True, width="stretch", height=240)
+        sobran = informe["sin_reconocer"]
+        if sobran:
+            st.caption("No se reconocieron (se ignoran): " + ", ".join(sobran[:25]))
 
 
 def _calidad(datos_crudos, X, descartes, diagnostico, modelo):
@@ -91,10 +137,9 @@ def _calidad(datos_crudos, X, descartes, diagnostico, modelo):
 
 
 def _lista_priorizada(predicciones, umbral):
-    st.markdown("## A quién llamar primero")
-    st.markdown(
-        "El modelo ordena. La capacidad la pone usted. Esa es toda la decisión: "
-        "**cuántos seguimientos puede hacer esta semana.**")
+    st.markdown("#### A quién llamar primero")
+    st.caption("El modelo ordena. La capacidad la pone usted. Esa es toda la decisión: "
+               "cuántos seguimientos puede hacer esta semana.")
 
     total = len(predicciones)
     sugerido = int((predicciones.probabilidad >= umbral).sum())
@@ -161,11 +206,11 @@ def _lista_priorizada(predicciones, umbral):
 
 
 def render():
-    st.title("Cargar un archivo de pacientes")
-    st.markdown(
-        "Suba un archivo con las hospitalizaciones que acaban de terminar. La "
-        "aplicación lo valida fila por fila, estima el riesgo de cada paciente y "
-        "arma la lista de seguimiento según la capacidad del programa.")
+    st.subheader("Cargar un archivo de pacientes")
+    st.caption("Suba un archivo con las hospitalizaciones que acaban de terminar. Se valida "
+               "fila por fila, se estima el riesgo de cada paciente y se arma la lista de "
+               "seguimiento según la capacidad del programa. No hace falta que traiga las 50 "
+               "columnas: se aprovecha lo que tenga y se avisa cuánto del modelo queda cubierto.")
 
     with st.expander("¿Qué archivo puedo subir?"):
         st.markdown(
@@ -185,20 +230,35 @@ def render():
                  f"es de {LIMITE_MB} MB.")
         return
 
-    numericas, categoricas, _ = datos.cargar_columnas()
+    numericas, categoricas, por_defecto = datos.cargar_columnas()
     modelo = datos.cargar_modelo()
     umbral = datos.umbral_oficial()
 
     try:
         crudos = pd.read_csv(io.BytesIO(archivo.getvalue()), na_values=["?"],
                              low_memory=False)
-        X, descartes, diagnostico = preparar_lote(crudos, numericas, categoricas)
-    except (ArchivoIncompatible, pd.errors.ParserError, UnicodeDecodeError,
-            ValueError, KeyError) as error:
-        st.error(f"No se pudo procesar el archivo: {error}")
+    except (pd.errors.ParserError, UnicodeDecodeError, ValueError) as error:
+        st.error(f"No se pudo leer el archivo: {error}")
         return
 
+    informe = None
+    try:
+        X, descartes, diagnostico = preparar_lote(crudos, numericas, categoricas)
+    except (ArchivoIncompatible, ValueError, KeyError):
+        # el archivo no trae el esquema exacto: se aprovecha lo que tenga y se
+        # completa el resto con los valores típicos, diciendo cuánto queda cubierto
+        try:
+            X, informe = preparar_tolerante(crudos, numericas, categoricas, por_defecto)
+        except Exception as error:
+            st.error(f"No se pudo procesar el archivo: {error}")
+            return
+        descartes = pd.DataFrame(columns=["fila_original", "motivo"])
+        diagnostico = {"formato": "parcial", "recibidas": len(crudos),
+                       "validas": len(X), "excluidas": 0}
+
     st.divider()
+    if informe is not None:
+        _cobertura(informe)
     _calidad(crudos, X, descartes, diagnostico, modelo)
 
     if X.empty:

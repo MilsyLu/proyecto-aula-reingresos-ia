@@ -65,21 +65,50 @@ def _tema_claro() -> str:
       color: {TINTA};
       font-feature-settings: "tnum" on;
   }}
-  [data-testid="stMainBlockContainer"], [data-testid="stAppViewBlockContainer"] {{ padding-top: 2.2rem; max-width: 1180px; }}
+  /* Densidad. El criterio es el mismo de CheCu: que quepa en una pantalla,
+     la informacion de un vistazo y el minimo de scroll. Todo lo de abajo
+     aprieta el espaciado por defecto de Streamlit, que es muy generoso. */
+  [data-testid="stMainBlockContainer"], [data-testid="stAppViewBlockContainer"] {{
+      padding-top: 1.1rem !important;
+      padding-bottom: 1.2rem !important;
+      max-width: 1400px !important;
+  }}
+  [data-testid="stVerticalBlock"] {{ gap: 0.45rem; }}
+  [data-testid="stHorizontalBlock"] {{ gap: 0.7rem; }}
+  [data-testid="stElementContainer"] {{ margin-bottom: 0; }}
 
-  h1 {{ color: {AZUL}; font-weight: 700; letter-spacing: -0.015em; font-size: 2.0rem; }}
-  h2 {{ color: {AZUL}; font-weight: 600; font-size: 1.35rem; margin-top: 1.6rem; }}
-  h3, h4 {{ color: {AZUL}; font-weight: 600; }}
+  h1 {{ color: {AZUL}; font-weight: 700; letter-spacing: -0.02em;
+       font-size: 1.55rem; margin: 0 0 0.25rem; padding: 0; }}
+  h2 {{ color: {AZUL}; font-weight: 600; font-size: 1.12rem;
+       margin: 0.7rem 0 0.2rem; padding: 0; }}
+  h3 {{ color: {AZUL}; font-weight: 600; font-size: 0.98rem;
+       margin: 0.5rem 0 0.15rem; padding: 0; }}
+  h4 {{ color: {AZUL}; font-weight: 600; font-size: 0.9rem;
+       margin: 0.4rem 0 0.1rem; padding: 0; }}
+  p {{ margin-bottom: 0.4rem; line-height: 1.45; }}
+  hr {{ margin: 0.6rem 0; }}
+  [data-testid="stCaptionContainer"] p {{ margin-bottom: 0.2rem; line-height: 1.35; }}
 
   /* tarjetas: borde fino, sin sombras pesadas */
   [data-testid="stMetric"], [data-testid="stForm"], [data-testid="stExpander"] {{
       background: #FFFFFF;
       border: 1px solid {BORDE};
-      border-radius: 12px;
-      padding: 1rem 1.15rem;
+      border-radius: 10px;
   }}
-  [data-testid="stMetricValue"] {{ color: {AZUL}; font-weight: 600; }}
-  [data-testid="stMetricLabel"] {{ color: {GRIS}; font-size: 0.82rem; }}
+  [data-testid="stMetric"] {{ padding: 0.55rem 0.75rem; }}
+  [data-testid="stForm"] {{ padding: 0.8rem 0.9rem; }}
+  [data-testid="stExpander"] details > summary {{ padding: 0.4rem 0.75rem; font-size: 0.86rem; }}
+  [data-testid="stMetricValue"] {{ color: {AZUL}; font-weight: 600; font-size: 1.5rem; }}
+  [data-testid="stMetricLabel"] {{ color: {GRIS}; font-size: 0.74rem; }}
+  [data-testid="stMetricDelta"] {{ font-size: 0.72rem; }}
+
+  /* controles mas bajos: en un formulario de 15 campos esto solo ahorra pantalla */
+  [data-testid="stNumberInput"] input, [data-testid="stSelectbox"] div[role="combobox"] {{
+      padding-top: 0.25rem !important; padding-bottom: 0.25rem !important;
+      font-size: 0.86rem !important;
+  }}
+  [data-testid="stWidgetLabel"] p {{ font-size: 0.78rem; margin-bottom: 0.1rem; }}
+  [data-testid="stTabs"] button {{ padding: 0.3rem 0.7rem; font-size: 0.88rem; }}
 
   [data-testid="stSidebar"] {{
       background: #FFFFFF;
@@ -108,18 +137,19 @@ def _tema_claro() -> str:
       background: #FFF8F2;
       border-left: 3px solid {TERRACOTA};
       border-radius: 8px;
-      padding: 0.7rem 0.9rem;
-      font-size: 0.86rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.82rem;
+      line-height: 1.4;
       color: #6B3A24;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
   }}
 
   .tarjeta {{
       background: #FFFFFF;
       border: 1px solid {BORDE};
-      border-radius: 12px;
-      padding: 1.1rem 1.25rem;
-      margin-bottom: 0.9rem;
+      border-radius: 10px;
+      padding: 0.7rem 0.85rem;
+      margin-bottom: 0.5rem;
   }}
   .etiqueta {{
       color: {GRIS};
