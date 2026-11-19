@@ -7,8 +7,23 @@ Universidad Popular del Cesar · Ingeniería de Sistemas · Séptimo semestre ·
 
 ### 🔗 Aplicación en vivo: **https://reingresos-grupo04.streamlit.app/**
 
-Estima el riesgo de un paciente, muestra el desempeño del modelo y publica la auditoría de
-equidad. No requiere instalar nada.
+Entra con usuario y contraseña. Hay **dos roles**, y no son decorativos: reproducen la tesis
+del proyecto. El umbral de alerta es una decisión de política sanitaria, no un cálculo
+clínico, así que quien lo fija no es quien lo consume.
+
+| | **Personal asistencial** | **Coordinación del programa** |
+|---|---|---|
+| Estimar el riesgo de un paciente | ✅ | ✅ |
+| Ver por qué se alertó | ✅ | ✅ |
+| Preguntarle al asistente | ✅ | ✅ |
+| Cargar un archivo y priorizar | ❌ | ✅ |
+| Desempeño del modelo | ❌ | ✅ |
+| Equidad y límites | ❌ | ✅ |
+
+Las credenciales de demostración aparecen en la pantalla de entrada y están en
+`app/usuarios_demo.toml`. Para usar cuentas reales, pegue una sección `[usuarios]` con esa
+misma forma en los secretos de la aplicación en Streamlit Cloud: lo que esté ahí manda sobre
+el archivo.
 
 ---
 
@@ -70,7 +85,15 @@ proyecto-reingresos/
 │   ├── 04_evaluacion_comparada.ipynb
 │   └── 05_equidad_sensibilidad.ipynb      auditoría de equidad y sensibilidad
 ├── app/
-│   ├── app.py                     aplicación Streamlit (4 páginas)
+│   ├── app.py              enrutador y sesión
+│   ├── auth.py             inicio de sesión, roles y control de acceso
+│   ├── datos.py            carga del modelo y de los resultados, con caché
+│   ├── estilo.py           hoja de estilos (portada oscura, interior claro)
+│   ├── modelo.py           predicción y explicación por paciente
+│   ├── asistente.py        asistente de lenguaje natural (Gemini, opcional)
+│   ├── paginas/            una por sección
+│   ├── assets/             vídeo y cartel de la portada
+│   ├── usuarios_demo.toml  cuentas de demostración, con hash
 │   └── valores_por_defecto.json   valores típicos de las variables no pedidas
 ├── src/               funciones reutilizables
 ├── models/            modelo entrenado (versionado: lo necesita la app)
@@ -109,6 +132,16 @@ jupyter notebook
 ```bash
 streamlit run app/app.py
 ```
+
+> Ejecútelo **desde la raíz del proyecto**. Streamlit lee `.streamlit/config.toml` relativo a
+> la carpeta actual, y si arranca desde otro sitio la aplicación hereda el modo oscuro del
+> sistema y los campos salen negros sobre fondo claro.
+
+**4. Opcional: encender el asistente**
+
+El asistente de lenguaje natural necesita una clave de Gemini. En local, una variable de
+entorno `GEMINI_API_KEY`; en Streamlit Cloud, un secreto con ese mismo nombre. Sin clave el
+asistente se apaga solo y el resto de la aplicación funciona igual.
 
 La aplicación carga `models/gradient_boosting_ajustado.joblib` y
 `reports/predicciones_prueba.csv`, ambos versionados, así que funciona sin haber ejecutado los
@@ -224,11 +257,20 @@ sesgo" que decir "no hay datos para medirlo".
 
 El informe completo está en `reports/Fase_3_Informe_Final_Grupo04.pdf` (15 páginas).
 
+> **Nota sobre el informe y la aplicación.** El informe describe la aplicación tal como se
+> entregó en la Fase 3: cuatro páginas, sin inicio de sesión. Después de la entrega la
+> aplicación siguió creciendo —roles, cargue de archivos, lista priorizada, explicación por
+> paciente y asistente— así que la sección 8 del informe se queda corta frente a lo que hay
+> hoy. Se deja así a propósito: el informe documenta lo que se entregó, no lo que vino
+> después. Este README describe el estado actual.
+
 ### Entregables de la Fase 3
 
 | Entregable | Dónde |
 |---|---|
-| Aplicación desplegada | https://reingresos-grupo04.streamlit.app/ |
+| Aplicación desplegada | https://reingresos-grupo04.streamlit.app/ — con inicio de sesión y dos roles |
+| Lista priorizada por capacidad | en la aplicación, sección **Cargar archivo** |
+| Explicación por paciente | en la aplicación, dentro de **Estimar riesgo** |
 | Informe final (15 pág.) | `reports/Fase_3_Informe_Final_Grupo04.pdf` · también en `.docx` |
 | Tablero de Power BI | datos en `reports/tablero_powerbi.csv` · guía en `reports/Guia_Tablero_PowerBI.md` |
 | Auditoría de equidad | `notebooks/05_equidad_sensibilidad.ipynb` |
