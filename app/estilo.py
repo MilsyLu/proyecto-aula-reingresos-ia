@@ -174,7 +174,7 @@ def _tema_portada() -> str:
       background: {NOCHE};
       color: #FFFFFF;
   }}
-  [data-testid="stSidebar"] {{ display: none; }}
+  /* Sidebar colapsado con Streamlit, nunca con display:none. */
   /* Streamlit pone sus propias reglas con mas peso: hay que insistir */
   [data-testid="stMainBlockContainer"], [data-testid="stAppViewBlockContainer"] {{
       max-width: 430px !important;
