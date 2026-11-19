@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from sklearn.base import clone
 from sklearn.compose import ColumnTransformer
 from sklearn.dummy import DummyClassifier
 from sklearn.impute import SimpleImputer
@@ -140,13 +141,13 @@ def entrenar_experimento(X, y, pacientes, numericas, categoricas,
         ),
         "Red neuronal MLP": MLPClassifier(
             hidden_layer_sizes=(int(neuronas),),
-            max_iter=int(iteraciones), early_stopping=True,
+            max_iter=int(iteraciones), early_stopping=False,
             n_iter_no_change=10, random_state=semilla,
         ),
     }
     filas, ajustados, probabilidades_val = [], {}, {}
     for nombre, algoritmo in modelos.items():
-        pipeline = Pipeline([("preprocesamiento", prep), ("modelo", algoritmo)])
+        pipeline = Pipeline([("preprocesamiento", clone(prep)), ("modelo", algoritmo)])
         pipeline.fit(X.iloc[tr], y.iloc[tr])
         prob = pipeline.predict_proba(X.iloc[va])[:, 1]
         registro = metricas(y.iloc[va], prob, umbral=0.5)
