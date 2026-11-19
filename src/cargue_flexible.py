@@ -173,7 +173,10 @@ DERIVADAS = {
 
 def diagnosticar(df: pd.DataFrame):
     """Qué trae el archivo, antes de intentar nada."""
-    cols = json.loads((BASE / "data/processed/columnas.json").read_text(encoding="utf-8"))
+    # Se lee de app/valores_por_defecto.json y no de data/processed/columnas.json:
+    # esa carpeta no se versiona, asi que en el servidor no existe.
+    cols = json.loads((BASE / "app" / "valores_por_defecto.json")
+                      .read_text(encoding="utf-8"))
     esperadas = cols["numericas"] + cols["categoricas"]
     crudas_uci = ["age", "diag_1", "diag_2", "diag_3", "time_in_hospital",
                   "num_medications", "num_lab_procedures", "number_inpatient"]
