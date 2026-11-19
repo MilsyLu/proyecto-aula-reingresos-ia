@@ -89,7 +89,8 @@ def _exploracion(crudos, X, descartes, resumen):
             st.dataframe(tabla.round(2), hide_index=True, width="stretch")
             campo = st.selectbox("Explorar distribución", tabla["variable"].tolist(),
                                   key="lab_variable")
-            serie = pd.to_numeric(crudos[campo], errors="coerce").dropna()
+            serie = pd.to_numeric(crudos[campo], errors="coerce")\
+                .replace([np.inf, -np.inf], np.nan).dropna()
             if not serie.empty:
                 conteos, bordes = np.histogram(serie.to_numpy(), bins=20)
                 histograma = pd.DataFrame({
@@ -181,6 +182,7 @@ def render():
         "En este laboratorio se entrena una **red neuronal MLP** y se compara "
         "con modelos de referencia, sin reemplazar al original."
     )
+    st.warning("Use únicamente datos públicos o anonimizados. No cargue archivos con información identificable de pacientes.")
     st.subheader("Seleccionar datos")
     st.markdown(
         "Cargue un CSV original de UCI o un CSV preparado con las 50 "
