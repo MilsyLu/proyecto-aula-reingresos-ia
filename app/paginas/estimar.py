@@ -110,13 +110,15 @@ def _resultado(entradas, umbral):
             "puede <b>añadir</b> seguimiento, nunca restringir atención.")
 
     _explicacion(base, efectos)
+    _asistente()
 
 
 def _explicacion(base, efectos):
     st.markdown("### Por qué salió este número")
     if not efectos:
         st.info("Este paciente se parece al perfil típico del conjunto de "
-                "entrenamiento, así que ningún dato lo separa de la media.")
+                "entrenamiento, así que ningún dato lo separa de la media. "
+                "Cambie algún dato del formulario para ver qué lo mueve.")
         return
 
     st.caption("Se vuelve a calcular el riesgo cambiando un dato a la vez por el valor "
@@ -138,8 +140,6 @@ def _explicacion(base, efectos):
             f'Si fuera {efecto["tipico"]}, como la mayoría, el riesgo {destino} de '
             f'{formato(base * 100)} % a {formato(efecto["riesgo_sin_el"] * 100)} %.'
             f'</div></div>', unsafe_allow_html=True)
-
-    _asistente()
 
     with st.expander("¿De dónde sale esta explicación?"):
         st.markdown(
