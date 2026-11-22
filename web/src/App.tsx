@@ -4,7 +4,7 @@ import { Armazon } from './componentes/Armazon'
 import { useSesion } from './lib/sesion'
 import { Entrar } from './paginas/Entrar'
 import { Portada } from './paginas/Portada'
-import { PANTALLAS } from './rutas'
+import { INICIO, PANTALLAS } from './rutas'
 
 /** Mientras se le pregunta al servidor si la cookie sigue viva, no se decide nada. */
 function Esperando() {
@@ -42,11 +42,11 @@ export function App() {
           </Protegida>
         }
       >
-        <Route index element={<Navigate to={PANTALLAS[0].ruta} replace />} />
+        <Route index element={<Navigate to={INICIO} replace />} />
         {PANTALLAS.map(({ ruta, Componente }) => (
           <Route key={ruta} path={ruta} element={<Componente />} />
         ))}
-        <Route path="*" element={<Navigate to={PANTALLAS[0].ruta} replace />} />
+        <Route path="*" element={<Navigate to={INICIO} replace />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

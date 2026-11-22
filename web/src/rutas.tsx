@@ -176,6 +176,16 @@ export const PANTALLAS: Pantalla[] = [
   },
 ]
 
+/**
+ * La pantalla con la que abre la aplicación.
+ *
+ * No es la primera del menú a propósito. Quien entra viene a trabajar: lo
+ * primero que debe ver es el formulario para estimar un paciente, no la guía.
+ * La guía queda arriba en el menú para quien la necesite, que es la primera
+ * vez y pocas más.
+ */
+export const INICIO = 'estimar'
+
 export function pantallasDe(grupo: Grupo, permisos: string[]): Pantalla[] {
   return PANTALLAS.filter((p) => p.grupo === grupo && permisos.includes(p.permiso))
 }
