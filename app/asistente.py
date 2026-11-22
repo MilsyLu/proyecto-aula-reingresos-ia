@@ -21,7 +21,12 @@ import os
 import socket
 import ssl
 
-import streamlit as st
+# Streamlit solo hace falta para leer la clave de sus secretos. La API de
+# FastAPI no lo instala, y entonces la clave se toma de la variable de entorno.
+try:
+    import streamlit as st
+except ModuleNotFoundError:
+    st = None
 
 # Si el primero está sobrecargado (error 503, pasa a ratos) se prueba el siguiente.
 # Para una demostración en vivo esto importa más que elegir el modelo perfecto.
@@ -81,11 +86,15 @@ LIMITES = """Limitaciones medidas de este modelo, que debes tener en cuenta:
 
 
 def _clave():
-    try:
-        if "GEMINI_API_KEY" in st.secrets:
-            return st.secrets["GEMINI_API_KEY"]
-    except Exception:
-        pass
+    # El orden importa poco, pero la regla no: la clave no se escribe en disco,
+    # no se muestra, y no aparece en ningun mensaje de error. Ni siquiera en el
+    # cuerpo de un error de Gemini, que a veces la repite.
+    if st is not None:
+        try:
+            if "GEMINI_API_KEY" in st.secrets:
+                return st.secrets["GEMINI_API_KEY"]
+        except Exception:
+            pass
     return os.environ.get("GEMINI_API_KEY")
 
 

@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { Asistente } from './paginas/Asistente'
 import { Estimar } from './paginas/Estimar'
 import { Fases } from './paginas/Fases'
 import { Guia } from './paginas/Guia'
@@ -69,6 +70,13 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Trabajar',
     permiso: 'Paso a paso',
     Componente: PasoAPaso,
+  },
+  {
+    ruta: 'asistente',
+    titulo: 'El asistente',
+    grupo: 'Trabajar',
+    permiso: 'Asistente',
+    Componente: Asistente,
   },
 ]
 

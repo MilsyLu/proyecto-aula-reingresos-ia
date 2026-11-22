@@ -29,6 +29,7 @@ for ruta in (str(BASE), str(BASE / "src"), str(BASE / "app")):
         sys.path.insert(0, ruta)
 
 from api import autenticacion as auth  # noqa: E402
+from api import conversacion  # noqa: E402
 from api import prediccion  # noqa: E402
 
 DIST = BASE / "web" / "dist"
@@ -116,6 +117,7 @@ def salud():
 # las de sesion y antes del front, porque la ruta comodin de abajo se traga
 # todo lo que no se haya declarado ya.
 prediccion.registrar(app)
+conversacion.registrar(app)
 
 
 # ===========================================================================
