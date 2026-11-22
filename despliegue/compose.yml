@@ -26,6 +26,14 @@ services:
       REINGRESAIA_CLAVE_SESION: ${REINGRESAIA_CLAVE_SESION:?falta la clave de sesion}
       # Caddy termina el TLS, asi que la cookie puede exigir HTTPS.
       REINGRESAIA_HTTPS: 'si'
+      # La clave de Gemini, para el asistente. Es opcional a proposito: si no
+      # esta, el asistente se apaga solo y avisa, y las otras dieciseis
+      # pantallas siguen funcionando igual.
+      #
+      # Ojo con esto, que me costo: compose lee .env para sustituir variables
+      # dentro de este archivo, pero al contenedor solo le entrega lo que
+      # aparezca aqui listado. Tener la clave en .env no basta.
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     networks:
       - interna
     # Un servidor de un solo nucleo: si la aplicacion se desboca, el resto del
