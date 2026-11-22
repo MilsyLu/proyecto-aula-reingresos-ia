@@ -1,0 +1,7 @@
+modelo,configuracion,parametros,AP_entrenamiento,AP_validacion,ROC_AUC_validacion,brecha_AP
+Gradient Boosting,1,"{'learning_rate': 0.05, 'max_leaf_nodes': 15, 'min_samples_leaf': 100, 'l2_regularization': 0.5}",0.2882053338456475,0.23438651631406854,0.6724479459961399,0.053818817531578966
+Gradient Boosting,2,"{'learning_rate': 0.08, 'max_leaf_nodes': 31, 'min_samples_leaf': 50, 'l2_regularization': 1.0}",0.39810060328364055,0.23298364442435038,0.6686929493049907,0.16511695885929017
+Gradient Boosting,3,"{'learning_rate': 0.03, 'max_leaf_nodes': 15, 'min_samples_leaf': 50, 'l2_regularization': 0.5}",0.2709059533822856,0.2306827515501926,0.6703779093007136,0.04022320183209302
+Red neuronal MLP,1,"{'hidden_layer_sizes': (24,), 'alpha': 0.0001}",0.34539432544481363,0.20514425728240102,0.6529144305933856,0.14025006816241262
+Red neuronal MLP,2,"{'hidden_layer_sizes': (24,), 'alpha': 0.01}",0.32420065598452,0.2110454564245329,0.6536321996058495,0.11315519955998712
+Red neuronal MLP,3,"{'hidden_layer_sizes': (24, 12), 'alpha': 0.001}",0.3925767924854743,0.17943156258905052,0.6256563516445672,0.21314522989642376
