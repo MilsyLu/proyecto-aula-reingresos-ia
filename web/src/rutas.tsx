@@ -1,8 +1,11 @@
 import type { ComponentType } from 'react'
 import { Asistente } from './paginas/Asistente'
+import { Cohorte } from './paginas/Cohorte'
+import { Descriptiva } from './paginas/Descriptiva'
 import { Estimar } from './paginas/Estimar'
 import { Fases } from './paginas/Fases'
 import { Guia } from './paginas/Guia'
+import { MapaCalor } from './paginas/MapaCalor'
 import { PasoAPaso } from './paginas/PasoAPaso'
 
 /**
@@ -77,6 +80,27 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Trabajar',
     permiso: 'Asistente',
     Componente: Asistente,
+  },
+  {
+    ruta: 'cohorte',
+    titulo: 'De dónde salen los datos',
+    grupo: 'Conocer los datos',
+    permiso: 'Conocer los datos',
+    Componente: Cohorte,
+  },
+  {
+    ruta: 'estadistica',
+    titulo: 'Estadística descriptiva',
+    grupo: 'Conocer los datos',
+    permiso: 'Estadística descriptiva',
+    Componente: Descriptiva,
+  },
+  {
+    ruta: 'mapa-de-calor',
+    titulo: 'Mapa de calor',
+    grupo: 'Conocer los datos',
+    permiso: 'Mapa de calor',
+    Componente: MapaCalor,
   },
 ]
 
