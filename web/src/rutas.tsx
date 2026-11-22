@@ -1,8 +1,10 @@
 import type { ComponentType } from 'react'
+import { Archivo } from './paginas/Archivo'
 import { Asistente } from './paginas/Asistente'
 import { Cohorte } from './paginas/Cohorte'
 import { Desempeno } from './paginas/Desempeno'
 import { Descriptiva } from './paginas/Descriptiva'
+import { Entrenar } from './paginas/Entrenar'
 import { Equidad } from './paginas/Equidad'
 import { Ficha } from './paginas/Ficha'
 import { Importancia } from './paginas/Importancia'
@@ -13,6 +15,7 @@ import { MapaCalor } from './paginas/MapaCalor'
 import { Modelos } from './paginas/Modelos'
 import { PasoAPaso } from './paginas/PasoAPaso'
 import { Techo } from './paginas/Techo'
+import { Umbral } from './paginas/Umbral'
 
 /**
  * El registro de pantallas.
@@ -149,6 +152,27 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Conocer el modelo',
     permiso: 'Ficha del modelo',
     Componente: Ficha,
+  },
+  {
+    ruta: 'archivo',
+    titulo: 'Archivo y lista de llamadas',
+    grupo: 'Trabajar',
+    permiso: 'Cargar archivo',
+    Componente: Archivo,
+  },
+  {
+    ruta: 'umbral',
+    titulo: 'Fijar el umbral',
+    grupo: 'Trabajar',
+    permiso: 'Fijar umbral',
+    Componente: Umbral,
+  },
+  {
+    ruta: 'entrenar',
+    titulo: 'Entrene usted el modelo',
+    grupo: 'Aprender haciendo',
+    permiso: 'Recorrido grabado',
+    Componente: Entrenar,
   },
 ]
 
