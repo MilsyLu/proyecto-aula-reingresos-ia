@@ -1,0 +1,282 @@
+@import 'tailwindcss';
+
+/* ===========================================================================
+   ReingresaIA — sistema visual
+
+   Se sigue Aira (Refero) al pie de la letra, con una sola extension decidida
+   por Michel: el color entra unicamente donde hay un dato. La navegacion, los
+   botones, los bordes y el texto se quedan en hueso y tinta, sin excepcion.
+
+   La regla que Aira repite y que aqui se respeta: no se usan sombras para
+   separar tarjetas en la misma superficie. Se usa filete de un pixel o se
+   invierte la superficie entera.
+   =========================================================================== */
+
+@theme {
+  /* --- paleta de Aira, tal cual ------------------------------------------ */
+  --color-hueso: #fafafb;
+  --color-grafito: #2c2c2b;
+  --color-carbon: #1f1f1f;
+  --color-obsidiana: #111111;
+  --color-prensa: #080808;
+  --color-piedra: #70706f;
+  --color-niebla: #cbcbcb;
+  --color-ceniza: #e3e3e3;
+  --color-nube: #ededed;
+  --color-pizarra: #444444;
+
+  /* --- el dato: rampa de terracota, el color del informe del grupo -------- */
+  --color-dato-0: #fbf1ec;
+  --color-dato-1: #f0d3c5;
+  --color-dato-2: #e0a98f;
+  --color-dato-3: #c25a3c;
+  --color-dato-4: #a8462c;
+  --color-dato-5: #8c3a22;
+
+  /* --- el dato: teal, para el orbe y lo que esta bajo el umbral ----------- */
+  --color-teal: #00827c;
+  --color-teal-neblina: #cbfffc;
+
+  /* --- tipografia -------------------------------------------------------- */
+  --font-serif: 'Fraunces', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* escala de Aira: el interletraje se cierra a medida que crece el tamano */
+  --text-leyenda: 12px;
+  --text-leyenda--line-height: 1.4;
+  --text-cuerpo-sm: 14px;
+  --text-cuerpo-sm--line-height: 1.4;
+  --text-cuerpo: 16px;
+  --text-cuerpo--line-height: 1.5;
+  --text-subtitulo: 20px;
+  --text-subtitulo--line-height: 1.4;
+  --text-titulo-sm: 30px;
+  --text-titulo-sm--line-height: 1.2;
+  --text-titulo: 36px;
+  --text-titulo--line-height: 1.2;
+  --text-titulo-lg: 48px;
+  --text-titulo-lg--line-height: 1.15;
+  --text-despliegue: 66px;
+  --text-despliegue--line-height: 1;
+
+  /* --- forma: la pastilla es el unico lenguaje interactivo del sistema ---- */
+  --radius-tarjeta: 16px;
+  --radius-entrada: 8px;
+  --radius-imagen: 8px;
+  --radius-pastilla: 999px;
+
+  --container-pagina: 1200px;
+}
+
+/* ===========================================================================
+   Tema claro y tema oscuro.
+
+   El oscuro no es un tema aparte: es la inversion de superficie que el propio
+   Aira define como su movimiento compositivo principal. Mismos tokens, al reves.
+   =========================================================================== */
+
+:root {
+  --lienzo: var(--color-hueso);
+  --superficie: var(--color-nube);
+  --superficie-2: var(--color-ceniza);
+  --tinta: var(--color-carbon);
+  --tinta-fuerte: var(--color-obsidiana);
+  --apagado: var(--color-piedra);
+  --filete: var(--color-ceniza);
+  --filete-fuerte: var(--color-grafito);
+  --relleno: var(--color-carbon);
+  --sobre-relleno: var(--color-hueso);
+  --borde-suave: var(--color-niebla);
+  /* el dato en RGB, para poder modular la opacidad en el mapa de calor */
+  --dato-rgb: 194 90 60;
+  --tinta-rgb: 31 31 31;
+  color-scheme: light;
+}
+
+[data-tema='oscuro'] {
+  --lienzo: var(--color-obsidiana);
+  --superficie: #1c1c1b;
+  --superficie-2: #262625;
+  --tinta: var(--color-hueso);
+  --tinta-fuerte: #ffffff;
+  --apagado: #9a9a98;
+  --filete: #2c2c2b;
+  --filete-fuerte: #3d3d3c;
+  --relleno: var(--color-hueso);
+  --sobre-relleno: var(--color-obsidiana);
+  --borde-suave: #3d3d3c;
+  --dato-rgb: 224 169 143;
+  --tinta-rgb: 250 250 251;
+  color-scheme: dark;
+}
+
+/* ===========================================================================
+   Base
+   =========================================================================== */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--lienzo);
+    color: var(--tinta);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.009em;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+
+  /* Aira: nunca Inter por encima de 24 px. El serif es lo que hace reconocible
+     la marca, y su interletraje siempre es negativo. */
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-variation-settings: 'opsz' 110;
+    color: var(--tinta-fuerte);
+  }
+
+  h1 {
+    font-size: clamp(38px, 6vw, 66px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: clamp(30px, 4.2vw, 48px);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+  }
+
+  h3 {
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  /* Las cifras siempre alineadas: en tablas de metricas, un digito que baila
+     se lee como un error de calculo. */
+  .cifra,
+  table td,
+  table th {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--filete-fuerte);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--tinta);
+    color: var(--lienzo);
+  }
+}
+
+/* ===========================================================================
+   Piezas que se repiten en toda la aplicacion
+   =========================================================================== */
+
+@layer components {
+  /* El antetitulo en mayuscula pequena abre cada pantalla. Aira lo llama el
+     'kicker': dice que lo que viene es serio, antes de que hable el serif. */
+  .antetitulo {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--apagado);
+  }
+
+  .pastilla {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: var(--radius-pastilla);
+    border: 1px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.009em;
+    padding: 11px 22px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+  }
+
+  .pastilla-rellena {
+    background: var(--relleno);
+    color: var(--sobre-relleno);
+  }
+
+  .pastilla-contorno {
+    background: transparent;
+    color: var(--tinta);
+    border-color: var(--borde-suave);
+  }
+
+  .pastilla-contorno:hover {
+    border-color: var(--filete-fuerte);
+  }
+
+  .pastilla-sm {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  /* Sobre fotografia el contraste se invierte: el relleno se vuelve claro. */
+  .sobre-foto .pastilla-rellena {
+    background: var(--color-hueso);
+    color: var(--color-carbon);
+  }
+
+  .sobre-foto .pastilla-contorno {
+    color: var(--color-hueso);
+    border-color: rgb(250 250 251 / 0.55);
+  }
+
+  .sobre-foto .pastilla-contorno:hover {
+    border-color: var(--color-hueso);
+  }
+
+  .pagina {
+    max-width: var(--container-pagina);
+    margin-inline: auto;
+    padding-inline: 40px;
+  }
+
+  @media (width < 900px) {
+    .pagina {
+      padding-inline: 24px;
+    }
+  }
+}
+
+/* ===========================================================================
+   Movimiento
+
+   Quien pidio no ver animaciones no las ve. No es un detalle de accesibilidad
+   de adorno: el orbe y las curvas que se dibujan pueden marear.
+   =========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

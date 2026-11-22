@@ -23,3 +23,7 @@ desktop.ini
 # Editores
 .vscode/
 .idea/
+
+# front de React
+web/node_modules/
+web/dist/

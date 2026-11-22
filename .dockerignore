@@ -1,0 +1,38 @@
+# Lo que no tiene por qué viajar a la imagen.
+#
+# Importa de verdad: data/ pesa decenas de megabytes y reports/figures/ otros
+# tantos. Sin esto, cada construcción sube todo eso al contexto de Docker aunque
+# después no se copie.
+
+.git
+.gitignore
+.github
+.devcontainer
+.claude
+
+# cuadernos, datos crudos y figuras: se usan para trabajar, no para servir
+notebooks/
+data/
+reports/figures/
+reports/*.pdf
+reports/*.docx
+docs/
+
+# dependencias y artefactos de construcción del front
+web/node_modules/
+web/dist/
+**/node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# pruebas y entorno local
+tests/
+.streamlit/secrets.toml
+.env
+*.log

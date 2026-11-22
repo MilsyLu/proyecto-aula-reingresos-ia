@@ -1,0 +1,21 @@
+# Lo que necesita el servidor de la aplicación web. Nada más.
+#
+# Las versiones de pandas, numpy y scikit-learn están fijadas a propósito: son
+# las mismas con las que se guardó models/gradient_boosting_ajustado.joblib.
+# Cargar un modelo con otra versión de scikit-learn puede funcionar en apariencia
+# y predecir distinto, que es la peor forma de fallar.
+#
+# No incluye jupyter, matplotlib ni streamlit: esos son para trabajar en el
+# proyecto, no para servirlo.
+
+pandas==3.0.5
+numpy==2.5.2
+scipy==1.18.1
+scikit-learn==1.9.1
+joblib==1.6.0
+
+fastapi==0.122.0
+uvicorn[standard]==0.41.0
+itsdangerous==2.2.0
+python-multipart==0.0.20
+pydantic==2.12.4
