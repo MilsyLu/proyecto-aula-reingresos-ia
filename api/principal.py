@@ -30,6 +30,7 @@ for ruta in (str(BASE), str(BASE / "src"), str(BASE / "app")):
 
 from api import autenticacion as auth  # noqa: E402
 from api import conversacion  # noqa: E402
+from api import evidencia  # noqa: E402
 from api import exploracion  # noqa: E402
 from api import prediccion  # noqa: E402
 
@@ -120,6 +121,7 @@ def salud():
 prediccion.registrar(app)
 conversacion.registrar(app)
 exploracion.registrar(app)
+evidencia.registrar(app)
 
 
 # ===========================================================================

@@ -1,12 +1,18 @@
 import type { ComponentType } from 'react'
 import { Asistente } from './paginas/Asistente'
 import { Cohorte } from './paginas/Cohorte'
+import { Desempeno } from './paginas/Desempeno'
 import { Descriptiva } from './paginas/Descriptiva'
+import { Equidad } from './paginas/Equidad'
+import { Ficha } from './paginas/Ficha'
+import { Importancia } from './paginas/Importancia'
 import { Estimar } from './paginas/Estimar'
 import { Fases } from './paginas/Fases'
 import { Guia } from './paginas/Guia'
 import { MapaCalor } from './paginas/MapaCalor'
+import { Modelos } from './paginas/Modelos'
 import { PasoAPaso } from './paginas/PasoAPaso'
+import { Techo } from './paginas/Techo'
 
 /**
  * El registro de pantallas.
@@ -101,6 +107,48 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Conocer los datos',
     permiso: 'Mapa de calor',
     Componente: MapaCalor,
+  },
+  {
+    ruta: 'modelos',
+    titulo: 'Qué modelos probamos',
+    grupo: 'Conocer el modelo',
+    permiso: 'Comparar modelos',
+    Componente: Modelos,
+  },
+  {
+    ruta: 'desempeno',
+    titulo: 'Desempeño y métricas',
+    grupo: 'Conocer el modelo',
+    permiso: 'Desempeño',
+    Componente: Desempeno,
+  },
+  {
+    ruta: 'importancia',
+    titulo: 'Qué pesa en el modelo',
+    grupo: 'Conocer el modelo',
+    permiso: 'Importancia',
+    Componente: Importancia,
+  },
+  {
+    ruta: 'equidad',
+    titulo: 'Equidad y límites',
+    grupo: 'Conocer el modelo',
+    permiso: 'Equidad',
+    Componente: Equidad,
+  },
+  {
+    ruta: 'techo',
+    titulo: 'El techo de los datos',
+    grupo: 'Conocer el modelo',
+    permiso: 'Techo de los datos',
+    Componente: Techo,
+  },
+  {
+    ruta: 'ficha',
+    titulo: 'Ficha del modelo',
+    grupo: 'Conocer el modelo',
+    permiso: 'Ficha del modelo',
+    Componente: Ficha,
   },
 ]
 
