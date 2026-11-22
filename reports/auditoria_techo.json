@@ -1,0 +1,61 @@
+{
+ "cohorte": {
+  "filas": 99343,
+  "pacientes": 69990,
+  "prevalencia": 0.11388824577474005,
+  "balanceada": 22628
+ },
+ "pliegues": 5,
+ "metodo": "Chowdhury et al. 2026, arXiv:2609.01909",
+ "completo": {
+  "techo": 0.6144950634414814,
+  "kappa": 0.2289901268829629,
+  "ic95": [
+   0.6130577664606789,
+   0.616118335748988
+  ],
+  "ba_lograda": 0.6171115432207884,
+  "brecha": -0.0026164797793070127
+ },
+ "piso_permutacion": {
+  "techo": 0.5127303394541798,
+  "exceso": 0.012730339454179784
+ },
+ "subajuste": {
+  "curva": [
+   {
+    "fraccion": 0.25,
+    "techo": 0.609891959880325
+   },
+   {
+    "fraccion": 0.5,
+    "techo": 0.6149546694731747
+   },
+   {
+    "fraccion": 0.75,
+    "techo": 0.6114630071668332
+   },
+   {
+    "fraccion": 1.0,
+    "techo": 0.6144950634414814
+   }
+  ],
+  "incremento_final": 0.0030320562746481983,
+  "veredicto": "cota inferior"
+ },
+ "canales": {
+  "administrativo": {
+   "techo": 0.6154926109594893,
+   "variables": 12
+  },
+  "clinico": {
+   "techo": 0.564335490430428,
+   "variables": 38
+  },
+  "juntos": {
+   "techo": 0.6144950634414814,
+   "variables": 50
+  },
+  "complementariedad": -0.0009975475180078464
+ }
+}
