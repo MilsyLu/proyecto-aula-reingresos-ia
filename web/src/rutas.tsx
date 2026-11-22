@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { Fases } from './paginas/Fases'
 import { Guia } from './paginas/Guia'
 
 /**
@@ -45,6 +46,13 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Empezar aquí',
     permiso: 'Guía',
     Componente: Guia,
+  },
+  {
+    ruta: 'fases',
+    titulo: 'Cómo se construyó',
+    grupo: 'Empezar aquí',
+    permiso: 'Las 12 fases',
+    Componente: Fases,
   },
 ]
 
