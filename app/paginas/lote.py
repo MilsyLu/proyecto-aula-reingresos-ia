@@ -152,21 +152,44 @@ def _calidad(datos_crudos, X, descartes, diagnostico, modelo):
         _descargar(por_columna, "reporte_calidad.csv", "Descargar el reporte")
 
 
-def _lista_priorizada(predicciones, umbral):
+def _lista_priorizada(predicciones, umbral, identidad):
     st.markdown("#### A quién llamar primero")
     st.caption("El modelo ordena. La capacidad la pone usted. Esa es toda la decisión: "
                "cuántos seguimientos puede hacer esta semana.")
 
     total = len(predicciones)
     sugerido = int((predicciones.probabilidad >= umbral).sum())
+    clave_capacidad = "lote_capacidad"
+    capacidad_inicial = min(max(sugerido, 1), total)
+    if st.session_state.get("lote_capacidad_identidad") != identidad:
+        st.session_state[clave_capacidad] = capacidad_inicial
+        st.session_state["lote_capacidad_identidad"] = identidad
+    else:
+        st.session_state[clave_capacidad] = min(
+            max(int(st.session_state.get(clave_capacidad, capacidad_inicial)), 1), total)
 
     izq, der = st.columns([1, 2])
     with izq:
+        st.caption("Ajuste rápido de capacidad")
+        accesos = st.columns(4)
+        for columna, porcentaje, etiqueta in zip(
+            accesos, (0.05, 0.10, 0.20, None), ("5 %", "10 %", "20 %", "Umbral")
+        ):
+            if columna.button(etiqueta, width="stretch", key=f"capacidad_{etiqueta}"):
+                st.session_state[clave_capacidad] = (
+                    capacidad_inicial if porcentaje is None
+                    else min(max(round(total * porcentaje), 1), total)
+                )
+                st.rerun()
+
         capacidad = st.number_input(
-            "¿A cuántos pacientes puede hacer seguimiento?",
-            min_value=1, max_value=total, value=min(max(sugerido, 1), total), step=10,
+            "Seguimientos disponibles esta semana",
+            min_value=1, max_value=total, step=max(1, total // 100),
+            key=clave_capacidad,
             help="Con el umbral oficial del modelo serían "
-                 f"{entero(sugerido)} de {entero(total)}.")
+                 f"{entero(sugerido)} de {entero(total)}. Use los botones para aplicar "
+                 "una capacidad habitual en un solo clic.")
+        st.caption("La lista y la cobertura se actualizan al instante al cambiar la capacidad.")
 
     orden = predicciones.sort_values("probabilidad", ascending=False).reset_index(drop=True)
     elegidos = orden.head(int(capacidad)).copy()
@@ -318,6 +341,6 @@ def render():
         return
 
     predicciones = guardado["predicciones"]
-    _lista_priorizada(predicciones, umbral)
+    _lista_priorizada(predicciones, umbral, identidad)
     _descargar(predicciones, "predicciones_reingreso.csv",
                "Descargar todas las predicciones")

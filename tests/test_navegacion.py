@@ -21,15 +21,18 @@ class NavegacionTest(unittest.TestCase):
             encoding="utf-8"
         )
 
-    def test_identidad_y_solo_dos_areas(self):
-        self.assertIn('CLIENTE = "Predicción de riesgo"', self.app)
-        self.assertIn('ADMIN = "Laboratorio de IA"', self.app)
-        self.assertIn("options=areas", self.app)
+    def test_identidad_y_navegacion_directa(self):
+        self.assertIn('INICIO = "Archivo y lista de llamadas" if COORDINADOR else "Estimar un paciente"', self.app)
+        self.assertIn('"EMPEZAR AQUÍ": ["Qué es esto"]', self.app)
+        self.assertIn('"TRABAJAR": ["Estimar un paciente"]', self.app)
+        self.assertIn('st.session_state["reia_pagina"]', self.app)
+        self.assertIn('st.session_state["reia_menu_abierto"] = False', self.app)
+        self.assertIn('key="alternar_menu_movil"', self.app)
         self.assertIn("ReingresaIA", self.app)
         self.assertIn("ReingresaIA", self.portada)
 
     def test_roles_y_funciones_no_se_pierden(self):
-        self.assertIn("if auth.es_coordinador()", self.app)
+        self.assertIn("COORDINADOR = auth.es_coordinador()", self.app)
         self.assertIn('auth.exige("Laboratorio de modelos")', self.app)
         self.assertIn('auth.exige("Cargar archivo")', self.app)
         self.assertIn('auth.exige("Ficha del modelo")', self.app)

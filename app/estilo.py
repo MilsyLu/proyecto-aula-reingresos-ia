@@ -20,12 +20,12 @@ import streamlit as st
 
 ASSETS = Path(__file__).resolve().parent / "assets"
 
-AZUL = "#1F3B63"
-TERRACOTA = "#C25A3C"
-TINTA = "#15202B"
-GRIS = "#5A6472"
-PAPEL = "#F4F6F9"
-BORDE = "#E3E8EF"
+AZUL = "#252321"
+TERRACOTA = "#B85A42"
+TINTA = "#292724"
+GRIS = "#77736F"
+PAPEL = "#FBFAF8"
+BORDE = "#E8E5E0"
 
 NOCHE = "#04061c"
 NOCHE_CARTA = "#0c0a2b"
@@ -50,7 +50,7 @@ def _incrustar(nombre: str) -> str:
 
 OCULTAR_CROMO = """
 <style>
-  [data-testid="stHeader"] { background: transparent; }
+  [data-testid="stHeader"] { background: transparent; pointer-events: none; }
   [data-testid="stSidebarCollapsedControl"] { display: flex !important; visibility: visible !important; }
   [data-testid="stToolbar"], [data-testid="stDecoration"], #MainMenu, footer { display: none; }
   [data-testid="stMain"] { padding-top: 0; }
@@ -64,6 +64,7 @@ def _tema_claro() -> str:
   html, body, [data-testid="stAppViewContainer"] {{
       background: {PAPEL};
       color: {TINTA};
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
       font-feature-settings: "tnum" on;
   }}
   /* Densidad. El criterio es el mismo de CheCu: que quepa en una pantalla,
@@ -85,14 +86,17 @@ def _tema_claro() -> str:
       border-radius: 13px; padding: 0.35rem; margin-bottom: 0.7rem;
   }}
 
-  h1 {{ color: {AZUL}; font-weight: 700; letter-spacing: -0.02em;
-       font-size: 1.55rem; margin: 0 0 0.25rem; padding: 0; }}
-  h2 {{ color: {AZUL}; font-weight: 600; font-size: 1.12rem;
-       margin: 0.7rem 0 0.2rem; padding: 0; }}
-  h3 {{ color: {AZUL}; font-weight: 600; font-size: 0.98rem;
-       margin: 0.5rem 0 0.15rem; padding: 0; }}
-  h4 {{ color: {AZUL}; font-weight: 600; font-size: 0.9rem;
-       margin: 0.4rem 0 0.1rem; padding: 0; }}
+  h1, h2, h3, [data-testid="stHeading"] h1,
+  [data-testid="stHeading"] h2, [data-testid="stHeading"] h3 {{
+      color: {AZUL}; font-family: Georgia, 'Times New Roman', serif !important;
+      font-weight: 500; letter-spacing: -0.025em;
+  }}
+  h1 {{ font-size: 1.8rem; margin: 0 0 0.35rem; padding: 0; }}
+  h2 {{ font-size: 1.35rem; margin: 0.7rem 0 0.25rem; padding: 0; }}
+  h3 {{ font-size: 1.12rem; margin: 0.55rem 0 0.2rem; padding: 0; }}
+  h4 {{ color: {AZUL}; font-family: Georgia, 'Times New Roman', serif !important;
+       font-weight: 500; font-size: 1rem; letter-spacing: -0.01em;
+       margin: 0.45rem 0 0.1rem; padding: 0; }}
   p {{ margin-bottom: 0.4rem; line-height: 1.45; }}
   hr {{ margin: 0.6rem 0; }}
   [data-testid="stCaptionContainer"] p {{ margin-bottom: 0.2rem; line-height: 1.35; }}
@@ -125,14 +129,34 @@ def _tema_claro() -> str:
   body:not(:has(#fondo-video)) [data-testid="stSidebar"] {{
       display: flex !important;
       visibility: visible !important;
-      min-width: 240px !important;
+      min-width: 272px !important;
       transform: none !important;
   }}
   [data-testid="stSidebar"] {{
       background: #FFFFFF;
       border-right: 1px solid {BORDE};
   }}
-  [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {{ font-size: 1.05rem; }}
+  [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {{
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.3rem; font-weight: 500; letter-spacing: -0.02em;
+  }}
+  [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {{ gap: 0.3rem; }}
+  [data-testid="stSidebar"] [data-testid="stButton"] button {{
+      border: 0; border-radius: 7px; justify-content: flex-start;
+      min-height: 2.15rem; padding: 0.35rem 0.55rem;
+      color: {GRIS}; background: transparent; font-size: 0.88rem;
+      font-weight: 450; text-align: left;
+  }}
+  [data-testid="stSidebar"] [data-testid="stButton"] button:hover {{
+      background: #F4F2EF; color: {TINTA}; border: 0;
+  }}
+  [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {{
+      background: #F1EFEC; color: {TINTA}; font-weight: 650;
+  }}
+  .reia-nav-titulo {{
+      color: #96918A; font-size: 0.65rem; letter-spacing: 0.15em;
+      font-weight: 650; margin: 0.8rem 0 0.2rem;
+  }}
 
   .stButton > button, .stDownloadButton > button, [data-testid="stFormSubmitButton"] > button {{
       border-radius: 10px;
@@ -151,16 +175,44 @@ def _tema_claro() -> str:
   }}
 
   /* Encabezado ReingresaIA sin saturar las pantallas interiores. */
-  .reia-encabezado {{
-      padding: 0.9rem 1.25rem; background: #FFFFFF;
-      border: 1px solid {BORDE}; border-radius: 14px; margin-bottom: 1rem;
+  .reia-topbar-marca {{
+      color: {AZUL}; font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.35rem; font-weight: 500; letter-spacing: -0.025em;
   }}
-  .reia-marca {{
-      color: {AZUL}; font-size: 1.15rem; font-weight: 750;
-      letter-spacing: 0.03em;
+  .reia-topbar-subtitulo {{ color: {GRIS}; font-size: 0.72rem; margin-top: 0.1rem; }}
+  .reia-usuario {{ text-align: right; line-height: 1.35; font-size: 0.78rem; }}
+  .reia-usuario strong, .reia-usuario span {{ display: block; }}
+  .reia-usuario span {{ color: {GRIS}; font-size: 0.7rem; }}
+  .st-key-reia-mobile-topbar, .st-key-reia-mobile-menu {{ display: none; }}
+  .st-key-reia-desktop-topbar [data-testid="stHorizontalBlock"] {{
+      padding: 0.2rem 0 0.75rem; border-bottom: 1px solid {BORDE};
+      margin-bottom: 1.1rem; align-items: center;
   }}
-  .reia-subtitulo {{
-      color: {GRIS}; font-size: 0.84rem; margin-top: 0.3rem;
+  @media (max-width: 767px) {{
+      body:not(:has(#fondo-video)) [data-testid="stSidebar"] {{ display: none !important; }}
+      .st-key-reia-desktop-topbar {{ display: none !important; }}
+      .st-key-reia-mobile-topbar {{
+          display: block !important; padding: 0.15rem 0 0.7rem;
+          border-bottom: 1px solid {BORDE}; margin-bottom: 1rem;
+      }}
+      .st-key-reia-mobile-menu {{
+          display: block !important; max-height: 62vh; overflow-y: auto;
+          background: #FFFFFF; border: 1px solid {BORDE};
+          border-radius: 12px; padding: 0.8rem; margin-bottom: 1rem;
+      }}
+      .st-key-reia-mobile-menu [data-testid="stButton"] button {{
+          justify-content: flex-start; text-align: left; border: 0 !important;
+          border-radius: 7px; background: transparent; color: {GRIS};
+          font-weight: 450;
+      }}
+      .st-key-reia-mobile-menu [data-testid="stButton"] button p {{ text-align: left; }}
+      .st-key-reia-mobile-menu [data-testid="stBaseButton-primary"] {{
+          background: #F1EFEC !important; color: {TINTA} !important; font-weight: 650;
+      }}
+      [data-testid="stMainBlockContainer"], [data-testid="stAppViewBlockContainer"] {{
+          padding: 0.65rem 0.85rem 1rem !important;
+      }}
+      .reia-topbar-subtitulo {{ font-size: 0.62rem; }}
   }}
   /* Los paneles y los bloques de preguntas deben ser legibles en móvil. */
   [data-testid="stSegmentedControl"] button {{ border-radius: 9px; }}

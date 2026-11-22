@@ -77,7 +77,13 @@ def iniciar(datos):
 
 
 def cerrar():
-    for clave in ("sesion", "lote_resultado", "lab_resultado", "lab_datos", "lab_etapa", "lab_firma_archivo", "ultima_estimacion", "conversacion"):
+    claves_sesion = (
+        "sesion", "lote_resultado", "lab_resultado", "lab_datos", "lab_etapa",
+        "lab_firma_archivo", "ultima_estimacion", "conversacion",
+        "cliente_seccion", "area_principal", "admin_seccion", "reia_pagina",
+        "reia_menu_abierto",
+    )
+    for clave in claves_sesion:
         st.session_state.pop(clave, None)
 
 
