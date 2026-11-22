@@ -1,0 +1,22 @@
+# Finales de linea.
+#
+# El proyecto se escribe en Windows pero se ejecuta en Linux: el servidor es
+# Ubuntu y la imagen de Docker tambien. Un archivo con finales de linea de
+# Windows hace que bash falle con un mensaje que no dice nada util
+# ("$'\r': command not found") y que el Dockerfile se rompa en la primera
+# instruccion. Por eso todo lo que Linux tiene que leer se guarda con LF.
+
+* text=auto eol=lf
+
+# Binarios: que git no los toque nunca.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.mp4 binary
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.joblib binary
+*.npy binary
+*.ico binary
