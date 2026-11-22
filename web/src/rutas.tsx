@@ -1,6 +1,8 @@
 import type { ComponentType } from 'react'
+import { Estimar } from './paginas/Estimar'
 import { Fases } from './paginas/Fases'
 import { Guia } from './paginas/Guia'
+import { PasoAPaso } from './paginas/PasoAPaso'
 
 /**
  * El registro de pantallas.
@@ -53,6 +55,20 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Empezar aquí',
     permiso: 'Las 12 fases',
     Componente: Fases,
+  },
+  {
+    ruta: 'estimar',
+    titulo: 'Estimar un paciente',
+    grupo: 'Trabajar',
+    permiso: 'Estimar riesgo',
+    Componente: Estimar,
+  },
+  {
+    ruta: 'paso-a-paso',
+    titulo: 'El cálculo paso a paso',
+    grupo: 'Trabajar',
+    permiso: 'Paso a paso',
+    Componente: PasoAPaso,
   },
 ]
 

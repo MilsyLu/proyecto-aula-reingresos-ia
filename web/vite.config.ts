@@ -10,7 +10,13 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+      // El puerto de la API en desarrollo. Se puede cambiar sin tocar el
+      // codigo: PUERTO_API=8002 npm run dev. Sirve cuando Windows deja un
+      // socket tomado por un proceso que ya murio y el puerto no se libera.
+      '/api': {
+        target: `http://127.0.0.1:${process.env.PUERTO_API ?? 8001}`,
+        changeOrigin: true,
+      },
     },
   },
   build: {

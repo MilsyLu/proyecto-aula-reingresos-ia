@@ -11,7 +11,26 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
-import streamlit as st
+
+# Este módulo lo usan dos aplicaciones: la de Streamlit y la API de FastAPI que
+# sirve el front de React. La segunda no instala Streamlit —no tendría sentido
+# cargar medio framework de interfaz en un servidor— así que el caché se elige
+# según quién esté importando.
+#
+# Hay una diferencia real entre los dos y conviene tenerla presente:
+# `st.cache_data` devuelve una copia en cada llamada, `lru_cache` devuelve
+# siempre el mismo objeto. Quien reciba un DataFrame de aquí y vaya a
+# modificarlo debe copiarlo primero, o se lo estará cambiando a todos.
+try:
+    import streamlit as st
+
+    cache_datos = st.cache_data(show_spinner=False)
+    cache_recurso = st.cache_resource(show_spinner=False)
+except ModuleNotFoundError:
+    from functools import lru_cache
+
+    cache_datos = lru_cache(maxsize=None)
+    cache_recurso = lru_cache(maxsize=None)
 
 BASE = Path(__file__).resolve().parent.parent
 MODELO_RUTA = BASE / "models" / "gradient_boosting_ajustado.joblib"
@@ -26,12 +45,12 @@ GRIS = "#5A6472"
 TINTA = "#15202B"
 
 
-@st.cache_resource(show_spinner=False)
+@cache_recurso
 def cargar_modelo():
     return joblib.load(MODELO_RUTA)
 
 
-@st.cache_data(show_spinner=False)
+@cache_datos
 def cargar_columnas():
     """Las 50 variables que espera el modelo, más el valor típico de cada una."""
     cfg = json.loads((Path(__file__).resolve().parent / "valores_por_defecto.json")
@@ -39,24 +58,24 @@ def cargar_columnas():
     return cfg["numericas"], cfg["categoricas"], cfg["por_defecto"]
 
 
-@st.cache_data(show_spinner=False)
+@cache_datos
 def umbral_oficial():
     return json.loads((REPORTES / "umbral_elegido.json")
                       .read_text(encoding="utf-8"))["umbral"]
 
 
-@st.cache_data(show_spinner=False)
+@cache_datos
 def cargar_tabla(nombre):
     return pd.read_csv(REPORTES / nombre)
 
 
-@st.cache_data(show_spinner=False)
+@cache_datos
 def predicciones_prueba():
     """Las 19.870 hospitalizaciones del conjunto de prueba, ya puntuadas."""
     return pd.read_csv(REPORTES / "predicciones_prueba.csv")
 
 
-@st.cache_data(show_spinner=False)
+@cache_datos
 def metricas_finales():
     """Las cifras oficiales del informe, leídas del CSV en vez de escritas a mano."""
     df = cargar_tabla("metricas_04_final.csv").set_index("conjunto")
@@ -90,7 +109,7 @@ def metricas_en(df, umbral):
     }
 
 
-@st.cache_data(show_spinner=False)
+@cache_datos
 def ganancia_por_tramo():
     """Cuánto concentra el riesgo el modelo según a cuánta gente se llame.
 
