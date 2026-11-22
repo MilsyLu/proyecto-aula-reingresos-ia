@@ -1,0 +1,46 @@
+# Caddy delante de ReingresaIA.
+#
+# Pide y renueva el certificado solo, sin intervencion. Para eso necesita que
+# los puertos 80 y 443 esten abiertos: el 443 para servir, y el 80 porque es
+# por donde Let's Encrypt comprueba que el dominio apunta aqui.
+
+{$DOMINIO} {
+	encode zstd gzip
+
+	# Cabeceras de seguridad. No son adorno: la aplicacion tiene inicio de
+	# sesion, y sin esto la cookie viaja con menos proteccion de la debida.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Los archivos con huella en el nombre (index-DhWhFFcV.js) no cambian
+	# nunca: se pueden guardar un ano. El index.html si cambia en cada
+	# despliegue, asi que ese no se guarda.
+	@conHuella path_regexp huella ^/assets/.+-[A-Za-z0-9_-]{8,}\.(js|css)$
+	header @conHuella Cache-Control "public, max-age=31536000, immutable"
+
+	@index path /
+	header @index Cache-Control "no-cache"
+
+	reverse_proxy aplicacion:7860 {
+		# El entrenamiento en vivo transmite durante minutos sobre una sola
+		# conexion. Con el valor por defecto, Caddy la cortaria a la mitad.
+		flush_interval -1
+		transport http {
+			read_timeout 10m
+			write_timeout 10m
+		}
+	}
+
+	log {
+		output file /data/acceso.log {
+			roll_size 10mb
+			roll_keep 3
+		}
+		format json
+	}
+}

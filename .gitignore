@@ -27,3 +27,6 @@ desktop.ini
 # front de React
 web/node_modules/
 web/dist/
+
+# despliegue: la clave de sesion no se versiona
+despliegue/.env

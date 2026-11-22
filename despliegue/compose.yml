@@ -1,0 +1,68 @@
+# ReingresaIA en el servidor de Oracle.
+#
+# Convive con RustDesk, que lleva semanas corriendo en el mismo servidor y NO
+# se toca: son contenedores aparte, en su propia red, y no comparten puertos.
+# RustDesk usa 21115-21119; esto usa 80 y 443.
+#
+#   cd ~/reingresaia/despliegue
+#   sudo docker compose up -d --build
+
+name: reingresaia
+
+services:
+  aplicacion:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: reingresaia
+    restart: unless-stopped
+    # Sin puertos publicados: solo Caddy habla con ella, por la red interna.
+    # Asi la aplicacion nunca queda expuesta sin HTTPS por delante.
+    expose:
+      - '7860'
+    environment:
+      # La clave firma la cookie de sesion. Se genera una vez con
+      # preparar.sh y vive en .env, que no se versiona.
+      REINGRESAIA_CLAVE_SESION: ${REINGRESAIA_CLAVE_SESION:?falta la clave de sesion}
+      # Caddy termina el TLS, asi que la cookie puede exigir HTTPS.
+      REINGRESAIA_HTTPS: 'si'
+    networks:
+      - interna
+    # Un servidor de un solo nucleo: si la aplicacion se desboca, el resto del
+    # servidor (RustDesk incluido) tiene que seguir respondiendo.
+    cpus: 0.85
+    mem_limit: 3g
+    healthcheck:
+      test: ['CMD-SHELL', 'python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen(''http://127.0.0.1:7860/api/salud'', timeout=5).status==200 else 1)"']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: reingresaia-caddy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-datos:/data
+      - caddy-config:/config
+    environment:
+      DOMINIO: ${DOMINIO:?falta el dominio}
+    networks:
+      - interna
+    depends_on:
+      - aplicacion
+
+networks:
+  interna:
+    name: reingresaia-interna
+
+volumes:
+  # Aqui vive el certificado. Si se borra, Let's Encrypt lo vuelve a emitir,
+  # pero hay limites de cuantas veces al dia: mejor no borrarlo.
+  caddy-datos:
+  caddy-config:
