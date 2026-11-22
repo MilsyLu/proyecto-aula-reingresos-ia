@@ -269,16 +269,12 @@ def _corre(contenido: bytes, nombre: str, particion: str) -> Iterator[bytes]:
                      texto=(
                          "La diferencia entre las dos columnas es cuánto se aprendió los datos "
                          "de memoria. Un modelo que brilla en entrenamiento y cae en validación "
-                         "va a fallar con pacientes nuevos.
-
-"
+                         "va a fallar con pacientes nuevos. "
                          f"Esta brecha de {brecha:.4f} es bastante mayor que la del modelo "
                          "oficial, que es 0,0538, y la razón vale la pena: aquí se entrena con "
                          "una fracción de los datos y sin parada temprana, que son justamente "
                          "las dos cosas que evitan que un modelo se memorice. Con menos datos, "
-                         "cualquier modelo se los aprende más fácil.
-
-"
+                         "cualquier modelo se los aprende más fácil. "
                          "Por eso en el proyecto oficial se eligió la configuración de menor "
                          "brecha y no la de mejor puntaje."
                      ))
