@@ -213,7 +213,7 @@ export function Cohorte() {
           gap: 26px; margin-top: 26px; max-width: 760px;
         }
         .cifra-bloque-valor {
-          font-family: var(--font-serif); font-weight: 300; font-size: 34px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 34px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }

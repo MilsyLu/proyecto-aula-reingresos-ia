@@ -297,7 +297,7 @@ export function Archivo() {
           gap: 26px; margin-top: 32px;
         }
         .dato-a-v {
-          font-family: var(--font-serif); font-weight: 300; font-size: 32px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 32px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }
@@ -320,7 +320,7 @@ export function Archivo() {
         }
         .tabla-a th.n, .tabla-a td.n { text-align: right; padding-right: 14px; }
         .tabla-a td { padding: 11px 14px 11px 0; border-bottom: 1px solid var(--filete); font-size: 14px; }
-        .tabla-a .puesto { font-family: var(--font-serif); color: var(--apagado); }
+        .tabla-a .puesto { font-family: var(--font-nunito); color: var(--apagado); }
         .barra-a { width: 120px; }
         .barra-a i { display: block; height: 5px; border-radius: 999px; background: var(--color-dato-3); }
         .etiqueta {

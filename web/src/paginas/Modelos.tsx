@@ -304,7 +304,7 @@ export function Modelos() {
           gap: 28px; margin-top: 28px;
         }
         .trampa-valor {
-          font-family: var(--font-serif); font-weight: 300; font-size: 40px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 40px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }
@@ -349,7 +349,7 @@ export function Modelos() {
         .duelo-caja .brecha {
           padding-top: 11px; border-top: 1px solid var(--filete);
         }
-        .duelo-caja .brecha dd { font-size: 20px; font-family: var(--font-serif); font-weight: 300; }
+        .duelo-caja .brecha dd { font-size: 20px; font-family: var(--font-nunito); font-weight: 900; }
       `}</style>
     </div>
   )

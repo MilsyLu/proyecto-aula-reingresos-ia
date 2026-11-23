@@ -299,14 +299,14 @@ export function Desempeno() {
         .meta.falla .meta-estado { color: var(--color-dato-4); }
 
         .cifras-d { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 26px; margin-top: 26px; }
-        .dato-d-v { font-family: var(--font-serif); font-weight: 300; font-size: 32px; letter-spacing: -0.02em; color: var(--tinta-fuerte); font-variant-numeric: tabular-nums lining-nums; }
+        .dato-d-v { font-family: var(--font-nunito); font-weight: 900; font-size: 32px; letter-spacing: -0.02em; color: var(--tinta-fuerte); font-variant-numeric: tabular-nums lining-nums; }
         .dato-d-n { margin-top: 7px; font-size: 12px; line-height: 1.5; color: var(--apagado); }
 
         .matriz { margin-top: 36px; padding: 24px; background: var(--superficie); border-radius: var(--radius-tarjeta); }
         .matriz-rejilla { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
         .celda-m { border: 1px solid var(--filete); border-radius: var(--radius-entrada); padding: 16px; }
         .celda-m.bien { border-color: var(--borde-suave); }
-        .celda-m-n { font-family: var(--font-serif); font-weight: 300; font-size: 28px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; }
+        .celda-m-n { font-family: var(--font-nunito); font-weight: 900; font-size: 28px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; }
         .celda-m-t { margin-top: 6px; font-size: 12.5px; color: var(--apagado); }
 
         .tabla-envoltura { overflow-x: auto; margin-top: 24px; }

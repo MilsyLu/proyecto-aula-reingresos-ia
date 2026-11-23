@@ -253,7 +253,7 @@ export function PasoAPaso() {
         }
         .paso:last-child { border-bottom: 1px solid var(--filete); }
         .paso-numero {
-          font-family: var(--font-serif); font-weight: 300; font-size: 30px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 30px;
           line-height: 1.1; letter-spacing: -0.02em; color: var(--apagado);
           font-variant-numeric: tabular-nums lining-nums;
         }
@@ -282,7 +282,7 @@ export function PasoAPaso() {
           gap: 24px; margin-top: 22px;
         }
         .mini-cifra-valor {
-          font-family: var(--font-serif); font-weight: 300; font-size: 28px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 28px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }

@@ -244,7 +244,7 @@ export function MapaCalor() {
         .celda:hover, .celda.activa { border-color: var(--tinta-fuerte); }
         .celda.activa { transform: scale(1.03); }
         .celda-tasa {
-          font-family: var(--font-serif); font-weight: 300; font-size: 19px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 19px;
           letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums;
         }
         .celda-casos { font-size: 10.5px; opacity: .74; font-variant-numeric: tabular-nums lining-nums; }
@@ -261,7 +261,7 @@ export function MapaCalor() {
         }
         .detalle-previas { margin-top: 6px; font-size: 13px; color: var(--apagado); line-height: 1.5; }
         .detalle-tasa {
-          font-family: var(--font-serif); font-weight: 300; font-size: 46px; line-height: 1;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 46px; line-height: 1;
           letter-spacing: -0.02em; margin-top: 16px; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }

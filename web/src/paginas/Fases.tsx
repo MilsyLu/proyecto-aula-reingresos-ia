@@ -162,8 +162,8 @@ export function Fases() {
         }
         .fase:last-child { border-bottom: 1px solid var(--filete); }
         .fase-numero {
-          font-family: var(--font-serif);
-          font-weight: 300;
+          font-family: var(--font-nunito);
+          font-weight: 900;
           font-size: 30px;
           line-height: 1.1;
           letter-spacing: -0.02em;
@@ -180,8 +180,8 @@ export function Fases() {
         }
         .fase-dato { text-align: right; }
         .fase-cifra {
-          font-family: var(--font-serif);
-          font-weight: 300;
+          font-family: var(--font-nunito);
+          font-weight: 900;
           font-size: 30px;
           line-height: 1.1;
           letter-spacing: -0.02em;

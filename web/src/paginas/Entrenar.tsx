@@ -346,7 +346,7 @@ export function Entrenar() {
         }
         .fase-e.lista { opacity: 1; }
         .fase-n {
-          font-family: var(--font-serif); font-size: 17px; color: var(--apagado);
+          font-family: var(--font-nunito); font-size: 17px; color: var(--apagado);
           font-variant-numeric: tabular-nums lining-nums;
         }
         .fase-t { font-size: 14.5px; }
@@ -355,7 +355,7 @@ export function Entrenar() {
           color: var(--apagado); margin-top: 4px; line-height: 1.5;
         }
         .fase-c {
-          text-align: right; font-family: var(--font-serif); font-weight: 300;
+          text-align: right; font-family: var(--font-nunito); font-weight: 900;
           font-size: 21px; letter-spacing: -0.02em;
           font-variant-numeric: tabular-nums lining-nums;
         }
@@ -368,7 +368,7 @@ export function Entrenar() {
         .leccion h3 { font-size: 24px; margin-top: 8px; max-width: 26ch; }
         .cifras-l { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 24px; margin-top: 22px; }
         .cifra-l-v {
-          font-family: var(--font-serif); font-weight: 300; font-size: 34px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 34px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }
@@ -394,7 +394,7 @@ export function Entrenar() {
         }
         .duelo-e { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 28px; margin-top: 18px; }
         .duelo-v {
-          font-family: var(--font-serif); font-weight: 300; font-size: 40px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 40px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }

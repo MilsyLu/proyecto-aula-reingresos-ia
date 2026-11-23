@@ -171,7 +171,7 @@ export function Importancia() {
           gap: 26px; margin-top: 40px;
         }
         .resumen-i-v {
-          font-family: var(--font-serif); font-weight: 300; font-size: 38px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 38px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }
@@ -184,7 +184,7 @@ export function Importancia() {
           padding-block: 11px; border-bottom: 1px solid var(--filete);
         }
         .puesto-i {
-          font-family: var(--font-serif); font-size: 15px; color: var(--apagado);
+          font-family: var(--font-nunito); font-size: 15px; color: var(--apagado);
           font-variant-numeric: tabular-nums lining-nums;
         }
         .nombre-i { font-size: 14px; }

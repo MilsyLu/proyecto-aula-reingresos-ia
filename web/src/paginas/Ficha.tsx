@@ -216,7 +216,7 @@ export function Ficha() {
         .tabla-f .explica { font-size: 12.5px; color: var(--apagado); line-height: 1.55; }
 
         .cifras-f { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 24px; margin-top: 24px; }
-        .dato-f-v { font-family: var(--font-serif); font-weight: 300; font-size: 30px; letter-spacing: -0.02em; color: var(--tinta-fuerte); font-variant-numeric: tabular-nums lining-nums; }
+        .dato-f-v { font-family: var(--font-nunito); font-weight: 900; font-size: 30px; letter-spacing: -0.02em; color: var(--tinta-fuerte); font-variant-numeric: tabular-nums lining-nums; }
         .dato-f-n { margin-top: 6px; font-size: 11.5px; line-height: 1.5; color: var(--apagado); }
 
         .prohibiciones { margin: 20px 0 0; padding-left: 20px; display: grid; gap: 14px; max-width: 72ch; }

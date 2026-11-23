@@ -235,17 +235,17 @@ export function Techo() {
         .nota-t { margin-top: 24px; font-size: 12.5px; line-height: 1.7; color: var(--apagado); max-width: 76ch; }
 
         .cifras-t { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 26px; margin-top: 28px; }
-        .dato-t-v { font-family: var(--font-serif); font-weight: 300; font-size: 40px; letter-spacing: -0.02em; color: var(--tinta-fuerte); font-variant-numeric: tabular-nums lining-nums; }
+        .dato-t-v { font-family: var(--font-nunito); font-weight: 900; font-size: 40px; letter-spacing: -0.02em; color: var(--tinta-fuerte); font-variant-numeric: tabular-nums lining-nums; }
         .dato-t-n { margin-top: 7px; font-size: 12px; line-height: 1.5; color: var(--apagado); }
 
         .controles { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 26px; }
         .control { border: 1px solid var(--filete); border-radius: var(--radius-tarjeta); padding: 22px; }
-        .control-v { font-family: var(--font-serif); font-weight: 300; font-size: 34px; margin-top: 10px; letter-spacing: -0.02em; color: var(--tinta-fuerte); font-variant-numeric: tabular-nums lining-nums; }
+        .control-v { font-family: var(--font-nunito); font-weight: 900; font-size: 34px; margin-top: 10px; letter-spacing: -0.02em; color: var(--tinta-fuerte); font-variant-numeric: tabular-nums lining-nums; }
         .control p:last-child { margin-top: 12px; font-size: 13px; line-height: 1.65; color: var(--apagado); }
         .control strong { font-weight: 600; color: var(--tinta); }
 
         .curva-sub { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 20px; margin-top: 26px; }
-        .curva-v { font-family: var(--font-serif); font-weight: 300; font-size: 24px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; }
+        .curva-v { font-family: var(--font-nunito); font-weight: 900; font-size: 24px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; }
         .curva-sub p { margin-top: 5px; font-size: 11.5px; color: var(--apagado); }
 
         .tabla-envoltura { overflow-x: auto; margin-top: 26px; }

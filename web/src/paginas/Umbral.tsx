@@ -212,7 +212,7 @@ export function Umbral() {
 
         .cifras-u { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 26px; margin-top: 24px; }
         .dato-u-v {
-          font-family: var(--font-serif); font-weight: 300; font-size: 38px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 38px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }
@@ -221,7 +221,7 @@ export function Umbral() {
         .costos { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 24px; }
         .costo { border: 1px solid var(--filete); border-radius: var(--radius-tarjeta); padding: 22px; }
         .costo-v {
-          font-family: var(--font-serif); font-weight: 300; font-size: 36px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 36px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }

@@ -248,7 +248,7 @@ export function Equidad() {
         .paridad { border: 1px solid var(--filete); border-radius: var(--radius-tarjeta); padding: 20px; }
         .paridad.falla { border-color: var(--color-dato-3); }
         .paridad-v {
-          font-family: var(--font-serif); font-weight: 300; font-size: 38px; margin-top: 10px;
+          font-family: var(--font-nunito); font-weight: 900; font-size: 38px; margin-top: 10px;
           letter-spacing: -0.02em; color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
         }
