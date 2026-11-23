@@ -301,10 +301,13 @@
 }
 
 .zona-app {
-  /* --- superficies --- */
-  --lienzo: #f7f8ff;
+  /* --- superficies ---
+     El lienzo es blanco, no tintado. Las tarjetas no necesitan un fondo de
+     color detras para verse: se separan con su filete de un pixel y su sombra
+     suave, que es justo lo que hace el diseno original. */
+  --lienzo: #ffffff;
   --superficie: #ffffff;
-  --superficie-2: #f1f2fa;
+  --superficie-2: #f4f5fa;
   --tinta: #22254c;
   --tinta-fuerte: #181b3d;
   --apagado: #73799a;
@@ -423,7 +426,6 @@
   --degradado: linear-gradient(110deg, #00a99d, #0bb3a4);
   --sombra-acento: 0 4px 11px #00a99d3d;
   --relleno: #00a99d;
-  --lienzo: #f3faf8;
 }
 
 [data-tema='oscuro'] .zona-app.zona-modelo {
@@ -434,7 +436,6 @@
   --acento-suave: #183b3a;
   --degradado: linear-gradient(110deg, #0e8d83, #12a89b);
   --relleno: #0e8d83;
-  --lienzo: #121c25;
 }
 
 /* ---------------------------------------------------------------------------
