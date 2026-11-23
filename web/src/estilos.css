@@ -2630,3 +2630,198 @@
 @media (width < 1000px) {
   .zona-app .asistente-columnas { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ---------------------------------------------------------------------------
+   «El cálculo, paso a paso»: los ocho pasos como pestañas
+
+   Antes iban apilados y era una pagina larguisima: para llegar a los arboles,
+   que es lo que hay que ensenar, habia que bajar y bajar. Asi se ve uno a la
+   vez y la pantalla entra sin scroll.
+   --------------------------------------------------------------------------- */
+
+.zona-app .calculo { display: grid; gap: 13px; }
+
+/* Las cuatro cifras de arriba. No son decoracion: cada una lleva al paso donde
+   se explica, que es lo que hace que se puedan pulsar. */
+.zona-app .calculo-resumen {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.zona-app .resumen-ficha {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 60px;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid var(--filete);
+  border-radius: 12px;
+  background: var(--superficie);
+  color: var(--tinta);
+  cursor: pointer;
+  box-shadow: var(--sombra-1);
+  transition: border-color .16s ease, background .16s ease, transform .16s ease;
+}
+
+.zona-app .resumen-ficha:hover {
+  border-color: var(--teal);
+  background: var(--teal-suave);
+  transform: translateY(-1px);
+}
+
+.zona-app .resumen-ficha > strong {
+  font-family: var(--font-nunito);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--teal-hondo);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .resumen-ficha > span {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--apagado);
+}
+
+.zona-app .resumen-ficha.es-resultado > strong { color: var(--acento-texto); }
+
+/* --- la barra de progreso --- */
+
+.zona-app .calculo-progreso {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--apagado);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.zona-app .calculo-cuenta {
+  font-family: var(--font-nunito);
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--tinta-fuerte);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .calculo-cuenta i { font-style: normal; font-size: 11px; color: var(--apagado); }
+
+.zona-app .calculo-riel {
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--superficie-2);
+  overflow: hidden;
+}
+
+.zona-app .calculo-riel i {
+  display: block;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--teal), #5cc8ad);
+  transition: width .25s ease;
+}
+
+.zona-app .calculo-nombre { min-width: 118px; text-align: right; }
+
+/* --- las pestañas y el panel --- */
+
+.zona-app .calculo-cuerpo {
+  display: grid;
+  grid-template-columns: minmax(205px, 0.3fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.zona-app .calculo-pestanas {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 7px;
+  border: 1px solid var(--filete);
+  border-radius: 14px;
+  background: var(--superficie);
+}
+
+.zona-app .pestana {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 9px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  text-align: left;
+  color: var(--tinta);
+  cursor: pointer;
+  font-family: var(--font-dm);
+  transition: background .16s ease, border-color .16s ease, color .16s ease;
+}
+
+.zona-app .pestana:hover { background: var(--superficie-2); border-color: var(--filete); }
+
+.zona-app .pestana.activa {
+  background: var(--teal-suave);
+  border-color: #c6e9e2;
+  color: var(--teal-hondo);
+}
+
+[data-tema='oscuro'] .zona-app .pestana.activa { border-color: #2e665c; }
+
+.zona-app .pestana-numero {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 8px;
+  background: var(--superficie-2);
+  color: var(--apagado);
+  font-family: var(--font-nunito);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.zona-app .pestana.activa .pestana-numero { background: var(--teal); color: #ffffff; }
+
+.zona-app .pestana-nombre { font-size: 12px; font-weight: 800; line-height: 1.25; }
+
+.zona-app .pestana-pista {
+  margin-top: 3px;
+  color: var(--apagado);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.zona-app .pestana.activa .pestana-pista { color: var(--teal-hondo); opacity: .85; }
+
+.zona-app .calculo-panel {
+  min-width: 0;
+  padding: 20px 22px;
+  border: 1px solid var(--filete);
+  border-radius: 14px;
+  background: var(--superficie);
+  box-shadow: var(--sombra-2);
+  animation: entrar-pantalla .35s cubic-bezier(.22,.9,.3,1) both;
+}
+
+@media (width < 1000px) {
+  .zona-app .calculo-resumen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .zona-app .calculo-cuerpo { grid-template-columns: minmax(0, 1fr); }
+  /* En estrecho las pestañas pasan a una tira horizontal que se desliza. */
+  .zona-app .calculo-pestanas {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(130px, 1fr);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .zona-app .pestana { scroll-snap-align: start; }
+}

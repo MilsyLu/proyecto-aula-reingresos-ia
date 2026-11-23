@@ -74,9 +74,13 @@ export function PasoAPaso() {
       {fallo && <p style={{ marginTop: 24, color: 'var(--color-dato-4)' }}>{fallo}</p>}
       {!t && !fallo && <p className="antetitulo" style={{ marginTop: 32 }}>Calculando</p>}
 
-      {t && (
-        <div className="pasos">
-          <Paso n={1} titulo="Lo que se escribió">
+      {t && <Explorador trazado={t} pasos={[
+            {
+              nombre: 'Entrada',
+              titulo: "Lo que se escribió",
+              pista: '15 campos',
+              cuerpo: (
+                <>
             <TextoRevelado className="paso-texto" porPalabra={0.014}>
               Quince campos. Los que están en su valor típico no mueven el resultado: el modelo
               los ve, pero no encuentra en ellos nada que lo aparte de la tasa base.
@@ -89,9 +93,16 @@ export function PasoAPaso() {
                 </span>
               ))}
             </div>
-          </Paso>
+                </>
+              ),
+            },
 
-          <Paso n={2} titulo="Las cincuenta columnas">
+            {
+              nombre: 'Columnas',
+              titulo: "Las cincuenta columnas",
+              pista: 'Cómo se completa',
+              cuerpo: (
+                <>
             <TextoRevelado className="paso-texto" porPalabra={0.014}>
               El modelo no espera quince datos sino cincuenta. Las que el formulario no pregunta
               se rellenan con el valor más frecuente de la cohorte, y cinco se calculan a partir
@@ -102,9 +113,16 @@ export function PasoAPaso() {
               <Dato valor={entero(t.columnas.resumen.calculadas)} nota="calculadas a partir de las otras" />
               <Dato valor={entero(t.columnas.resumen.tipicas)} nota="con el valor típico de la cohorte" />
             </div>
-          </Paso>
+                </>
+              ),
+            },
 
-          <Paso n={3} titulo="Los vacíos">
+            {
+              nombre: 'Datos ausentes',
+              titulo: "Los vacíos",
+              pista: 'Qué pasa si falta',
+              cuerpo: (
+                <>
             <TextoRevelado className="paso-texto" porPalabra={0.014}>
               Lo que llega vacío no se descarta ni se inventa: se marca como Ausente, que es una
               categoría que el modelo aprendió durante el entrenamiento. Para este paciente no
@@ -119,9 +137,16 @@ export function PasoAPaso() {
                 ))}
               </div>
             )}
-          </Paso>
+                </>
+              ),
+            },
 
-          <Paso n={4} titulo="De palabras a números">
+            {
+              nombre: 'Codificación',
+              titulo: "De palabras a números",
+              pista: 'De texto a número',
+              cuerpo: (
+                <>
             <TextoRevelado className="paso-texto" porPalabra={0.014}>
               Las treinta y tres columnas de texto se convierten en números, cada categoría al
               suyo. Si llegara una que el modelo no vio en el entrenamiento recibiría un menos
@@ -142,9 +167,16 @@ export function PasoAPaso() {
                   </span>
                 ))}
             </div>
-          </Paso>
+                </>
+              ),
+            },
 
-          <Paso n={5} titulo="El punto de partida">
+            {
+              nombre: 'Tasa base',
+              titulo: "El punto de partida",
+              pista: 'El punto de partida',
+              cuerpo: (
+                <>
             <TextoRevelado className="paso-texto" porPalabra={0.014}>
               Antes del primer árbol el modelo ya dice algo, y dice la verdad del conjunto: la
               proporción de pacientes que reingresa. De ahí arranca todo, y es la razón por la
@@ -154,9 +186,16 @@ export function PasoAPaso() {
               <Dato valor={numero(t.partida.log_odds, 4)} nota="en log-odds, como lo calcula por dentro" />
               <Dato valor={porcentaje(t.partida.probabilidad)} nota="la misma cifra, en probabilidad" />
             </div>
-          </Paso>
+                </>
+              ),
+            },
 
-          <Paso n={6} titulo={`Los ${t.arboles.total} árboles`} destacado>
+            {
+              nombre: 'Árboles',
+              titulo: `Los ${t.arboles.total} árboles`,
+              pista: 'Aportes al cálculo',
+              cuerpo: (
+                <>
             <TextoRevelado className="paso-texto" porPalabra={0.014}>
               Cada árbol mueve la cifra un poco, hacia arriba o hacia abajo. No son ciento
               treinta y cinco decisiones independientes sino una sola subida, y la mayor parte
@@ -195,9 +234,16 @@ export function PasoAPaso() {
                 </tbody>
               </table>
             </details>
-          </Paso>
+                </>
+              ),
+            },
 
-          <Paso n={7} titulo="De log-odds a probabilidad">
+            {
+              nombre: 'Resultado',
+              titulo: "De log-odds a probabilidad",
+              pista: 'La probabilidad',
+              cuerpo: (
+                <>
             <TextoRevelado className="paso-texto" porPalabra={0.014}>
               La suma de todos los árboles da un número en log-odds, que no significa nada para
               nadie. La función logística lo convierte en una probabilidad, que sí.
@@ -211,9 +257,16 @@ export function PasoAPaso() {
                 ? `Coincide con lo que responde el modelo (${numero(t.final.del_modelo * 100, 4)} %). La reconstrucción es exacta.`
                 : 'La reconstrucción no coincide con el modelo. Algo se rompió en el preprocesamiento.'}
             </p>
-          </Paso>
+                </>
+              ),
+            },
 
-          <Paso n={8} titulo="El umbral">
+            {
+              nombre: 'Umbral',
+              titulo: "El umbral",
+              pista: 'Prioridad de llamada',
+              cuerpo: (
+                <>
             <TextoRevelado className="paso-texto" porPalabra={0.014}>
               La última decisión no es del modelo sino del programa. El umbral dice a cuánta
               gente alcanza a llamar el equipo de seguimiento, y por eso lo fija la coordinación
@@ -230,9 +283,10 @@ export function PasoAPaso() {
                 nota={t.umbral.supera ? 'entra en la lista de llamadas' : 'queda fuera de la lista'}
               />
             </div>
-          </Paso>
-        </div>
-      )}
+                </>
+              ),
+            },
+      ]} />}
 
       <style>{`
         .editor-paciente {
@@ -312,29 +366,6 @@ export function PasoAPaso() {
   )
 }
 
-function Paso({
-  n,
-  titulo,
-  destacado = false,
-  children,
-}: {
-  n: number
-  titulo: string
-  destacado?: boolean
-  children: React.ReactNode
-}) {
-  return (
-    <section className="paso">
-      <div className="paso-numero" aria-hidden="true">
-        {String(n).padStart(2, '0')}
-      </div>
-      <div>
-        <h2 style={destacado ? { color: 'var(--tinta-fuerte)' } : undefined}>{titulo}</h2>
-        {children}
-      </div>
-    </section>
-  )
-}
 
 function Dato({ valor, nota }: { valor: string; nota: string }) {
   return (
@@ -437,5 +468,117 @@ function Curva({ trazado }: { trazado: Trazado }) {
         <span>árbol {trazado.arboles.total}</span>
       </figcaption>
     </figure>
+  )
+}
+
+interface PasoDef {
+  nombre: string
+  titulo: string
+  pista: string
+  cuerpo: React.ReactNode
+}
+
+/**
+ * Los ocho pasos como pestañas, no apilados.
+ *
+ * Apilados eran una página larguísima en la que había que bajar y bajar para
+ * llegar a los árboles, que es lo que de verdad hay que enseñar. Así se ve uno
+ * a la vez, se salta al que uno quiere, y la pantalla entra sin bajar.
+ *
+ * Las cuatro cifras de arriba no son decoración: cada una lleva al paso donde
+ * se explica.
+ */
+function Explorador({ trazado, pasos }: { trazado: Trazado; pasos: PasoDef[] }) {
+  const [actual, setActual] = useState(0)
+  const paso = pasos[actual]
+
+  const resumen = [
+    { valor: entero(trazado.escrito.length), nota: 'campos ingresados', va: 0 },
+    { valor: entero(trazado.columnas.detalle.length), nota: 'columnas del modelo', va: 1 },
+    { valor: entero(trazado.arboles.total), nota: 'árboles recorridos', va: 5 },
+    {
+      valor: porcentaje(trazado.final.probabilidad),
+      nota: 'probabilidad estimada',
+      va: 6,
+      resultado: true,
+    },
+  ]
+
+  return (
+    <div className="calculo">
+      <div className="calculo-resumen">
+        {resumen.map((r) => (
+          <button
+            key={r.nota}
+            type="button"
+            className={r.resultado ? 'resumen-ficha es-resultado' : 'resumen-ficha'}
+            onClick={() => setActual(r.va)}
+          >
+            <strong>{r.valor}</strong>
+            <span>{r.nota}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="calculo-progreso">
+        <span className="calculo-cuenta">
+          {String(actual + 1).padStart(2, '0')} <i>/ {String(pasos.length).padStart(2, '0')}</i>
+        </span>
+        <div className="calculo-riel" aria-hidden="true">
+          <i style={{ width: `${((actual + 1) / pasos.length) * 100}%` }} />
+        </div>
+        <span className="calculo-nombre">{paso.nombre}</span>
+      </div>
+
+      <div className="calculo-cuerpo">
+        <nav className="calculo-pestanas" role="tablist" aria-label="Etapas del cálculo">
+          {pasos.map((p, i) => (
+            <button
+              key={p.nombre}
+              type="button"
+              role="tab"
+              id={`paso-tab-${i}`}
+              aria-selected={i === actual}
+              aria-controls="paso-panel"
+              tabIndex={i === actual ? 0 : -1}
+              className={i === actual ? 'pestana activa' : 'pestana'}
+              onClick={() => setActual(i)}
+              onKeyDown={(e) => {
+                // Las flechas mueven entre pestañas, que es lo que espera
+                // cualquiera que use el teclado en una lista de pestañas.
+                if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                  e.preventDefault()
+                  const sig = (i + 1) % pasos.length
+                  setActual(sig)
+                  document.getElementById(`paso-tab-${sig}`)?.focus()
+                }
+                if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                  e.preventDefault()
+                  const ant = (i - 1 + pasos.length) % pasos.length
+                  setActual(ant)
+                  document.getElementById(`paso-tab-${ant}`)?.focus()
+                }
+              }}
+            >
+              <span className="pestana-numero">{String(i + 1).padStart(2, '0')}</span>
+              <span className="pestana-nombre">{p.titulo}</span>
+              <span className="pestana-pista">{p.pista}</span>
+            </button>
+          ))}
+        </nav>
+
+        <section
+          className="calculo-panel"
+          id="paso-panel"
+          role="tabpanel"
+          aria-labelledby={`paso-tab-${actual}`}
+          aria-live="polite"
+          tabIndex={0}
+          key={actual}
+        >
+          {paso.cuerpo}
+        </section>
+      </div>
+    </div>
   )
 }
