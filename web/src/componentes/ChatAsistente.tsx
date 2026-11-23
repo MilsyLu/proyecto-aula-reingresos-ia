@@ -38,12 +38,17 @@ function conNegrita(texto: string) {
 
 export function ChatAsistente({
   estimacion,
-  alto = 300,
+  alto,
   saludo = 'Pregúnteme por qué este paciente dio ese riesgo, qué dato lo empuja, o qué tan de fiar es la cifra.',
   compacto = false,
 }: {
   estimacion: Estimacion | null
-  /** Alto del hilo en píxeles. El panel lateral y la pantalla suelta difieren. */
+  /**
+   * Alto del hilo en píxeles. Sin él, el hilo ocupa el espacio que quede en la
+   * tarjeta: crece con la conversación y no reserva hueco vacío por si acaso.
+   * Reservarlo obligaba a bajar la página para ver lo de abajo, y eso es justo
+   * lo que no queremos.
+   */
   alto?: number
   saludo?: string
   /** El panel lateral de «Estimar» es estrecho: sin etiquetas ni campo grande. */
@@ -118,7 +123,10 @@ export function ChatAsistente({
         {disponible !== false && <span className="en-linea">Disponible</span>}
       </div>
 
-      <div className="chat-hilo" style={{ maxHeight: alto, minHeight: alto }}>
+      <div
+        className="chat-hilo"
+        style={alto ? { maxHeight: alto, minHeight: alto } : undefined}
+      >
         {disponible === false ? (
           <div className="turno de-bot">
             <div className="burbuja">

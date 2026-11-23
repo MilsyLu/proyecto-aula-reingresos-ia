@@ -2339,6 +2339,7 @@
   padding: 17px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
 }
 
 .zona-app .turno { display: flex; flex-direction: column; max-width: 88%; }
@@ -2476,8 +2477,18 @@
   display: grid;
   grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
   gap: 16px;
-  align-items: start;
+  /* Estirado, no alineado arriba: las dos columnas miden lo mismo y la
+     conversación no deja un hueco vacío debajo que obligue a bajar. */
+  align-items: stretch;
 }
+
+.zona-app .tarjeta-chat { display: flex; }
+.zona-app .tarjeta-chat .chat { flex: 1; min-height: 0; }
+
+/* Tope al hilo para que una conversación larga haga scroll DENTRO de la
+   tarjeta y nunca estire la página. Medido: con este tope la pantalla entra
+   entera incluso en un portátil de 800 px de alto. */
+.zona-app .tarjeta-chat .chat-hilo { max-height: 42vh; }
 
 /* La columna de contexto va tintada: dice «esto es de lo que estamos
    hablando», no «esto es otra cosa que leer». */

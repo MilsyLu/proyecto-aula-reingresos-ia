@@ -110,8 +110,11 @@ export function Asistente() {
           </div>
         </aside>
 
-        <div className="tarjeta">
-          <ChatAsistente estimacion={estimacion} alto={330} />
+        {/* Sin alto fijo: la tarjeta se estira hasta igualar la columna de la
+            izquierda y el hilo ocupa lo que sobre. Así las dos columnas miden
+            lo mismo y la página entra sin bajar. */}
+        <div className="tarjeta tarjeta-chat">
+          <ChatAsistente estimacion={estimacion} />
         </div>
       </div>
     </div>
