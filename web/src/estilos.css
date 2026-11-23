@@ -1011,8 +1011,11 @@
     cursor: pointer;
   }
 
+  /* En un telefono no hay tecla Ctrl: el distintivo solo ocupa sitio. */
   .zona-app .boton-buscar span,
+  .zona-app .boton-buscar kbd,
   .zona-app .boton-salir span { display: none; }
+  .zona-app .boton-buscar { padding: 8px; }
   .zona-app .cinta { height: 52px; padding: 0 12px; }
   .zona-app .lienzo-app { padding: 15px 12px 54px; }
 }
