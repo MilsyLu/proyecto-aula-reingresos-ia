@@ -693,11 +693,15 @@
 
 .zona-app {
   display: grid;
-  grid-template-columns: 252px minmax(0, 1fr);
+  grid-template-columns: var(--ancho-barra) minmax(0, 1fr);
   align-items: start;
+  --ancho-barra: 252px;
+  --alto-cinta: 56px;
+  --pad-x: 26px;
+  --pad-y: 22px;
 }
 
-.zona-app.colapsada { grid-template-columns: 74px minmax(0, 1fr); }
+.zona-app.colapsada { --ancho-barra: 74px; }
 
 .zona-app .barra {
   position: sticky;
@@ -949,7 +953,7 @@
 .zona-app .boton-salir:hover { border-color: var(--acento); color: var(--acento-texto); }
 
 .zona-app .lienzo-app {
-  padding: 22px 26px 70px;
+  padding: var(--pad-y) var(--pad-x) 70px;
   max-width: 1760px;
   min-height: calc(100vh - 56px);
 }
@@ -964,12 +968,12 @@
 }
 
 @media (width < 1100px) {
-  .zona-app .lienzo-app { padding: 18px 18px 60px; }
+  .zona-app { --pad-x: 18px; --pad-y: 18px; }
 }
 
 @media (width < 900px) {
   .zona-app,
-  .zona-app.colapsada { grid-template-columns: minmax(0, 1fr); }
+  .zona-app.colapsada { grid-template-columns: minmax(0, 1fr); --ancho-barra: 0px; --alto-cinta: 52px; }
 
   .zona-app .barra {
     position: fixed;
@@ -1023,7 +1027,7 @@
   .zona-app .boton-salir span { display: none; }
   .zona-app .boton-buscar { padding: 8px; }
   .zona-app .cinta { height: 52px; padding: 0 12px; }
-  .zona-app .lienzo-app { padding: 15px 12px 54px; }
+  .zona-app { --pad-x: 12px; --pad-y: 15px; }
 }
 
 /* ---------------------------------------------------------------------------
@@ -2180,4 +2184,338 @@
 @media (width < 1080px) {
   .zona-app .guia-portico { grid-template-columns: minmax(0, 1fr); }
   .zona-app .cabeza-nota { text-align: left; }
+}
+
+/* ---------------------------------------------------------------------------
+   «Cómo se construyó»: las doce fases
+
+   La unica pantalla de la aplicacion con fondo a sangre. Va siempre oscura,
+   en los dos temas, porque la fotografia y el orbe lo son.
+   --------------------------------------------------------------------------- */
+
+/* Se sale del relleno del lienzo con margenes negativos para ocupar la vista
+   entera. NO se usa position:fixed para el fondo: la pantalla entra con una
+   animacion de transform, y un transform en un ancestro hace que lo fijo se
+   ancle a el en vez de a la ventana. Costo un rato verlo. */
+.zona-app .fases {
+  position: relative;
+  margin: calc(var(--pad-y) * -1) calc(var(--pad-x) * -1) -70px;
+  padding: 30px var(--pad-x) 46px;
+  min-height: calc(100vh - var(--alto-cinta));
+  overflow: hidden;
+}
+
+.zona-app .fases-fondo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background-color: #090a18;
+  /* Tres capas, de arriba abajo:
+       1. una sombra circular donde va el orbe. Sin ella el orbe desaparece:
+          la Tierra de noche brilla tanto como sus particulas y no se ve nada.
+       2. el velo que oscurece la izquierda, donde va el texto.
+       3. la fotografia. */
+  background-image:
+    radial-gradient(circle at 68% 50%, #060a1ff2 0%, #060a1fb3 24%, #060a1f00 52%),
+    linear-gradient(100deg, #0a0b1feb 0%, #171a52a6 40%, #10133a59 100%),
+    url('/imagenes/tierra-noche.webp');
+  background-size: cover;
+  /* El encuadre importa: en esta foto el limbo brillante esta a la izquierda,
+     justo donde va el texto, y lo dejaba ilegible. Corriendola se mete en
+     cuadro la parte oscura con las luces de las ciudades, que es la que da el
+     aire que buscaba Michel. */
+  background-position: 72% 46%;
+}
+
+/* El orbe, alineado a la derecha y girando. Es el mismo de la portada y son
+   los mismos pacientes: no es un adorno traido de fuera. */
+/* Corrido a la izquierda de la baraja a proposito: pegado al borde quedaba
+   tapado entero por las tarjetas y no se veia girar. Asi asoma media esfera. */
+.zona-app .fases-orbe {
+  position: absolute;
+  top: 50%;
+  right: 9%;
+  width: min(66vh, 680px);
+  height: min(66vh, 680px);
+  transform: translateY(-50%);
+  opacity: 1;
+}
+
+.zona-app .fases-orbe > div { width: 100%; height: 100%; }
+
+.zona-app .fases-contenido {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 420px);
+  gap: 38px;
+  align-items: center;
+  min-height: calc(100vh - var(--alto-cinta) - 130px);
+}
+
+/* --- la columna de la izquierda --- */
+
+.zona-app .fases-izq { max-width: 62ch; }
+.zona-app .fases-antetitulo { color: #7fd8ff; }
+
+.zona-app .fases-izq h1 {
+  margin-top: 10px;
+  font-size: clamp(27px, 3.2vw, 40px);
+  line-height: 1.07;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.zona-app .fases-bajada {
+  margin-top: 12px;
+  max-width: 54ch;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #b9bfe0;
+}
+
+/* El detalle de la fase activa. Cambia de contenido con una entrada propia,
+   para que se note que paso algo aunque uno estuviera mirando la baraja. */
+.zona-app .fase-detalle {
+  margin-top: 26px;
+  padding: 20px 22px;
+  border-radius: var(--radio-lg);
+  background: #0a0d20f2;
+  border: 1px solid #ffffff26;
+  animation: entrar-fase 0.5s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+
+@keyframes entrar-fase {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.zona-app .fase-detalle-cabeza { display: flex; align-items: baseline; gap: 13px; }
+
+.zona-app .fase-numerote {
+  font-family: var(--font-nunito);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #4ec3ff;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .fase-detalle h2 { font-size: clamp(18px, 2vw, 24px); color: #ffffff; }
+
+.zona-app .fase-que {
+  margin-top: 13px;
+  font-size: 13.5px;
+  line-height: 1.68;
+  color: #c3c8e6;
+}
+
+.zona-app .fase-cifra {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #ffffff1a;
+  flex-wrap: wrap;
+}
+
+.zona-app .fase-cifra b {
+  font-family: var(--font-nunito);
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .fase-cifra small { font-size: 11.5px; color: #9aa0c4; }
+
+/* --- los mandos --- */
+
+.zona-app .fases-mando {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.zona-app .fases-mando button {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid #ffffff2b;
+  background: #ffffff14;
+  color: #e6e9ff;
+  cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.zona-app .fases-mando button:hover { background: #ffffff2b; border-color: #ffffff4d; }
+
+.zona-app .fases-cuenta {
+  font-family: var(--font-nunito);
+  font-size: 14px;
+  font-weight: 900;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums lining-nums;
+  margin-left: 6px;
+}
+
+.zona-app .fases-cuenta i { font-style: normal; font-weight: 700; color: #8d93ba; }
+
+.zona-app .fases-riel {
+  flex: 1;
+  min-width: 110px;
+  height: 3px;
+  border-radius: 999px;
+  background: #ffffff1f;
+  overflow: hidden;
+}
+
+.zona-app .fases-riel i {
+  display: block;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #4ec3ff, #5fd3c6);
+  transition: width 0.5s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+/* --- la baraja de la derecha --- */
+
+.zona-app .fases-baraja {
+  position: relative;
+  height: 290px;
+  perspective: 1200px;
+}
+
+.zona-app .fase-carta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42px;
+  display: block;
+  text-align: left;
+  padding: 20px 22px 22px;
+  border-radius: var(--radio-lg);
+  border: 1px solid #ffffff26;
+  /* Sin desenfoque de fondo: cuesta cada fotograma y a Michel no le gusta. */
+  background: linear-gradient(155deg, #161c42fa, #0a0c22fc);
+  box-shadow: 0 18px 44px #00000073;
+  cursor: pointer;
+  font-family: var(--font-dm);
+  transition:
+    transform 0.58s cubic-bezier(0.22, 0.9, 0.3, 1),
+    opacity 0.42s ease,
+    border-color 0.3s ease;
+  will-change: transform, opacity;
+}
+
+.zona-app .fase-carta.frente {
+  transform: none;
+  opacity: 1;
+  border-color: #4ec3ff59;
+  cursor: default;
+}
+
+/* Las tres siguientes se apilan detras, subiendo y encogiendo. */
+.zona-app .fase-carta.detras {
+  transform:
+    translate3d(calc(var(--d) * 14px), calc(var(--d) * -17px), 0)
+    scale(calc(1 - var(--d) * 0.052));
+  opacity: calc(0.66 - (var(--d) - 1) * 0.19);
+}
+
+.zona-app .fase-carta.detras:hover {
+  border-color: #ffffff59;
+  transform:
+    translate3d(calc(var(--d) * 14px - 6px), calc(var(--d) * -17px), 0)
+    scale(calc(1 - var(--d) * 0.052 + 0.015));
+}
+
+/* La que acaba de salir cae y se desvanece. */
+.zona-app .fase-carta.fuera {
+  transform: translate3d(0, 92px, 0) scale(0.9);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.zona-app .fase-carta-num {
+  display: block;
+  font-family: var(--font-nunito);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #4ec3ff;
+}
+
+.zona-app .fase-carta b {
+  display: block;
+  margin-top: 9px;
+  font-family: var(--font-nunito);
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.zona-app .fase-carta-cifra {
+  display: block;
+  margin-top: 16px;
+  padding-top: 13px;
+  border-top: 1px solid #ffffff1a;
+  font-family: var(--font-nunito);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .fase-carta-cifra i {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--font-dm);
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #9aa0c4;
+}
+
+/* --- los doce puntos --- */
+
+.zona-app .fases-puntos {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.zona-app .fases-puntos button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #ffffff2e;
+  cursor: pointer;
+  transition: background 0.2s ease, width 0.2s ease;
+}
+
+.zona-app .fases-puntos button:hover { background: #ffffff66; }
+.zona-app .fases-puntos button.activo { width: 22px; background: #4ec3ff; }
+
+@media (width < 1080px) {
+  .zona-app .fases-contenido { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .zona-app .fases-baraja { height: 268px; }
+  .zona-app .fases-orbe { opacity: 0.45; right: -22%; }
 }

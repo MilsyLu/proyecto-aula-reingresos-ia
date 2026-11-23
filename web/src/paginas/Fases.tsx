@@ -1,11 +1,21 @@
-import { Encabezado } from '../componentes/Encabezado'
-import { TextoRevelado } from '../componentes/core/TextoRevelado'
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react'
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
+
+// three.js pesa medio mega: solo se carga cuando esta pantalla se abre.
+const OrbeParticulas = lazy(() =>
+  import('../orbe/OrbeParticulas').then((m) => ({ default: m.OrbeParticulas })),
+)
 
 /**
  * Pantalla 2: cómo se construyó el modelo, en las doce fases de la asignatura.
  *
  * Cada fase trae lo que de verdad se hizo y la cifra que salió, no la
  * definición de libro. Todas las cifras provienen de archivos de `reports/`.
+ *
+ * La maqueta: el fondo ocupa la vista entera —la fotografía de la Tierra de
+ * noche con el orbe de partículas girando a la derecha— y las fases pasan
+ * encima como una baraja. El orbe es el mismo de la portada y son los mismos
+ * pacientes: no es un adorno traído de fuera.
  */
 
 interface Fase {
@@ -15,7 +25,6 @@ interface Fase {
   cifra?: string
   pie?: string
 }
-
 const FASES: Fase[] = [
   {
     numero: 1,
@@ -103,103 +112,144 @@ const FASES: Fase[] = [
   },
 ]
 
-export function Fases() {
-  return (
-    <div style={{ display: 'grid', gap: 56 }}>
-      <Encabezado antetitulo="Empezar aquí" titulo="Cómo se construyó, en doce fases">
-        <p>
-          De la pregunta inicial hasta esta pantalla. Cada fase trae lo que se hizo de verdad y
-          la cifra que salió, no la definición del libro.
-        </p>
-      </Encabezado>
+const ESPERA = 6500
 
-      <ol className="fases">
-        {FASES.map((fase) => (
-          <li key={fase.numero} className="fase">
-            <div className="fase-numero" aria-hidden="true">
-              {String(fase.numero).padStart(2, '0')}
+export function Fases() {
+  const [actual, setActual] = useState(0)
+  const [corriendo, setCorriendo] = useState(true)
+  const [orbeFallo, setOrbeFallo] = useState(false)
+
+  const mover = useCallback((paso: number) => {
+    setActual((i) => (i + paso + FASES.length) % FASES.length)
+  }, [])
+
+  useEffect(() => {
+    if (!corriendo) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const t = setInterval(() => mover(1), ESPERA)
+    return () => clearInterval(t)
+  }, [corriendo, mover])
+
+  // Las flechas del teclado mueven la baraja. En una sustentación es más
+  // cómodo que buscar un botón con el ratón mientras uno habla.
+  useEffect(() => {
+    function tecla(e: KeyboardEvent) {
+      const campo = document.activeElement?.tagName
+      if (campo === 'INPUT' || campo === 'TEXTAREA') return
+      if (e.key === 'ArrowRight') { mover(1); setCorriendo(false) }
+      if (e.key === 'ArrowLeft') { mover(-1); setCorriendo(false) }
+    }
+    window.addEventListener('keydown', tecla)
+    return () => window.removeEventListener('keydown', tecla)
+  }, [mover])
+
+  const fase = FASES[actual]
+
+  return (
+    <div className="fases">
+      <div className="fases-fondo" aria-hidden="true">
+        {!orbeFallo && (
+          <div className="fases-orbe">
+            <Suspense fallback={null}>
+              <OrbeParticulas forma="cohorte" onFallo={() => setOrbeFallo(true)} />
+            </Suspense>
+          </div>
+        )}
+      </div>
+
+      <div className="fases-contenido">
+        <div className="fases-izq">
+          <p className="antetitulo fases-antetitulo">Empezar aquí · Cómo se construyó</p>
+          <h1>Doce fases, de la pregunta al despliegue</h1>
+          <p className="fases-bajada">
+            Esto no es la teoría de un libro: es lo que de verdad se hizo, en orden, con la
+            cifra que salió de cada paso. Las tarjetas pasan solas, o use las flechas del
+            teclado.
+          </p>
+
+          <div className="fase-detalle" key={fase.numero}>
+            <div className="fase-detalle-cabeza">
+              <span className="fase-numerote">{String(fase.numero).padStart(2, '0')}</span>
+              <h2>{fase.titulo}</h2>
             </div>
-            <div className="fase-cuerpo">
-              <h2 className="fase-titulo">{fase.titulo}</h2>
-              <TextoRevelado className="fase-que" porPalabra={0.016}>
-                {fase.que}
-              </TextoRevelado>
-            </div>
+            <p className="fase-que">{fase.que}</p>
             {fase.cifra && (
-              <div className="fase-dato">
-                <div className="fase-cifra">{fase.cifra}</div>
-                {fase.pie && <p className="fase-pie">{fase.pie}</p>}
+              <div className="fase-cifra">
+                <b>{fase.cifra}</b>
+                <small>{fase.pie}</small>
               </div>
             )}
-          </li>
+          </div>
+
+          <div className="fases-mando">
+            <button type="button" onClick={() => { mover(-1); setCorriendo(false) }} aria-label="Fase anterior">
+              <ChevronLeft size={17} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setCorriendo((v) => !v)}
+              aria-label={corriendo ? 'Detener el paso automático' : 'Reanudar el paso automático'}
+            >
+              {corriendo ? <Pause size={15} strokeWidth={2} /> : <Play size={15} strokeWidth={2} />}
+            </button>
+            <button type="button" onClick={() => { mover(1); setCorriendo(false) }} aria-label="Fase siguiente">
+              <ChevronRight size={17} strokeWidth={2} />
+            </button>
+            <span className="fases-cuenta">
+              {String(actual + 1).padStart(2, '0')} <i>/ {FASES.length}</i>
+            </span>
+            <div className="fases-riel">
+              <i style={{ width: `${((actual + 1) / FASES.length) * 100}%` }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="fases-baraja">
+          {FASES.map((f, i) => {
+            // Distancia desde la fase activa, en circulo. La de delante es 0;
+            // las tres siguientes se apilan detras; el resto queda fuera.
+            const d = (i - actual + FASES.length) % FASES.length
+            const detras = d >= 1 && d <= 3
+            const estado = d === 0 ? 'frente' : detras ? 'detras' : 'fuera'
+
+            return (
+              <button
+                key={f.numero}
+                type="button"
+                className={`fase-carta ${estado}`}
+                style={{ zIndex: FASES.length - d, '--d': d } as React.CSSProperties}
+                tabIndex={d === 0 ? 0 : -1}
+                aria-hidden={d !== 0}
+                onClick={() => {
+                  if (d !== 0) { setActual(i); setCorriendo(false) }
+                }}
+              >
+                <span className="fase-carta-num">{String(f.numero).padStart(2, '0')}</span>
+                <b>{f.titulo}</b>
+                {f.cifra && (
+                  <span className="fase-carta-cifra">
+                    {f.cifra}
+                    <i>{f.pie}</i>
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="fases-puntos">
+        {FASES.map((f, i) => (
+          <button
+            key={f.numero}
+            type="button"
+            className={i === actual ? 'activo' : ''}
+            aria-label={`Fase ${f.numero}: ${f.titulo}`}
+            aria-current={i === actual}
+            onClick={() => { setActual(i); setCorriendo(false) }}
+          />
         ))}
-      </ol>
-
-      <p
-        style={{
-          fontSize: 13,
-          color: 'var(--apagado)',
-          lineHeight: 1.7,
-          maxWidth: '74ch',
-          borderTop: '1px solid var(--filete)',
-          paddingTop: 24,
-        }}
-      >
-        Las doce fases corresponden a las de la asignatura. Todas las cifras de esta pantalla
-        salen de archivos del repositorio, no están escritas a mano: se pueden volver a calcular
-        corriendo los cuadernos.
-      </p>
-
-      <style>{`
-        .fases { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
-        .fase {
-          display: grid;
-          grid-template-columns: 56px minmax(0, 1fr) 200px;
-          gap: 28px;
-          align-items: start;
-          padding-block: 34px;
-          border-top: 1px solid var(--filete);
-        }
-        .fase:last-child { border-bottom: 1px solid var(--filete); }
-        .fase-numero {
-          font-family: var(--font-nunito);
-          font-weight: 900;
-          font-size: 30px;
-          line-height: 1.1;
-          letter-spacing: -0.02em;
-          color: var(--apagado);
-          font-variant-numeric: tabular-nums lining-nums;
-        }
-        .fase-titulo { font-size: 24px; line-height: 1.2; }
-        .fase-que {
-          margin-top: 12px;
-          font-size: 15.5px;
-          line-height: 1.7;
-          color: var(--apagado);
-          max-width: 62ch;
-        }
-        .fase-dato { text-align: right; }
-        .fase-cifra {
-          font-family: var(--font-nunito);
-          font-weight: 900;
-          font-size: 30px;
-          line-height: 1.1;
-          letter-spacing: -0.02em;
-          color: var(--tinta-fuerte);
-          font-variant-numeric: tabular-nums lining-nums;
-        }
-        .fase-pie {
-          margin-top: 8px;
-          font-size: 11.5px;
-          line-height: 1.5;
-          color: var(--apagado);
-        }
-        @media (width < 860px) {
-          .fase { grid-template-columns: 44px minmax(0, 1fr); gap: 18px; }
-          .fase-dato { grid-column: 2; text-align: left; margin-top: 16px; }
-          .fase-pie { max-width: 40ch; }
-        }
-      `}</style>
+      </div>
     </div>
   )
 }
