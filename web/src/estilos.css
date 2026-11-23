@@ -365,15 +365,19 @@
 }
 
 [data-tema='oscuro'] .zona-app {
-  --lienzo: #151827;
-  --superficie: #20243a;
-  --superficie-2: #282d45;
-  --tinta: #eef0ff;
+  /* Negro de verdad, no azul oscuro.
+     El original del diseno tiraba a azul en todo: fondo, tarjetas, texto,
+     filetes y hasta las sombras. Sumado se sentia azul, no oscuro. Aqui el
+     gris es neutro y el unico color que queda es el acento. */
+  --lienzo: #000000;
+  --superficie: #121214;
+  --superficie-2: #1c1c1f;
+  --tinta: #f2f2f4;
   --tinta-fuerte: #ffffff;
-  --apagado: #abb1d0;
-  --filete: #343a57;
-  --filete-fuerte: #434a6b;
-  --borde-suave: #343a57;
+  --apagado: #9d9da6;
+  --filete: #26262a;
+  --filete-fuerte: #35353b;
+  --borde-suave: #26262a;
 
   --acento: #8d78f2;
   --acento-2: #5b8cf5;
@@ -385,23 +389,25 @@
 
   --teal: #19c2b4;
   --teal-hondo: #6fdcd4;
-  --teal-suave: #183b3a;
+  --teal-suave: #13302e;
 
   --amarillo: #ffd331;
   --amarillo-texto: #4a3c00;
 
-  --estado-pendiente-f: #30284d;
+  --estado-pendiente-f: #2a2140;
   --estado-pendiente-t: #c2b7ff;
-  --estado-agendado-f: #243453;
+  --estado-agendado-f: #1b2a42;
   --estado-agendado-t: #9bbcff;
-  --estado-contactado-f: #183b3a;
+  --estado-contactado-f: #13302e;
   --estado-contactado-t: #6fdcd4;
-  --estado-cerrado-f: #2a2f4a;
-  --estado-cerrado-t: #abb1d0;
+  --estado-cerrado-f: #232326;
+  --estado-cerrado-t: #9d9da6;
 
-  --sombra-1: 0 1px 2px #080a1655;
-  --sombra-2: 0 4px 17px #080a1680;
-  --sombra-3: 0 12px 38px #080a16aa;
+  /* Sombras negras, no azules. Sobre negro casi no se ven, y esta bien: ahi
+     lo que separa una tarjeta del fondo es su propio gris. */
+  --sombra-1: 0 1px 2px #00000080;
+  --sombra-2: 0 4px 17px #000000a6;
+  --sombra-3: 0 12px 38px #000000cc;
 
   --dato-rgb: 224 169 143;
   --tinta-rgb: 238 240 255;
@@ -433,7 +439,7 @@
   --acento-2: #19c2b4;
   --acento-hondo: #6fdcd4;
   --acento-texto: #6fdcd4;
-  --acento-suave: #183b3a;
+  --acento-suave: #13302e;
   --degradado: linear-gradient(110deg, #0e8d83, #12a89b);
   --relleno: #0e8d83;
 }
@@ -780,7 +786,7 @@
   transition: background .16s ease, color .16s ease;
 }
 
-[data-tema='oscuro'] .zona-app .barra-enlace { color: #c7cbe3; }
+[data-tema='oscuro'] .zona-app .barra-enlace { color: #c6c6cd; }
 
 .zona-app .barra-enlace svg { flex: none; color: var(--acento); }
 
@@ -816,7 +822,7 @@
   font-weight: 900;
 }
 
-[data-tema='oscuro'] .zona-app .avatar { background: #2c3458; color: #a9bcff; }
+[data-tema='oscuro'] .zona-app .avatar { background: #26262a; color: #c2b7ff; }
 
 .zona-app .barra-persona-texto { min-width: 0; }
 
@@ -953,7 +959,7 @@
   inset: 0;
   z-index: 40;
   border: 0;
-  background: #0d0f1e73;
+  background: #000000a6;
   cursor: pointer;
 }
 
@@ -973,7 +979,7 @@
     left: 0;
     width: 252px;
     transform: translateX(-104%);
-    box-shadow: 10px 0 30px #161a3430;
+    box-shadow: 10px 0 30px #00000066;
     transition: transform .22s cubic-bezier(.22,.75,.25,1);
   }
 
@@ -1086,7 +1092,7 @@
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: #0d0f1e85;
+  background: #000000b3;
   display: flex;
   justify-content: center;
   padding-top: 13vh;
@@ -1397,7 +1403,7 @@
   border-top-left-radius: 3px;
 }
 
-[data-tema='oscuro'] .zona-app .burbuja.de-bot { background: #214443; color: #c9f1ea; }
+[data-tema='oscuro'] .zona-app .burbuja.de-bot { background: #16302e; color: #c9f1ea; }
 
 .zona-app .burbuja.de-usted {
   align-self: flex-end;
@@ -1406,7 +1412,7 @@
   border-top-right-radius: 3px;
 }
 
-[data-tema='oscuro'] .zona-app .burbuja.de-usted { background: #303355; color: #dddfff; }
+[data-tema='oscuro'] .zona-app .burbuja.de-usted { background: #232329; color: #e4e4ea; }
 
 .zona-app .sugerencias { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 14px 11px; }
 
@@ -1423,7 +1429,7 @@
   transition: background .14s ease;
 }
 
-[data-tema='oscuro'] .zona-app .sugerencia { border-color: #2c5551; }
+[data-tema='oscuro'] .zona-app .sugerencia { border-color: #24443f; }
 .zona-app .sugerencia:hover { background: var(--teal-suave); }
 .zona-app .sugerencia:disabled { opacity: .5; cursor: default; }
 
@@ -1837,4 +1843,341 @@
 @media (width < 900px) {
   .zona-app .portico { grid-template-columns: minmax(0, 1fr); padding: 22px 18px; }
   .zona-app .portico-orbe { display: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   «Qué es esto»: la pantalla de orientación
+   --------------------------------------------------------------------------- */
+
+.zona-app .guia { display: grid; gap: 42px; }
+
+.zona-app .guia-portico {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 480px);
+  gap: 34px;
+  align-items: center;
+}
+
+.zona-app .guia-intro h1 {
+  margin-top: 10px;
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+
+.zona-app .guia-bajada {
+  margin-top: 14px;
+  max-width: 56ch;
+  font-size: 14.5px;
+  line-height: 1.68;
+  color: var(--apagado);
+}
+
+.zona-app .guia-boton { margin-top: 20px; }
+
+/* --- el carrusel --- */
+
+/* Fondo propio, oscuro y fijo en los dos temas: es la unica pieza de la
+   aplicacion que no se invierte, y por eso se lee como una tarjeta destacada
+   en vez de como una seccion mas. */
+.zona-app .carrusel {
+  position: relative;
+  overflow: hidden;
+  padding: 22px 24px 20px;
+  border-radius: var(--radio-lg);
+  background:
+    radial-gradient(120% 140% at 88% 8%, #15635b 0%, transparent 58%),
+    linear-gradient(145deg, #0b3f3b 0%, #072d2a 100%);
+  box-shadow: var(--sombra-2);
+  min-height: 196px;
+  display: flex;
+  flex-direction: column;
+}
+
+.zona-app .carrusel-antetitulo {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8fd8d0;
+}
+
+.zona-app .carrusel-cara { animation: entrar-pantalla 0.45s cubic-bezier(.22,.75,.25,1) both; }
+
+.zona-app .carrusel-cifras {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.zona-app .carrusel-cifras b {
+  display: block;
+  font-family: var(--font-nunito);
+  font-size: clamp(27px, 2.8vw, 36px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .carrusel-cifras small {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #a9ccc7;
+}
+
+.zona-app .carrusel-flecha { flex: none; color: #5fb3aa; }
+
+.zona-app .carrusel-caja {
+  flex: none;
+  min-width: 128px;
+  padding: 12px 15px;
+  border-radius: 12px;
+  background: #ffffff1a;
+  border: 1px solid #ffffff1f;
+}
+
+.zona-app .carrusel-nota {
+  margin-top: 16px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #9ec5c0;
+  max-width: 54ch;
+}
+
+.zona-app .carrusel-nota b { color: #d8f2ee; font-weight: 700; }
+
+.zona-app .carrusel-puntos {
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 16px;
+  justify-content: flex-end;
+}
+
+.zona-app .carrusel-puntos button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #ffffff33;
+  cursor: pointer;
+  transition: background 0.2s ease, width 0.2s ease;
+}
+
+.zona-app .carrusel-puntos button.activo { width: 20px; background: #5fd3c6; }
+.zona-app .carrusel-puntos button:hover { background: #ffffff66; }
+.zona-app .carrusel-puntos button.activo:hover { background: #5fd3c6; }
+
+/* --- el encabezado de cada seccion --- */
+
+.zona-app .cabeza-seccion {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-top: 18px;
+  border-top: 1px solid var(--filete);
+  margin-bottom: 16px;
+}
+
+.zona-app .cabeza-seccion h2 {
+  margin-top: 7px;
+  font-size: clamp(20px, 2.1vw, 26px);
+}
+
+.zona-app .cabeza-nota {
+  font-size: 11.5px;
+  color: var(--acento-texto);
+  max-width: 44ch;
+  text-align: right;
+}
+
+/* --- que si hace / que no hace --- */
+
+.zona-app .dos-caras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 14px;
+}
+
+.zona-app .cara { padding: 16px 18px 18px; }
+
+/* El color del borde es lo que distingue una cara de la otra. Se usa el teal
+   del acento y la terracota del riesgo: los dos colores que ya significan algo
+   en esta aplicacion, no dos verdes y rojos cualesquiera. */
+.zona-app .cara.si { border-color: #9fd9d1; }
+.zona-app .cara.no { border-color: #f0bda8; }
+[data-tema='oscuro'] .zona-app .cara.si { border-color: #25554f; }
+[data-tema='oscuro'] .zona-app .cara.no { border-color: #5c3527; }
+
+.zona-app .cara-cabeza { display: flex; gap: 11px; align-items: flex-start; }
+
+.zona-app .cara-sello {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+}
+
+.zona-app .cara.si .cara-sello { background: var(--teal-suave); color: var(--teal-hondo); }
+.zona-app .cara.no .cara-sello { background: #fdeee8; color: #c2410c; }
+[data-tema='oscuro'] .zona-app .cara.no .cara-sello { background: #3a2119; color: #f0a58a; }
+
+.zona-app .cara h3 { font-size: 14px; }
+
+.zona-app .cara-cabeza p {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--apagado);
+}
+
+.zona-app .cara ul { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+
+.zona-app .cara li {
+  position: relative;
+  padding-left: 15px;
+  font-size: 12px;
+  color: var(--tinta);
+}
+
+.zona-app .cara li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+}
+
+.zona-app .cara.si li::before { background: var(--teal); }
+.zona-app .cara.no li::before { background: #c2410c; }
+[data-tema='oscuro'] .zona-app .cara.no li::before { background: #e8845f; }
+
+/* --- los tres pasos --- */
+
+.zona-app .tres-pasos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
+}
+
+.zona-app .paso { padding: 16px 18px 18px; }
+
+.zona-app .paso-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.zona-app .paso-sello {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--acento-suave);
+  color: var(--acento-texto);
+}
+
+.zona-app .paso-numero {
+  font-family: var(--font-nunito);
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--apagado);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .paso h3 { font-size: 14px; }
+.zona-app .paso p { margin-top: 6px; font-size: 12px; line-height: 1.6; color: var(--apagado); }
+
+/* --- los atajos --- */
+
+.zona-app .atajos-guia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+  gap: 14px;
+}
+
+.zona-app .atajo-guia {
+  display: block;
+  padding: 15px 17px 16px;
+  text-decoration: none;
+  color: var(--tinta);
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.zona-app .atajo-guia:hover {
+  transform: translateY(-2px);
+  border-color: var(--acento);
+  box-shadow: var(--sombra-3);
+}
+
+.zona-app .atajo-guia b {
+  display: block;
+  font-family: var(--font-nunito);
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--tinta-fuerte);
+}
+
+.zona-app .atajo-guia small {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--apagado);
+}
+
+/* --- la franja de aviso --- */
+
+.zona-app .franja-aviso {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex-wrap: wrap;
+  padding: 14px 17px;
+  border-radius: var(--radio);
+  background: #fffaec;
+  border: 1px solid #f3e2b8;
+}
+
+[data-tema='oscuro'] .zona-app .franja-aviso { background: #2a2411; border-color: #4a3f1c; }
+
+.zona-app .franja-sello {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--amarillo);
+  color: var(--amarillo-texto);
+}
+
+.zona-app .franja-aviso > p {
+  flex: 1;
+  min-width: 260px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6b5a22;
+}
+
+[data-tema='oscuro'] .zona-app .franja-aviso > p { color: #e0cd92; }
+.zona-app .franja-aviso > p b { font-weight: 800; }
+
+@media (width < 1080px) {
+  .zona-app .guia-portico { grid-template-columns: minmax(0, 1fr); }
+  .zona-app .cabeza-nota { text-align: left; }
 }

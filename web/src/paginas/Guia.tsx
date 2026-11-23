@@ -1,140 +1,336 @@
-import { Encabezado } from '../componentes/Encabezado'
+import {
+  ArrowRight, Check, ClipboardList, Info, Minus, PhoneCall, Sigma,
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useSesion } from '../lib/sesion'
 
 /**
  * Pantalla 1: qué es esto y qué puede hacer.
  *
- * Es la primera que ve alguien que entra sin saber nada. Tiene que responder
- * tres cosas antes de que la persona se pierda: para qué sirve, qué no hace, y
- * por dónde empezar.
+ * Es la primera que ve alguien que entra sin saber nada, así que no puede ser
+ * un documento. Tiene que responder tres cosas antes de que la persona se
+ * pierda: para qué sirve, qué NO hace, y por dónde empezar.
+ *
+ * Todo lo que se afirma aquí está medido y sale de `reports/`. Ninguna cifra
+ * es de adorno.
  */
+
+/** Las tarjetas que se pasan solas arriba a la derecha. */
+const TARJETAS = [
+  {
+    antetitulo: 'La idea, en un ejemplo',
+    cifra: '20.000',
+    pie: 'personas dadas de alta',
+    cifra2: '400',
+    pie2: 'llamadas disponibles',
+    nota: (
+      <>
+        El modelo ayuda a decidir por cuáles empezar. <b>Es un ejemplo ilustrativo</b>, no un
+        dato de operación.
+      </>
+    ),
+  },
+  {
+    antetitulo: 'Dónde sí sirve',
+    cifra: '43,1 %',
+    pie: 'reingresa en el 2 % de mayor riesgo',
+    cifra2: '11,4 %',
+    pie2: 'reingresa en la población general',
+    nota: (
+      <>
+        <b>Casi cuatro veces más.</b> Acierta poco paciente por paciente, pero ordenando es
+        donde vale la pena.
+      </>
+    ),
+  },
+  {
+    antetitulo: 'Comparado con lo que se usa hoy',
+    cifra: '0,666',
+    pie: 'ROC-AUC de este modelo',
+    cifra2: '0,648',
+    pie2: 'el índice LACE, en su validación danesa',
+    nota: (
+      <>
+        LACE y HOSPITAL (0,661) se usan hoy en hospitales de Canadá y Estados Unidos para esta
+        misma decisión. <b>Estamos en ese rango.</b>
+      </>
+    ),
+  },
+  {
+    antetitulo: 'El límite, medido',
+    cifra: '0,6145',
+    pie: 'todo lo que estos datos permiten',
+    cifra2: '0,6171',
+    pie2: 'lo que el modelo ya logra',
+    nota: (
+      <>
+        <b>El modelo está en el techo.</b> Lo que falta no es un algoritmo mejor: son datos que
+        el hospital no registra.
+      </>
+    ),
+  },
+  {
+    antetitulo: 'De dónde salen los datos',
+    cifra: '130',
+    pie: 'hospitales de Estados Unidos',
+    cifra2: '99.343',
+    pie2: 'hospitalizaciones, entre 1999 y 2008',
+    nota: (
+      <>
+        Conjunto público y anonimizado. <b>No hay pacientes identificables</b> en ninguna parte
+        de esta aplicación.
+      </>
+    ),
+  },
+]
+
+const PASOS = [
+  {
+    Icono: ClipboardList,
+    titulo: 'Se revisa el alta',
+    texto: 'Se introducen los datos de la hospitalización y del uso previo de servicios.',
+  },
+  {
+    Icono: Sigma,
+    titulo: 'Se calcula una estimación',
+    texto: 'El modelo produce una probabilidad orientativa de reingreso a treinta días.',
+  },
+  {
+    Icono: PhoneCall,
+    titulo: 'El equipo prioriza',
+    texto: 'La lista ayuda a organizar llamadas, teniendo siempre en cuenta el contexto clínico.',
+  },
+]
+
+/**
+ * El carrusel de arriba.
+ *
+ * Pasa solo cada siete segundos, pero se detiene si el cursor está encima: si
+ * alguien se queda leyendo una tarjeta, que no se la quiten de delante. Y a
+ * quien pidió no ver animaciones no se le mueve nunca.
+ */
+function Carrusel() {
+  const [actual, setActual] = useState(0)
+  const [quieto, setQuieto] = useState(false)
+
+  useEffect(() => {
+    if (quieto) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const t = setInterval(() => setActual((i) => (i + 1) % TARJETAS.length), 7000)
+    return () => clearInterval(t)
+  }, [quieto])
+
+  const c = TARJETAS[actual]
+
+  return (
+    <div
+      className="carrusel"
+      onMouseEnter={() => setQuieto(true)}
+      onMouseLeave={() => setQuieto(false)}
+      aria-roledescription="carrusel"
+      aria-label="Cifras del proyecto"
+    >
+      <div className="carrusel-cara" key={actual}>
+        <p className="carrusel-antetitulo">{c.antetitulo}</p>
+
+        <div className="carrusel-cifras">
+          <div>
+            <b>{c.cifra}</b>
+            <small>{c.pie}</small>
+          </div>
+          <ArrowRight className="carrusel-flecha" size={22} strokeWidth={1.4} aria-hidden="true" />
+          <div className="carrusel-caja">
+            <b>{c.cifra2}</b>
+            <small>{c.pie2}</small>
+          </div>
+        </div>
+
+        <p className="carrusel-nota">{c.nota}</p>
+      </div>
+
+      <div className="carrusel-puntos">
+        {TARJETAS.map((t, i) => (
+          <button
+            key={t.antetitulo}
+            type="button"
+            className={i === actual ? 'activo' : ''}
+            aria-label={`Ver «${t.antetitulo}»`}
+            aria-current={i === actual}
+            onClick={() => setActual(i)}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** El encabezado de cada sección: antetítulo, titular y una nota a la derecha. */
+function CabezaSeccion({
+  antetitulo, titulo, nota,
+}: { antetitulo: string; titulo: string; nota: string }) {
+  return (
+    <div className="cabeza-seccion">
+      <div>
+        <p className="antetitulo">{antetitulo}</p>
+        <h2>{titulo}</h2>
+      </div>
+      <p className="cabeza-nota">{nota}</p>
+    </div>
+  )
+}
+
 export function Guia() {
   const { sesion } = useSesion()
   const esCoordinador = sesion?.rol === 'coordinador'
 
   return (
-    <div style={{ display: 'grid', gap: 64 }}>
-      <Encabezado antetitulo="Empezar aquí" titulo="Qué es esto y qué puede hacer">
-        <p>
-          ReingresaIA estima qué tan probable es que una persona con diabetes vuelva al hospital
-          antes de treinta días desde que le dieron el alta. Con esa estimación ordena una lista:
-          a quién conviene llamar primero cuando el programa de seguimiento no alcanza para
-          llamar a todos.
-        </p>
-      </Encabezado>
+    <div className="guia">
+      <section className="guia-portico">
+        <div className="guia-intro">
+          <p className="antetitulo">Empezar aquí · Orientación</p>
+          <h1>¿Qué es esto y qué puede hacer?</h1>
+          <p className="guia-bajada">
+            ReingresaIA estima la probabilidad de que una persona con diabetes vuelva al hospital
+            durante los treinta días posteriores al alta. Con esa estimación ayuda a ordenar a
+            quién conviene llamar primero cuando el equipo no alcanza a contactar a todas las
+            personas.
+          </p>
+          <Link to="../estimar" className="pastilla pastilla-rellena guia-boton">
+            Conocer la estimación
+            <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+          </Link>
+        </div>
 
-      <Bloque titulo="Qué decide y qué no decide">
-        <p>
-          Decide un <strong style={{ fontWeight: 600 }}>orden de prioridad</strong>. Nada más.
-          Cuando el equipo tiene cupo para cuatrocientas llamadas y hay veinte mil pacientes
-          dados de alta, el modelo dice por cuáles cuatrocientos empezar.
-        </p>
-        <p style={{ marginTop: 16 }}>
-          No decide altas, no sugiere tratamientos, no reemplaza el criterio de nadie y no
-          sustituye una valoración clínica. Un paciente que el modelo deja fuera de la lista
-          puede estar grave: lo único que dice es que, en promedio, los de arriba vuelven más.
-        </p>
-      </Bloque>
+        <Carrusel />
+      </section>
 
-      <Bloque titulo="Qué tan bien funciona">
-        <p>
-          Acierta poco paciente por paciente, y eso hay que decirlo de frente. Su ROC-AUC es
-          0,666. Para comparar: el índice LACE, que se usa hoy en hospitales de Canadá y Estados
-          Unidos para esta misma decisión, obtuvo 0,648 en su validación danesa, y el HOSPITAL
-          score 0,661 en la misma.
-        </p>
-        <p style={{ marginTop: 16 }}>
-          Donde sí sirve es ordenando. Entre el 2 % de mayor riesgo reingresa el 43,1 %, frente
-          al 11,4 % de la población general: casi cuatro veces más. Eso es lo que convierte una
-          lista de llamadas en algo que vale la pena hacer.
-        </p>
-        <p style={{ marginTop: 16 }}>
-          Y hay un límite que no es culpa del modelo. Medimos cuánta información contienen estas
-          columnas y el modelo ya está en ese techo. Lo que falta no es un algoritmo mejor: son
-          datos que el hospital no registra, como si el paciente tiene quién lo cuide, si puede
-          pagar los medicamentos o si tiene cómo llegar al control.
-        </p>
-      </Bloque>
+      <section>
+        <CabezaSeccion
+          antetitulo="Alcance de la herramienta"
+          titulo="Decide un orden de prioridad. Nada más."
+          nota="Es una ayuda para organizar el seguimiento, no una decisión clínica automática."
+        />
 
-      <Bloque titulo="Por dónde empezar">
-        <p>El menú de la izquierda está en el orden en que conviene recorrerlo.</p>
-        <ol className="lista-guia">
-          <li>
-            <strong>Cómo se construyó.</strong> Las doce fases, de la pregunta inicial al
-            despliegue. Si nunca ha visto cómo se entrena un modelo, empiece por ahí.
-          </li>
-          <li>
-            <strong>Estimar un paciente.</strong> Escriba los datos de una hospitalización y vea
-            la estimación.
-          </li>
-          <li>
-            <strong>Paso a paso del cálculo.</strong> De dónde sale exactamente esa cifra, árbol
-            por árbol. Es la pantalla que responde a «¿y usted cómo sabe?».
-          </li>
-          <li>
-            <strong>El asistente.</strong> Pregúntele con sus palabras. Si no sabe algo, se lo
-            dice en vez de inventarlo.
-          </li>
+        <div className="dos-caras">
+          <div className="tarjeta cara si">
+            <div className="cara-cabeza">
+              <span className="cara-sello">
+                <Check size={16} strokeWidth={2.4} aria-hidden="true" />
+              </span>
+              <div>
+                <h3>Qué sí hace</h3>
+                <p>
+                  Estima y organiza una lista para que el equipo pueda empezar por los casos que
+                  el modelo considera prioritarios.
+                </p>
+              </div>
+            </div>
+            <ul>
+              <li>Apoya la planificación de llamadas</li>
+              <li>Resume la información del alta en una sola cifra</li>
+              <li>Deja la decisión en manos del equipo</li>
+            </ul>
+          </div>
+
+          <div className="tarjeta cara no">
+            <div className="cara-cabeza">
+              <span className="cara-sello">
+                <Minus size={16} strokeWidth={2.4} aria-hidden="true" />
+              </span>
+              <div>
+                <h3>Qué no hace</h3>
+                <p>
+                  La estimación no determina la atención que una persona necesita ni reemplaza
+                  una valoración profesional.
+                </p>
+              </div>
+            </div>
+            <ul>
+              <li>No decide altas ni tratamientos</li>
+              <li>No diagnostica ni descarta gravedad</li>
+              <li>No sustituye el criterio clínico</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <CabezaSeccion
+          antetitulo="Un recorrido sencillo"
+          titulo="De los datos a una llamada priorizada"
+          nota="La estimación orienta la conversación; el equipo conserva el control."
+        />
+
+        <div className="tres-pasos">
+          {PASOS.map(({ Icono, titulo, texto }, i) => (
+            <div key={titulo} className="tarjeta paso">
+              <div className="paso-cabeza">
+                <span className="paso-sello">
+                  <Icono size={17} strokeWidth={1.7} aria-hidden="true" />
+                </span>
+                <span className="paso-numero">{String(i + 1).padStart(2, '0')}</span>
+              </div>
+              <h3>{titulo}</h3>
+              <p>{texto}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <CabezaSeccion
+          antetitulo="Por dónde empezar"
+          titulo="El menú está en el orden en que conviene recorrerlo"
+          nota="Pulse cualquiera para ir directo."
+        />
+
+        <div className="atajos-guia">
+          <Link to="../fases" className="tarjeta atajo-guia">
+            <b>Cómo se construyó</b>
+            <small>
+              Las doce fases, de la pregunta inicial al despliegue. Si nunca ha visto cómo se
+              entrena un modelo, empiece por ahí.
+            </small>
+          </Link>
+          <Link to="../paso-a-paso" className="tarjeta atajo-guia">
+            <b>El cálculo paso a paso</b>
+            <small>
+              De dónde sale exactamente esa cifra, árbol por árbol. Es la pantalla que responde
+              a «¿y usted cómo sabe?».
+            </small>
+          </Link>
+          <Link to="../asistente" className="tarjeta atajo-guia">
+            <b>El asistente</b>
+            <small>
+              Pregúntele con sus palabras. Cuando no sabe algo, se lo dice en vez de inventarlo.
+            </small>
+          </Link>
           {esCoordinador && (
-            <li>
-              <strong>Archivo y lista de llamadas.</strong> Suba el corte del día, diga a cuántas
-              personas alcanza a llamar y reciba la lista ordenada.
-            </li>
+            <Link to="../archivo" className="tarjeta atajo-guia">
+              <b>Archivo y lista de llamadas</b>
+              <small>
+                Suba el corte del día, diga a cuántas personas alcanza a llamar y reciba la
+                lista ordenada.
+              </small>
+            </Link>
           )}
-        </ol>
-      </Bloque>
+        </div>
+      </section>
 
-      <Bloque titulo="Por qué hay dos tipos de usuario">
+      <div className="franja-aviso">
+        <span className="franja-sello">
+          <Info size={15} strokeWidth={2} aria-hidden="true" />
+        </span>
         <p>
-          Todo el conocimiento está abierto para los dos: los datos, las métricas, la equidad,
-          los límites. Lo que está reservado para la coordinación son tres palancas: cargar
-          archivos, fijar el umbral de alerta y disparar un entrenamiento.
+          <b>Importante:</b> un resultado bajo no significa que una persona esté fuera de
+          peligro. Este prototipo académico no está validado para tomar decisiones clínicas.
         </p>
-        <p style={{ marginTop: 16 }}>
-          La razón es que el umbral no es un cálculo clínico sino una decisión de política: de él
-          depende a cuánta gente se llama y, por tanto, cuánto cuesta el programa. Quien lo fija
-          responde por esa decisión. Quien lo consume, no.
-        </p>
-      </Bloque>
-
-      <div
-        style={{
-          borderTop: '1px solid var(--filete)',
-          paddingTop: 24,
-          maxWidth: '72ch',
-        }}
-      >
-        <p style={{ fontSize: 13, color: 'var(--apagado)', lineHeight: 1.7 }}>
-          Los datos provienen del conjunto público de 130 hospitales de Estados Unidos
-          (1999-2008). No hay información de pacientes reales identificables, y el prototipo no
-          está validado para uso clínico. Universidad Popular del Cesar, Grupo 04.
-        </p>
+        <Link to="../equidad" className="pastilla pastilla-contorno pastilla-sm">
+          Conocer límites del modelo
+          <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+        </Link>
       </div>
-
-      <style>{`
-        .lista-guia {
-          margin: 20px 0 0;
-          padding-left: 22px;
-          display: grid;
-          gap: 14px;
-          color: var(--apagado);
-          font-size: 15px;
-          line-height: 1.65;
-        }
-        .lista-guia strong { color: var(--tinta); font-weight: 600; }
-        .lista-guia::marker { color: var(--apagado); }
-      `}</style>
     </div>
-  )
-}
-
-function Bloque({ titulo, children }: { titulo: string; children: React.ReactNode }) {
-  return (
-    <section style={{ maxWidth: '68ch' }}>
-      <h2 style={{ fontSize: 'clamp(24px, 3vw, 30px)' }}>{titulo}</h2>
-      <div style={{ marginTop: 18, fontSize: 16, lineHeight: 1.7, color: 'var(--apagado)' }}>
-        {children}
-      </div>
-    </section>
   )
 }

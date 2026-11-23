@@ -109,6 +109,7 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Empezar aquí',
     permiso: 'Guía',
     Icono: BookOpen,
+    teal: true,
     Componente: Guia,
   },
   {
