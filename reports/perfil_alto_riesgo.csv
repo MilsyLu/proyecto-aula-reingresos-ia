@@ -1,0 +1,30 @@
+variable,tipo,nivel,alto,resto,veces,n_alto,n_resto,reingreso_alto,reingreso_resto
+Hospitalizaciones en el año previo,promedio,,1.43,0.11,12.5,7624,12246,0.1781,0.0739
+Días de estancia,promedio,,5.16,3.89,1.33,7624,12246,0.1781,0.0739
+Diagnósticos registrados,promedio,,7.96,7.04,1.13,7624,12246,0.1781,0.0739
+Medicamentos administrados,promedio,,17.81,14.86,1.2,7624,12246,0.1781,0.0739
+Edad,promedio,,68.87,63.97,1.08,7624,12246,0.1781,0.0739
+Tipo de egreso,proporcion,A casa,0.3531,0.7632,0.46,2692,9346,0.0948,
+Tipo de egreso,proporcion,A casa con atención domiciliaria,0.1542,0.1111,1.39,1176,1361,0.1273,
+Tipo de egreso,proporcion,Centro de enfermería,0.289,0.0463,6.24,2203,567,0.1458,
+Tipo de egreso,proporcion,Cuidado intermedio,0.008,0.0082,0.98,61,100,0.1118,
+Tipo de egreso,proporcion,Otra institución,0.0289,0.0012,23.56,220,15,0.234,
+Tipo de egreso,proporcion,Otro egreso,0.0794,0.055,1.44,605,674,0.1212,
+Tipo de egreso,proporcion,Rehabilitación,0.0539,0.0,,411,0,0.2676,
+Tipo de egreso,proporcion,Traslado a otro hospital,0.0336,0.0149,2.25,256,183,0.1298,
+Grupo de edad,proporcion,50 a 60,0.1322,0.1995,0.66,1008,2443,0.0892,
+Grupo de edad,proporcion,60 a 70,0.2211,0.2313,0.96,1686,2833,0.1235,
+Grupo de edad,proporcion,70 a 80,0.2615,0.2383,1.1,1994,2918,0.1177,
+Grupo de edad,proporcion,80 o más,0.2632,0.1554,1.69,2007,1903,0.1189,
+Grupo de edad,proporcion,Menos de 50,0.1219,0.1755,0.69,929,2149,0.115,
+Diagnóstico principal,proporcion,Circulatorio,0.3223,0.2824,1.14,2457,3458,0.1163,
+Diagnóstico principal,proporcion,Diabetes,0.0961,0.0796,1.21,733,975,0.1171,
+Diagnóstico principal,proporcion,Digestivo,0.0788,0.1026,0.77,601,1257,0.1157,
+Diagnóstico principal,proporcion,Genitourinario,0.0502,0.0495,1.02,383,606,0.1132,
+Diagnóstico principal,proporcion,Lesiones,0.0812,0.0659,1.23,619,807,0.1269,
+Diagnóstico principal,proporcion,Musculoesqueletico,0.039,0.0569,0.68,297,697,0.1006,
+Diagnóstico principal,proporcion,Neoplasias,0.0258,0.0358,0.72,197,438,0.1181,
+Diagnóstico principal,proporcion,Otros,0.1964,0.1658,1.18,1497,2030,0.1106,
+Diagnóstico principal,proporcion,Respiratorio,0.1099,0.1612,0.68,838,1974,0.107,
+Género,proporcion,Mujer,0.5668,0.5268,1.08,4321,6451,0.1133,
+Género,proporcion,Hombre,0.4332,0.4732,0.92,3303,5795,0.1146,

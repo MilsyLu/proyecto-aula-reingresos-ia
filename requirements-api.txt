@@ -19,3 +19,8 @@ uvicorn[standard]==0.41.0
 itsdangerous==2.2.0
 python-multipart==0.0.20
 pydantic==2.12.4
+
+# Los reportes que se descargan: Excel y PDF. Las dos son puro Python y pesan
+# poco, que importa en un servidor de un solo nucleo.
+openpyxl==3.1.5
+reportlab==5.0.0

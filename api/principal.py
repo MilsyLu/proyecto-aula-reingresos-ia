@@ -34,7 +34,11 @@ from api import entrenamiento  # noqa: E402
 from api import evidencia  # noqa: E402
 from api import exploracion  # noqa: E402
 from api import lotes  # noqa: E402
+from api import pacientes  # noqa: E402
+from api import panel  # noqa: E402
 from api import prediccion  # noqa: E402
+from api import reportes  # noqa: E402
+from api import seguimiento  # noqa: E402
 
 DIST = BASE / "web" / "dist"
 
@@ -126,6 +130,10 @@ exploracion.registrar(app)
 evidencia.registrar(app)
 lotes.registrar(app)
 entrenamiento.registrar(app)
+seguimiento.registrar(app)
+reportes.registrar(app)
+pacientes.registrar(app)
+panel.registrar(app)
 
 
 # ===========================================================================

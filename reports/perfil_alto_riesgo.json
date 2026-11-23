@@ -1,0 +1,39 @@
+{
+  "n_total": 19870,
+  "n_alto": 7624,
+  "n_resto": 12246,
+  "porcentaje_alto": 0.3837,
+  "reingreso_alto": 0.1781,
+  "reingreso_resto": 0.0739,
+  "veces_mas_reingreso": 2.41,
+  "rasgos": [
+    {
+      "variable": "Tipo de egreso",
+      "nivel": "Otra institución",
+      "alto": 0.0289,
+      "resto": 0.0012,
+      "veces": 23.56
+    },
+    {
+      "variable": "Tipo de egreso",
+      "nivel": "Centro de enfermería",
+      "alto": 0.289,
+      "resto": 0.0463,
+      "veces": 6.24
+    },
+    {
+      "variable": "Tipo de egreso",
+      "nivel": "Traslado a otro hospital",
+      "alto": 0.0336,
+      "resto": 0.0149,
+      "veces": 2.25
+    },
+    {
+      "variable": "Grupo de edad",
+      "nivel": "80 o más",
+      "alto": 0.2632,
+      "resto": 0.1554,
+      "veces": 1.69
+    }
+  ]
+}

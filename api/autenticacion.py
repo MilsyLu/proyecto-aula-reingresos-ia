@@ -50,6 +50,18 @@ CONOCIMIENTO = frozenset({
     "Recorrido grabado",
 })
 
+# El trabajo del dia a dia con pacientes concretos: tambien para los dos roles.
+#
+# Registrar a alguien para seguimiento y llamarlo es trabajo asistencial, no
+# una decision de politica; y los reportes son conocimiento, que es lo que este
+# proyecto decidio no esconderle a nadie. La division sigue intacta: lo
+# reservado a coordinacion son las tres palancas de abajo.
+ASISTENCIAL = frozenset({
+    "Seguimiento",
+    "Reportes",
+    "Lista priorizada",
+})
+
 # Las palancas que mueven el programa: solo coordinación.
 OPERACION = frozenset({
     "Cargar archivo",
@@ -58,8 +70,8 @@ OPERACION = frozenset({
 })
 
 PERMISOS: dict[str, frozenset[str]] = {
-    "clinico": CONOCIMIENTO,
-    "coordinador": CONOCIMIENTO | OPERACION,
+    "clinico": CONOCIMIENTO | ASISTENCIAL,
+    "coordinador": CONOCIMIENTO | ASISTENCIAL | OPERACION,
 }
 
 NOMBRE_ROL = {

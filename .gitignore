@@ -30,3 +30,7 @@ web/dist/
 
 # despliegue: la clave de sesion no se versiona
 despliegue/.env
+
+# La base de datos del seguimiento. En el servidor vive en un volumen de
+# Docker; aqui es un archivo local de pruebas y no se versiona.
+datos/
