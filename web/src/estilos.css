@@ -280,3 +280,928 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ===========================================================================
+   EL APLICATIVO POR DENTRO
+   ===========================================================================
+
+   Todo lo que sigue vive dentro de `.zona-app`, que solo envuelve a las
+   pantallas de /app. La portada y la pantalla de entrar quedan intactas: siguen
+   leyendo las variables de Aira de mas arriba, sin enterarse de que esto existe.
+
+   Y esto contradice a Aira a proposito, en dos puntos que Michel decidio
+   cambiar: aqui si entra el color donde no hay dato, y si hay sombras. Aira
+   sigue mandando afuera, que es donde se ve bien. Adentro mandaba la queja del
+   profesor.
+
+   Regla que SI se mantiene: la rampa de terracota es del riesgo y de nada mas.
+   Si el violeta empezara a significar riesgo tambien, el color dejaria de
+   decir algo.
+   =========================================================================== */
+
+@theme {
+  --color-violeta: #5b3fd4;
+  --color-violeta-claro: #8771f5;
+  --color-violeta-hondo: #4a32b8;
+  --color-indigo: #3a6be8;
+  --color-indigo-claro: #5b8cf5;
+}
+
+.zona-app {
+  /* --- superficies ------------------------------------------------------- */
+  --lienzo: #f7f8ff;
+  --superficie: #ffffff;
+  --superficie-2: #eef0ff;
+
+  /* --- texto ------------------------------------------------------------- */
+  --tinta: #22254c;
+  --tinta-fuerte: #13152e;
+  --apagado: #6f749b;
+
+  /* --- lineas ------------------------------------------------------------ */
+  --filete: #e6e8f5;
+  --filete-fuerte: #c9cde6;
+  --borde-suave: #d8dcf0;
+
+  /* --- el acento --------------------------------------------------------- */
+  --acento: #5b3fd4;
+  --acento-2: #3a6be8;
+  --acento-texto: #5339c4;
+  --acento-suave: #eeeaff;
+  --degradado: linear-gradient(118deg, #5b3fd4, #3a6be8);
+  --relleno: #5b3fd4;
+  --sobre-relleno: #ffffff;
+
+  /* --- estados del seguimiento ------------------------------------------- */
+  --estado-pendiente-f: #eeeaff;
+  --estado-pendiente-t: #5339c4;
+  --estado-agendado-f: #e6eeff;
+  --estado-agendado-t: #2b5bc4;
+  --estado-contactado-f: #dff5f2;
+  --estado-contactado-t: #046b66;
+  --estado-cerrado-f: #eef0f6;
+  --estado-cerrado-t: #6f749b;
+
+  /* --- sombras: la unica licencia que Aira no da -------------------------- */
+  --sombra-1: 0 1px 2px rgb(20 22 50 / 0.05);
+  --sombra-2: 0 1px 2px rgb(20 22 50 / 0.04), 0 5px 18px rgb(20 22 50 / 0.07);
+  --sombra-3: 0 2px 6px rgb(20 22 50 / 0.06), 0 16px 40px rgb(20 22 50 / 0.12);
+  --sombra-acento: 0 4px 14px rgb(91 63 212 / 0.28);
+
+  --radio-sm: 10px;
+  --radio: 14px;
+  --radio-lg: 20px;
+
+  --dato-rgb: 194 90 60;
+  --tinta-rgb: 34 37 76;
+
+  color-scheme: light;
+  position: relative;
+  min-height: 100vh;
+  background: var(--lienzo);
+  color: var(--tinta);
+}
+
+[data-tema='oscuro'] .zona-app {
+  --lienzo: #12131f;
+  --superficie: #1b1d2e;
+  --superficie-2: #262a42;
+
+  --tinta: #e6e8f7;
+  --tinta-fuerte: #ffffff;
+  --apagado: #9ba1c4;
+
+  --filete: #2b2f48;
+  --filete-fuerte: #3c4162;
+  --borde-suave: #343955;
+
+  --acento: #8771f5;
+  --acento-2: #5b8cf5;
+  --acento-texto: #b6a6ff;
+  --acento-suave: rgb(135 113 245 / 0.17);
+  --degradado: linear-gradient(118deg, #6d52e8, #3f72ee);
+  --relleno: #6d52e8;
+  --sobre-relleno: #ffffff;
+
+  --estado-pendiente-f: rgb(135 113 245 / 0.18);
+  --estado-pendiente-t: #b6a6ff;
+  --estado-agendado-f: rgb(91 140 245 / 0.18);
+  --estado-agendado-t: #9bbcff;
+  --estado-contactado-f: rgb(0 170 160 / 0.18);
+  --estado-contactado-t: #6fdcd4;
+  --estado-cerrado-f: rgb(155 161 196 / 0.14);
+  --estado-cerrado-t: #9ba1c4;
+
+  --sombra-1: 0 1px 2px rgb(0 0 0 / 0.3);
+  --sombra-2: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 20px rgb(0 0 0 / 0.33);
+  --sombra-3: 0 2px 8px rgb(0 0 0 / 0.4), 0 18px 46px rgb(0 0 0 / 0.5);
+  --sombra-acento: 0 4px 16px rgb(91 63 212 / 0.45);
+
+  --dato-rgb: 224 169 143;
+  --tinta-rgb: 230 232 247;
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+   El fondo: aurora y grano
+
+   Tres manchas de color muy abiertas y muy tenues, moviendose despacio detras
+   de todo. La textura de grano encima es la que evita que el degradado se vea
+   en bandas, que es el defecto clasico de este efecto.
+
+   Va fija y sin eventos de puntero: no se mueve al bajar la pagina y nunca se
+   come un clic.
+   --------------------------------------------------------------------------- */
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aurora i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.aurora i:nth-child(1) {
+  width: 46vw;
+  height: 46vw;
+  top: -14vw;
+  left: -8vw;
+  background: radial-gradient(circle, rgb(91 63 212 / 0.5), transparent 68%);
+  animation: deriva-a 34s ease-in-out infinite alternate;
+}
+
+.aurora i:nth-child(2) {
+  width: 38vw;
+  height: 38vw;
+  top: 24vh;
+  right: -10vw;
+  background: radial-gradient(circle, rgb(58 107 232 / 0.42), transparent 68%);
+  animation: deriva-b 41s ease-in-out infinite alternate;
+}
+
+.aurora i:nth-child(3) {
+  width: 34vw;
+  height: 34vw;
+  bottom: -14vw;
+  left: 34vw;
+  background: radial-gradient(circle, rgb(0 130 124 / 0.32), transparent 68%);
+  animation: deriva-c 48s ease-in-out infinite alternate;
+}
+
+/* El grano. Es un SVG en linea para no pedirle un archivo mas al servidor. */
+.aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)' opacity='.055'/%3E%3C/svg%3E");
+}
+
+[data-tema='oscuro'] .aurora i {
+  opacity: 0.42;
+}
+
+[data-tema='oscuro'] .aurora::after {
+  opacity: 0.75;
+}
+
+@keyframes deriva-a {
+  to { transform: translate3d(7vw, 9vh, 0) scale(1.14); }
+}
+
+@keyframes deriva-b {
+  to { transform: translate3d(-9vw, 6vh, 0) scale(1.1); }
+}
+
+@keyframes deriva-c {
+  to { transform: translate3d(5vw, -8vh, 0) scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora i { animation: none !important; }
+}
+
+/* ---------------------------------------------------------------------------
+   Piezas que se repiten en todas las pantallas de adentro
+   --------------------------------------------------------------------------- */
+
+.zona-app .tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-2);
+}
+
+.zona-app .tarjeta-pad { padding: 20px 22px; }
+
+/* El titulo de una tarjeta. Serif, pero del tamano de una aplicacion: dentro
+   de un panel, un titular de revista se lee como un error de maqueta. */
+.zona-app .tarjeta-titulo {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--tinta-fuerte);
+}
+
+.zona-app .tarjeta-sub {
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--apagado);
+}
+
+/* La tira de cifras: una sola caja dividida por filetes, no cuatro tarjetas
+   sueltas. Juntas se leen como un panel; separadas, como cuatro adornos. */
+.zona-app .tira {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-2);
+  overflow: hidden;
+}
+
+.zona-app .tira > div {
+  padding: 15px 18px;
+  border-right: 1px solid var(--filete);
+}
+
+.zona-app .tira > div:last-child { border-right: 0; }
+
+.zona-app .tira-etiqueta {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--apagado);
+}
+
+.zona-app .tira-cifra {
+  margin-top: 7px;
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--tinta-fuerte);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .tira-pie {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--apagado);
+}
+
+.zona-app .tira-pie b { color: var(--acento-texto); font-weight: 600; }
+
+/* Etiquetas de estado del seguimiento */
+.zona-app .etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.zona-app .etiqueta-pendiente  { background: var(--estado-pendiente-f);  color: var(--estado-pendiente-t); }
+.zona-app .etiqueta-agendado   { background: var(--estado-agendado-f);   color: var(--estado-agendado-t); }
+.zona-app .etiqueta-contactado { background: var(--estado-contactado-f); color: var(--estado-contactado-t); }
+.zona-app .etiqueta-cerrado    { background: var(--estado-cerrado-f);    color: var(--estado-cerrado-t); }
+
+/* Botones: la pastilla de Aira conserva su forma y cambia de piel. */
+.zona-app .pastilla { font-size: 13.5px; padding: 9px 18px; }
+
+.zona-app .pastilla-rellena {
+  background: var(--degradado);
+  color: #ffffff;
+  box-shadow: var(--sombra-acento);
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.zona-app .pastilla-rellena:hover { transform: translateY(-1px); filter: brightness(1.07); }
+
+.zona-app .pastilla-contorno {
+  background: var(--superficie);
+  border-color: var(--borde-suave);
+  box-shadow: var(--sombra-1);
+}
+
+.zona-app .pastilla-contorno:hover { border-color: var(--acento); color: var(--acento-texto); }
+
+.zona-app .pastilla-sm { font-size: 12.5px; padding: 7px 14px; }
+
+/* Tablas */
+.zona-app table { border-collapse: collapse; width: 100%; }
+
+.zona-app thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--superficie-2);
+  color: var(--apagado);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--filete);
+  white-space: nowrap;
+}
+
+.zona-app tbody td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--filete);
+  font-size: 13px;
+  color: var(--tinta);
+}
+
+.zona-app tbody tr:last-child td { border-bottom: 0; }
+
+.zona-app tbody tr.clicable { cursor: pointer; transition: background 0.15s ease; }
+.zona-app tbody tr.clicable:hover,
+.zona-app tbody tr.elegida { background: var(--superficie-2); }
+
+/* Campos */
+.zona-app input,
+.zona-app select,
+.zona-app textarea {
+  font-family: var(--font-sans);
+  background: var(--superficie);
+  color: var(--tinta);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-sm);
+  padding: 9px 11px;
+  font-size: 13.5px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.zona-app input:focus,
+.zona-app select:focus,
+.zona-app textarea:focus {
+  outline: none;
+  border-color: var(--acento);
+  box-shadow: 0 0 0 3px var(--acento-suave);
+}
+
+.zona-app :focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+
+/* Movimiento: la entrada de cada pantalla al cambiar de ruta, y el escalonado
+   de las tarjetas, para que no aparezcan todas en el mismo fotograma. */
+@keyframes entrar-pantalla {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.zona-app .pantalla {
+  animation: entrar-pantalla 0.42s cubic-bezier(0.22, 0.75, 0.25, 1) both;
+}
+
+.zona-app .escalonado > * {
+  animation: entrar-pantalla 0.5s cubic-bezier(0.22, 0.75, 0.25, 1) both;
+}
+
+.zona-app .escalonado > *:nth-child(1) { animation-delay: 0.04s; }
+.zona-app .escalonado > *:nth-child(2) { animation-delay: 0.10s; }
+.zona-app .escalonado > *:nth-child(3) { animation-delay: 0.16s; }
+.zona-app .escalonado > *:nth-child(4) { animation-delay: 0.22s; }
+.zona-app .escalonado > *:nth-child(5) { animation-delay: 0.28s; }
+.zona-app .escalonado > *:nth-child(6) { animation-delay: 0.34s; }
+
+/* ---------------------------------------------------------------------------
+   El buscador de Ctrl+K
+   --------------------------------------------------------------------------- */
+
+.zona-app .boton-buscar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--superficie);
+  border: 1px solid var(--borde-suave);
+  border-radius: 999px;
+  padding: 7px 8px 7px 13px;
+  color: var(--apagado);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  cursor: pointer;
+  box-shadow: var(--sombra-1);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.zona-app .boton-buscar:hover { border-color: var(--acento); color: var(--tinta); }
+
+.zona-app .boton-buscar kbd {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: var(--superficie-2);
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: var(--apagado);
+}
+
+/* Velo liso, sin desenfoque: el desenfoque de fondo cuesta cada fotograma y
+   a Michel no le gusta en ninguno de sus proyectos. */
+.zona-app .buscador-velo {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(10 11 24 / 0.5);
+  display: flex;
+  justify-content: center;
+  padding-top: 13vh;
+  animation: entrar-pantalla 0.16s ease both;
+}
+
+.zona-app .buscador-caja {
+  width: min(560px, calc(100vw - 32px));
+  height: fit-content;
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-3);
+  overflow: hidden;
+}
+
+.zona-app .buscador-campo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--filete);
+  color: var(--apagado);
+}
+
+.zona-app .buscador-campo input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 15px;
+  color: var(--tinta);
+}
+
+.zona-app .buscador-campo input:focus { outline: none; box-shadow: none; }
+
+.zona-app .buscador-lista {
+  max-height: 52vh;
+  overflow-y: auto;
+  padding: 7px;
+}
+
+.zona-app .buscador-fila {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radio-sm);
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--tinta);
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+}
+
+.zona-app .buscador-fila span { flex: 1; }
+
+.zona-app .buscador-fila em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--apagado);
+}
+
+.zona-app .buscador-fila.elegida {
+  background: var(--acento-suave);
+  color: var(--acento-texto);
+}
+
+.zona-app .buscador-fila.elegida em { color: var(--acento-texto); opacity: 0.75; }
+
+.zona-app .buscador-vacio {
+  padding: 22px 14px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--apagado);
+}
+
+/* ---------------------------------------------------------------------------
+   El armazon: menu lateral, cinta superior y lienzo
+
+   El contenido NO esta limitado a 1200 px. En un monitor ancho esas dos franjas
+   vacias a los lados no son respiracion, son espacio desperdiciado, y eran la
+   primera queja sobre esta pantalla.
+   --------------------------------------------------------------------------- */
+
+.zona-app {
+  display: grid;
+  grid-template-columns: 268px minmax(0, 1fr);
+  align-items: start;
+}
+
+.zona-app.colapsada { grid-template-columns: 76px minmax(0, 1fr); }
+
+/* Todo lo que no sea la aurora va por encima de ella. */
+.zona-app > .barra,
+.zona-app > .columna { position: relative; z-index: 1; }
+
+.zona-app .barra {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--superficie);
+  border-right: 1px solid var(--filete);
+  overflow: hidden;
+}
+
+.zona-app .barra-marca {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 17px 16px;
+  border-bottom: 1px solid var(--filete);
+}
+
+.zona-app .marca-sello {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--degradado);
+  box-shadow: var(--sombra-acento);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.zona-app .marca-texto { display: block; min-width: 0; }
+
+.zona-app .marca-texto strong {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--tinta-fuerte);
+  white-space: nowrap;
+}
+
+.zona-app .marca-texto small {
+  display: block;
+  margin-top: 2px;
+  font-size: 10.5px;
+  color: var(--apagado);
+  white-space: nowrap;
+}
+
+.zona-app .barra-cerrar { display: none; }
+
+.zona-app .barra-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 10px 8px;
+}
+
+.zona-app .barra-nav::-webkit-scrollbar { width: 7px; }
+.zona-app .barra-nav::-webkit-scrollbar-thumb {
+  background: var(--filete-fuerte);
+  border-radius: 999px;
+}
+
+.zona-app .barra-grupo { margin-bottom: 15px; }
+
+.zona-app .barra-grupo-titulo {
+  padding: 0 10px;
+  margin-bottom: 5px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--apagado);
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.zona-app .barra-enlace {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 11px;
+  margin-bottom: 1px;
+  border-radius: var(--radio-sm);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--apagado);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.zona-app .barra-enlace svg { flex: none; }
+
+.zona-app .barra-enlace:hover {
+  background: var(--superficie-2);
+  color: var(--tinta);
+  transform: translateX(2px);
+}
+
+.zona-app .barra-enlace.active {
+  background: var(--degradado);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: var(--sombra-acento);
+  transform: none;
+}
+
+.zona-app .barra-enlace.active:hover { transform: none; filter: brightness(1.05); }
+
+.zona-app .barra-pie {
+  border-top: 1px solid var(--filete);
+  padding: 10px;
+}
+
+.zona-app .barra-persona {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 6px;
+  min-width: 0;
+}
+
+.zona-app .avatar {
+  flex: none;
+  width: 31px;
+  height: 31px;
+  border-radius: 50%;
+  background: var(--acento-suave);
+  color: var(--acento-texto);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.zona-app .barra-persona-texto { min-width: 0; }
+
+.zona-app .barra-persona-texto strong {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--tinta-fuerte);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zona-app .barra-persona-texto small {
+  display: block;
+  margin-top: 2px;
+  font-size: 10.5px;
+  color: var(--apagado);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zona-app .barra-colapsar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 4px;
+  padding: 8px 11px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radio-sm);
+  color: var(--apagado);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.zona-app .barra-colapsar:hover { background: var(--superficie-2); color: var(--tinta); }
+
+/* --- el menu contraido a 76 px --- */
+.zona-app.colapsada .marca-texto,
+.zona-app.colapsada .barra-grupo-titulo,
+.zona-app.colapsada .barra-enlace span,
+.zona-app.colapsada .barra-persona-texto,
+.zona-app.colapsada .barra-colapsar span { display: none; }
+
+.zona-app.colapsada .barra-marca,
+.zona-app.colapsada .barra-persona,
+.zona-app.colapsada .barra-colapsar { justify-content: center; }
+
+.zona-app.colapsada .barra-enlace {
+  justify-content: center;
+  padding: 11px 0;
+}
+
+/* Sin los titulos de grupo, los grupos se separan con una linea: si no, las
+   diecisiete opciones quedan como una columna de iconos sin ninguna division. */
+.zona-app.colapsada .barra-grupo + .barra-grupo {
+  border-top: 1px solid var(--filete);
+  padding-top: 10px;
+}
+
+.zona-app.colapsada .barra-colapsar svg { transform: rotate(180deg); }
+
+/* --- la cinta superior --- */
+.zona-app .columna { min-width: 0; }
+
+.zona-app .cinta {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 60px;
+  padding: 0 22px;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--filete);
+}
+
+.zona-app .cinta-izq,
+.zona-app .cinta-der { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+.zona-app .miga {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--apagado);
+  min-width: 0;
+}
+
+.zona-app .miga i { font-style: normal; opacity: 0.5; }
+
+.zona-app .miga b {
+  font-weight: 600;
+  color: var(--tinta-fuerte);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zona-app .boton-hamburguesa { display: none; }
+
+.zona-app .boton-salir {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1px solid var(--borde-suave);
+  border-radius: 999px;
+  padding: 7px 14px;
+  color: var(--tinta);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.zona-app .boton-salir:hover { border-color: var(--color-dato-3); color: var(--color-dato-4); }
+
+/* --- el lienzo --- */
+.zona-app .lienzo-app {
+  padding: 26px 30px 76px;
+  max-width: 1760px;
+  min-height: calc(100vh - 60px);
+}
+
+/* --- celular y tableta --- */
+.zona-app .velo-movil {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  border: 0;
+  background: rgb(10 11 24 / 0.45);
+  cursor: pointer;
+}
+
+@media (width < 1100px) {
+  .zona-app .lienzo-app { padding: 22px 20px 64px; }
+}
+
+@media (width < 900px) {
+  .zona-app,
+  .zona-app.colapsada { grid-template-columns: minmax(0, 1fr); }
+
+  .zona-app .barra {
+    position: fixed;
+    z-index: 50;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 266px;
+    transform: translateX(-104%);
+    box-shadow: var(--sombra-3);
+    transition: transform 0.26s cubic-bezier(0.22, 0.75, 0.25, 1);
+  }
+
+  .zona-app .barra.abierta { transform: none; }
+
+  /* Contraido no tiene sentido cuando el menu ya sale y se esconde entero. */
+  .zona-app.colapsada .marca-texto,
+  .zona-app.colapsada .barra-grupo-titulo,
+  .zona-app.colapsada .barra-enlace span,
+  .zona-app.colapsada .barra-persona-texto { display: revert; }
+
+  .zona-app.colapsada .barra-enlace { justify-content: flex-start; padding: 9px 11px; }
+  .zona-app.colapsada .barra-marca,
+  .zona-app.colapsada .barra-persona { justify-content: flex-start; }
+
+  .zona-app .barra-colapsar { display: none; }
+  .zona-app .barra-cerrar,
+  .zona-app .boton-hamburguesa { display: inline-flex; }
+
+  .zona-app .barra-cerrar {
+    margin-left: auto;
+    border: 0;
+    background: transparent;
+    color: var(--apagado);
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .zona-app .boton-hamburguesa {
+    align-items: center;
+    border: 1px solid var(--borde-suave);
+    border-radius: var(--radio-sm);
+    background: var(--superficie);
+    color: var(--tinta);
+    padding: 7px;
+    cursor: pointer;
+  }
+
+  .zona-app .boton-buscar span { display: none; }
+  .zona-app .boton-salir span { display: none; }
+  .zona-app .lienzo-app { padding: 18px 14px 56px; }
+}
+
+/* ---------------------------------------------------------------------------
+   El encabezado de cada pantalla, en tamano de aplicacion
+   --------------------------------------------------------------------------- */
+
+.zona-app .encabezado {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.zona-app .encabezado-texto { min-width: 0; }
+
+.zona-app .encabezado h1 {
+  margin-top: 9px;
+  font-size: clamp(24px, 2.4vw, 31px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.zona-app .encabezado-bajada {
+  margin-top: 10px;
+  max-width: 74ch;
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--apagado);
+}
+
+.zona-app .encabezado-acciones { display: flex; align-items: center; gap: 9px; }
+
+@media (width < 760px) {
+  .zona-app .encabezado { align-items: flex-start; }
+}

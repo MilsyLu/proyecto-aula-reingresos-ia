@@ -59,9 +59,20 @@ export function Estimar() {
     )
   }
 
+
   return (
     <div>
-      <Encabezado antetitulo="Trabajar" titulo="Estimar un paciente">
+      <Encabezado
+        antetitulo="Trabajar"
+        titulo="Estimar un paciente"
+        acciones={
+          opciones ? (
+            <button type="button" className="pastilla pastilla-contorno pastilla-sm" onClick={restablecer}>
+              Volver al paciente típico
+            </button>
+          ) : null
+        }
+      >
         <p>
           Escriba los datos de una hospitalización que ya terminó. El riesgo se recalcula solo a
           medida que cambia los campos, así que se ve enseguida cuál pesa y cuál no mueve nada.
@@ -69,7 +80,7 @@ export function Estimar() {
       </Encabezado>
 
       <div className="estimar-columnas">
-        <section>
+        <section className="tarjeta tarjeta-pad">
           {opciones ? (
             <FormularioPaciente
               campos={opciones.campos}
@@ -80,177 +91,185 @@ export function Estimar() {
           ) : (
             <p className="antetitulo">Cargando el formulario</p>
           )}
-
-          {opciones && (
-            <button
-              type="button"
-              className="pastilla pastilla-contorno pastilla-sm"
-              style={{ marginTop: 24 }}
-              onClick={restablecer}
-            >
-              Volver al paciente típico
-            </button>
-          )}
         </section>
 
         <aside className="estimar-resultado">
-          <p className="antetitulo">Riesgo de reingreso · 30 días</p>
+          <div className={`tarjeta tarjeta-pad resultado${resultado?.supera ? ' alerta' : ''}`}>
+            <p className="antetitulo">Riesgo de reingreso · 30 días</p>
 
-          <div className="riesgo-cifra" aria-live="polite">
-            {resultado ? porcentaje(resultado.probabilidad) : '—'}
+            <div className="riesgo-cifra" aria-live="polite">
+              {resultado ? porcentaje(resultado.probabilidad) : '—'}
+            </div>
+
+            {resultado && (
+              <>
+                <div className="riesgo-barra">
+                  <i style={{ width: `${Math.min(resultado.probabilidad * 100, 100)}%` }} />
+                  <b style={{ left: `${resultado.umbral * 100}%` }} />
+                </div>
+
+                <div className="riesgo-datos">
+                  <div>
+                    <p>Tasa base</p>
+                    <p>{porcentaje(resultado.tasa_base)}</p>
+                  </div>
+                  <div>
+                    <p>Umbral</p>
+                    <p>{porcentaje(resultado.umbral)}</p>
+                  </div>
+                  <div>
+                    <p>Veces la base</p>
+                    <p>{veces(resultado.veces_la_base)}</p>
+                  </div>
+                </div>
+
+                <p className="riesgo-decision">
+                  {resultado.supera
+                    ? 'Entra en la lista de llamadas del programa.'
+                    : 'No alcanza el umbral: queda fuera de la lista.'}
+                </p>
+              </>
+            )}
+
+            {fueraDeRango.length > 0 && (
+              <p className="riesgo-aviso">
+                Hay valores fuera de rango; se está usando el más cercano permitido.
+              </p>
+            )}
+            {fallo && <p className="riesgo-aviso">{fallo}</p>}
+            {calculando && !resultado && <p className="antetitulo">Calculando</p>}
           </div>
 
           {resultado && (
-            <>
-              <div className="riesgo-barra">
-                <i style={{ width: `${Math.min(resultado.probabilidad * 100, 100)}%` }} />
-                <b style={{ left: `${resultado.umbral * 100}%` }} />
-              </div>
-
-              <div className="riesgo-datos">
-                <div>
-                  <p>Tasa base</p>
-                  <p>{porcentaje(resultado.tasa_base)}</p>
-                </div>
-                <div>
-                  <p>Umbral</p>
-                  <p>{porcentaje(resultado.umbral)}</p>
-                </div>
-                <div>
-                  <p>Veces la base</p>
-                  <p>{veces(resultado.veces_la_base)}</p>
-                </div>
-              </div>
-
-              <p className="riesgo-decision">
-                {resultado.supera
-                  ? 'Entra en la lista de llamadas del programa.'
-                  : 'No alcanza el umbral: queda fuera de la lista.'}
-              </p>
-
-              <div className="riesgo-peso">
-                <h3>Qué pesó en este resultado</h3>
-                {resultado.efectos.length === 0 ? (
-                  <p className="riesgo-nota">
-                    Todos los datos están en su valor típico, así que el riesgo es el del
-                    paciente promedio de la cohorte. Cambie algún campo para ver qué lo mueve.
-                  </p>
-                ) : (
-                  <>
-                    {resultado.efectos.map((e) => {
-                      const ancho = Math.min(Math.abs(e.efecto) / 0.25, 1) * 100
-                      return (
-                        <div key={e.campo} className="peso-fila">
-                          <div className="peso-cabeza">
-                            <span>
-                              {e.nombre}: <strong>{e.valor}</strong>
-                            </span>
-                            <span className="peso-valor">
-                              {conSigno(e.efecto * 100)} pts
-                            </span>
-                          </div>
-                          <div className="peso-barra">
-                            <i
-                              style={{
-                                width: `${ancho}%`,
-                                background:
-                                  e.efecto >= 0 ? 'var(--color-dato-3)' : 'var(--color-teal)',
-                              }}
-                            />
-                          </div>
-                          <p className="peso-pie">
-                            Con el valor típico ({e.tipico}) bajaría a {porcentaje(e.sin_el)}.
-                          </p>
+            <div className="tarjeta tarjeta-pad riesgo-peso">
+              <h3 className="tarjeta-titulo">Qué pesó en este resultado</h3>
+              {resultado.efectos.length === 0 ? (
+                <p className="riesgo-nota">
+                  Todos los datos están en su valor típico, así que el riesgo es el del paciente
+                  promedio de la cohorte. Cambie algún campo para ver qué lo mueve.
+                </p>
+              ) : (
+                <>
+                  {resultado.efectos.map((e) => {
+                    const ancho = Math.min(Math.abs(e.efecto) / 0.25, 1) * 100
+                    return (
+                      <div key={e.campo} className="peso-fila">
+                        <div className="peso-cabeza">
+                          <span>
+                            {e.nombre}: <strong>{e.valor}</strong>
+                          </span>
+                          <span className="peso-valor">{conSigno(e.efecto * 100)} pts</span>
                         </div>
-                      )
-                    })}
-                    <p className="riesgo-nota">
-                      No es una aproximación estadística: cada cifra se obtiene volviéndole a
-                      preguntar al modelo con ese dato cambiado.
-                    </p>
-                  </>
-                )}
-              </div>
+                        <div className="peso-barra">
+                          <i
+                            style={{
+                              width: `${ancho}%`,
+                              background:
+                                e.efecto >= 0 ? 'var(--color-dato-3)' : 'var(--color-teal)',
+                            }}
+                          />
+                        </div>
+                        <p className="peso-pie">
+                          Con el valor típico ({e.tipico}) bajaría a {porcentaje(e.sin_el)}.
+                        </p>
+                      </div>
+                    )
+                  })}
+                  <p className="riesgo-nota">
+                    No es una aproximación estadística: cada cifra se obtiene volviéndole a
+                    preguntar al modelo con ese dato cambiado.
+                  </p>
+                </>
+              )}
 
               <Link to="../paso-a-paso" className="pastilla pastilla-contorno pastilla-sm riesgo-enlace">
                 Ver el cálculo paso a paso
               </Link>
-            </>
+            </div>
           )}
-
-          {fueraDeRango.length > 0 && (
-            <p className="riesgo-aviso">
-              Hay valores fuera de rango; se está usando el más cercano permitido.
-            </p>
-          )}
-          {fallo && <p className="riesgo-aviso">{fallo}</p>}
-          {calculando && !resultado && <p className="antetitulo">Calculando</p>}
         </aside>
       </div>
 
       <style>{`
         .estimar-columnas {
           display: grid;
-          grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
-          gap: 56px;
+          grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+          gap: 20px;
           align-items: start;
-          margin-top: 44px;
         }
-        .estimar-resultado { position: sticky; top: 96px; }
+        .estimar-resultado {
+          position: sticky;
+          top: 82px;
+          display: grid;
+          gap: 16px;
+        }
+        /* Cuando el riesgo pasa el umbral, la tarjeta entera se tine: el color
+           llega antes que el numero y es lo primero que se nota de reojo. */
+        .resultado.alerta {
+          background:
+            linear-gradient(180deg, rgb(var(--dato-rgb) / .09), transparent 62%),
+            var(--superficie);
+          border-color: rgb(var(--dato-rgb) / .35);
+        }
         .riesgo-cifra {
           font-family: var(--font-serif);
           font-weight: 300;
-          font-size: clamp(50px, 7vw, 80px);
+          font-size: clamp(44px, 4.6vw, 64px);
           line-height: .95;
-          letter-spacing: -0.02em;
+          letter-spacing: -0.025em;
           color: var(--tinta-fuerte);
           font-variant-numeric: tabular-nums lining-nums;
-          margin-top: 12px;
+          margin-top: 10px;
         }
         .riesgo-barra {
-          position: relative; height: 4px; background: var(--filete); margin-top: 26px;
+          position: relative; height: 6px; border-radius: 999px;
+          background: var(--superficie-2); margin-top: 20px;
         }
         .riesgo-barra i {
-          position: absolute; left: 0; top: 0; height: 4px;
-          background: var(--color-dato-3);
+          position: absolute; left: 0; top: 0; height: 6px; border-radius: 999px;
+          background: linear-gradient(90deg, var(--color-dato-2), var(--color-dato-4));
           transition: width .5s cubic-bezier(.2,.75,.2,1);
         }
         .riesgo-barra b {
-          position: absolute; top: -7px; width: 1px; height: 18px; background: var(--apagado);
+          position: absolute; top: -6px; width: 2px; height: 18px; border-radius: 2px;
+          background: var(--apagado);
         }
-        .riesgo-datos { display: flex; gap: 32px; margin-top: 18px; flex-wrap: wrap; }
+        .riesgo-datos {
+          display: grid; grid-template-columns: repeat(3, 1fr);
+          gap: 10px; margin-top: 18px;
+          border-top: 1px solid var(--filete); padding-top: 14px;
+        }
         .riesgo-datos p:first-child {
-          font-size: 11px; font-weight: 500; letter-spacing: .14em;
+          font-size: 10px; font-weight: 600; letter-spacing: .1em;
           text-transform: uppercase; color: var(--apagado);
         }
         .riesgo-datos p:last-child {
-          font-size: 16px; margin-top: 5px;
+          font-size: 17px; margin-top: 5px; font-weight: 500;
           font-variant-numeric: tabular-nums lining-nums;
         }
-        .riesgo-decision { margin-top: 20px; font-size: 14.5px; }
-        .riesgo-peso {
-          margin-top: 30px; padding: 24px;
-          background: var(--superficie); border-radius: var(--radius-tarjeta);
-        }
-        .riesgo-peso h3 { font-size: 20px; }
-        .peso-fila { margin-top: 18px; }
+        .riesgo-decision { margin-top: 16px; font-size: 13.5px; }
+        .riesgo-peso h3 { margin-bottom: 4px; }
+        .peso-fila { margin-top: 16px; }
         .peso-cabeza {
           display: flex; justify-content: space-between; gap: 12px;
-          align-items: baseline; font-size: 14px;
+          align-items: baseline; font-size: 13px;
         }
         .peso-cabeza strong { font-weight: 600; }
         .peso-valor { font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
-        .peso-barra { height: 6px; background: var(--filete); margin-top: 8px; border-radius: 999px; }
+        .peso-barra {
+          height: 6px; background: var(--superficie-2);
+          margin-top: 7px; border-radius: 999px; overflow: hidden;
+        }
         .peso-barra i {
           display: block; height: 6px; border-radius: 999px;
           transition: width .5s cubic-bezier(.2,.75,.2,1);
         }
-        .peso-pie { margin-top: 7px; font-size: 12.5px; color: var(--apagado); }
-        .riesgo-nota { margin-top: 18px; font-size: 13px; line-height: 1.65; color: var(--apagado); }
-        .riesgo-enlace { margin-top: 24px; }
-        .riesgo-aviso { margin-top: 16px; font-size: 13px; color: var(--color-dato-4); }
-        @media (width < 1040px) {
-          .estimar-columnas { grid-template-columns: 1fr; gap: 40px; }
+        .peso-pie { margin-top: 6px; font-size: 12px; color: var(--apagado); }
+        .riesgo-nota { margin-top: 16px; font-size: 12.5px; line-height: 1.6; color: var(--apagado); }
+        .riesgo-enlace { margin-top: 20px; }
+        .riesgo-aviso { margin-top: 14px; font-size: 12.5px; color: var(--color-dato-4); }
+        @media (width < 1080px) {
+          .estimar-columnas { grid-template-columns: 1fr; }
           .estimar-resultado { position: static; }
         }
       `}</style>

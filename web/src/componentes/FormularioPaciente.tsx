@@ -79,33 +79,57 @@ export function FormularioPaciente({
 
       <style>{`
         .grupo-campos { border: 0; margin: 0; padding: 0; }
-        .grupo-campos legend { padding: 0; margin-bottom: 14px; }
+        .grupo-campos legend { padding: 0; margin-bottom: 12px; }
         .rejilla-campos {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 14px;
+          grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+          gap: 13px;
         }
-        .campo-paciente { display: flex; flex-direction: column; gap: 6px; }
-        .campo-etiqueta { font-size: 13.5px; color: var(--tinta); }
+        .campo-paciente {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          position: relative;
+        }
+        .campo-etiqueta { font-size: 12.5px; font-weight: 500; color: var(--tinta); }
         .campo-paciente input,
         .campo-paciente select {
           background: var(--superficie);
-          border: 1px solid var(--filete);
-          border-radius: var(--radius-entrada);
-          padding: 10px 12px;
+          border: 1px solid var(--borde-suave);
+          border-radius: var(--radio-sm, 10px);
+          padding: 9px 11px;
           font-family: var(--font-sans);
-          font-size: 15px;
+          font-size: 14px;
           color: var(--tinta);
           letter-spacing: -0.009em;
           font-variant-numeric: tabular-nums lining-nums;
           width: 100%;
+          transition: border-color .18s ease, box-shadow .18s ease;
         }
-        .campo-paciente select { cursor: pointer; appearance: none; }
+        .campo-paciente select { cursor: pointer; appearance: none; padding-right: 28px; }
+        /* La flecha del desplegable, dibujada con bordes: quitar la nativa con
+           appearance:none y no poner nada deja un campo que no se ve que abre. */
+        .campo-paciente:has(select)::after {
+          content: '';
+          position: absolute;
+          right: 12px;
+          top: 36px;
+          width: 0;
+          height: 0;
+          pointer-events: none;
+          border-left: 4px solid transparent;
+          border-right: 4px solid transparent;
+          border-top: 5px solid var(--apagado);
+        }
         .campo-paciente input:focus,
-        .campo-paciente select:focus { outline: none; border-color: var(--filete-fuerte); }
+        .campo-paciente select:focus {
+          outline: none;
+          border-color: var(--acento, var(--filete-fuerte));
+          box-shadow: 0 0 0 3px var(--acento-suave, transparent);
+        }
         .campo-paciente input:disabled,
         .campo-paciente select:disabled { opacity: .55; cursor: default; }
-        .campo-rango { font-size: 11px; color: var(--apagado); }
+        .campo-rango { font-size: 10.5px; color: var(--apagado); }
       `}</style>
     </div>
   )

@@ -3,37 +3,34 @@ import type { ReactNode } from 'react'
 /**
  * El encabezado con el que abre cada pantalla.
  *
- * Aira lo define como patrón fijo: antetítulo en mayúscula pequeña con mucho
- * interletraje, titular en serif, y una frase que dice para qué sirve lo que
- * sigue. Tenerlo en un componente evita que cada pantalla lo escriba distinto.
+ * Mantiene el patrón de Aira —antetítulo en mayúscula pequeña, titular en
+ * serif, y una frase que dice para qué sirve lo que sigue— pero en tamaño de
+ * aplicación, no de revista. Dentro de un panel con menú lateral, un titular
+ * de 48 px se lee como un error de maqueta y además empuja hacia abajo lo
+ * único que la persona vino a ver.
+ *
+ * `acciones` es para los botones que pertenecen a la pantalla entera, que van
+ * a la derecha y a la misma altura del titular.
  */
 export function Encabezado({
   antetitulo,
   titulo,
+  acciones,
   children,
 }: {
   antetitulo: string
   titulo: string
+  acciones?: ReactNode
   children?: ReactNode
 }) {
   return (
-    <div style={{ maxWidth: '60ch' }}>
-      <p className="antetitulo">{antetitulo}</p>
-      <h1 style={{ marginTop: 14, fontSize: 'clamp(32px, 4.4vw, 48px)', lineHeight: 1.12 }}>
-        {titulo}
-      </h1>
-      {children && (
-        <div
-          style={{
-            marginTop: 18,
-            fontSize: 17,
-            lineHeight: 1.6,
-            color: 'var(--apagado)',
-          }}
-        >
-          {children}
-        </div>
-      )}
+    <div className="encabezado">
+      <div className="encabezado-texto">
+        <p className="antetitulo">{antetitulo}</p>
+        <h1>{titulo}</h1>
+        {children && <div className="encabezado-bajada">{children}</div>}
+      </div>
+      {acciones && <div className="encabezado-acciones">{acciones}</div>}
     </div>
   )
 }
