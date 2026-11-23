@@ -225,7 +225,7 @@ export function Estimar() {
           )}
 
           <aside className="tarjeta">
-            <ChatAsistente estimacion={resultado} alto={248} />
+            <ChatAsistente estimacion={resultado} alto={248} compacto />
           </aside>
 
           {resultado && resultado.efectos.length > 0 && (

@@ -1332,145 +1332,6 @@
 .zona-app .apagado { color: var(--apagado); }
 .zona-app td.puesto { font-variant-numeric: tabular-nums lining-nums; font-size: 11px; color: var(--apagado); }
 
-/* ---------------------------------------------------------------------------
-   El chat del asistente
-
-   Sirve en los dos sitios donde aparece: la pantalla suelta y el panel que va
-   pegado a la derecha en Estimar.
-   --------------------------------------------------------------------------- */
-
-.zona-app .chat { display: flex; flex-direction: column; }
-
-.zona-app .chat-cabeza {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 15px 17px;
-  background: var(--teal-suave);
-  border-bottom: 1px solid var(--filete);
-}
-
-.zona-app .chat-titulo { display: flex; gap: 10px; align-items: center; }
-
-.zona-app .sello-bot {
-  flex: none;
-  width: 32px;
-  height: 32px;
-  background: var(--teal);
-  color: #ffffff;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-}
-
-.zona-app .en-linea {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
-  font-weight: 900;
-  color: var(--teal-hondo);
-  white-space: nowrap;
-}
-
-.zona-app .en-linea::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  background: #22c695;
-  border-radius: 50%;
-}
-
-.zona-app .chat-hilo {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  padding: 14px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-.zona-app .burbuja {
-  max-width: 93%;
-  font-size: 12.5px;
-  line-height: 1.55;
-  padding: 10px 12px;
-  border-radius: 12px;
-  white-space: pre-wrap;
-}
-
-.zona-app .burbuja.de-bot {
-  align-self: flex-start;
-  background: var(--teal-suave);
-  color: #285552;
-  border-top-left-radius: 3px;
-}
-
-[data-tema='oscuro'] .zona-app .burbuja.de-bot { background: #16302e; color: #c9f1ea; }
-
-.zona-app .burbuja.de-usted {
-  align-self: flex-end;
-  background: #e9edff;
-  color: #354caa;
-  border-top-right-radius: 3px;
-}
-
-[data-tema='oscuro'] .zona-app .burbuja.de-usted { background: #232329; color: #e4e4ea; }
-
-.zona-app .sugerencias { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 14px 11px; }
-
-.zona-app .sugerencia {
-  border: 1px solid #ccece5;
-  border-radius: 20px;
-  background: var(--superficie);
-  color: var(--teal-hondo);
-  padding: 7px 11px;
-  font-family: var(--font-dm);
-  font-size: 11px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background .14s ease;
-}
-
-[data-tema='oscuro'] .zona-app .sugerencia { border-color: #24443f; }
-.zona-app .sugerencia:hover { background: var(--teal-suave); }
-.zona-app .sugerencia:disabled { opacity: .5; cursor: default; }
-
-.zona-app .chat-form {
-  border-top: 1px solid var(--filete);
-  padding: 11px 13px;
-  display: flex;
-  gap: 7px;
-}
-
-.zona-app .chat-form input { flex: 1; min-width: 0; font-size: 12.5px; }
-
-/* El amarillo del boton de enviar es el del diseno que paso Michel. Es el
-   unico sitio, con la pastilla de prioridad, donde entra ese color. */
-.zona-app .enviar {
-  flex: none;
-  border: 0;
-  border-radius: var(--radio-sm);
-  background: var(--amarillo);
-  color: var(--amarillo-texto);
-  width: 42px;
-  font-size: 16px;
-  font-weight: 900;
-  cursor: pointer;
-  transition: filter .14s ease;
-}
-
-.zona-app .enviar:hover { filter: brightness(1.05); }
-.zona-app .enviar:disabled { opacity: .5; cursor: default; }
-
-.zona-app .chat-pie {
-  text-align: center;
-  font-size: 10px;
-  color: var(--apagado);
-  padding: 0 12px 11px;
-}
-
 /* --- la agenda semanal --- */
 
 .zona-app .semana-barra {
@@ -2415,4 +2276,346 @@
 
 @media (width < 1080px) {
   .zona-app .fases-orbe { opacity: 0.4; right: -18%; }
+}
+
+/* ---------------------------------------------------------------------------
+   El chat del asistente
+
+   Sirve en los dos sitios donde aparece: la pantalla suelta y el panel que va
+   pegado a la derecha en «Estimar». En el panel entra en modo compacto, sin
+   etiquetas ni campo grande, porque ahi solo hay 340 px de ancho.
+   --------------------------------------------------------------------------- */
+
+.zona-app .chat { display: flex; flex-direction: column; }
+
+.zona-app .chat-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 17px;
+  border-bottom: 1px solid var(--filete);
+}
+
+.zona-app .chat-titulo { display: flex; gap: 11px; align-items: center; }
+
+.zona-app .sello-bot {
+  flex: none;
+  width: 33px;
+  height: 33px;
+  background: var(--teal);
+  color: #ffffff;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-nunito);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.zona-app .en-linea {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--teal-hondo);
+  white-space: nowrap;
+}
+
+.zona-app .en-linea::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  background: #22c695;
+  border-radius: 50%;
+}
+
+.zona-app .chat-hilo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 17px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.zona-app .turno { display: flex; flex-direction: column; max-width: 88%; }
+.zona-app .turno.de-usted { align-self: flex-end; align-items: flex-end; }
+.zona-app .turno.de-bot { align-self: flex-start; }
+
+.zona-app .turno-quien {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--apagado);
+  margin-bottom: 5px;
+  padding-inline: 3px;
+}
+
+.zona-app .burbuja {
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 12px 14px;
+  border-radius: 12px;
+  white-space: pre-wrap;
+}
+
+.zona-app .turno.de-bot .burbuja {
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  color: var(--tinta);
+  border-top-left-radius: 4px;
+}
+
+.zona-app .turno.de-usted .burbuja {
+  background: var(--superficie-2);
+  color: var(--tinta);
+  border-top-right-radius: 4px;
+}
+
+/* El aviso al pie de cada respuesta. Repetirlo en cada una es a proposito:
+   quien entra a mitad de la conversacion lo lee igual. */
+.zona-app .burbuja-pie {
+  display: block;
+  margin-top: 11px;
+  padding-top: 9px;
+  border-top: 1px solid var(--filete);
+  font-size: 10.5px;
+  color: var(--apagado);
+}
+
+.zona-app .sugerencias { padding: 0 17px 13px; }
+
+.zona-app .sugerencias-titulo {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--apagado);
+  margin-bottom: 8px;
+}
+
+.zona-app .sugerencias-fichas { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.zona-app .sugerencia {
+  border: 1px solid #ccece5;
+  border-radius: 20px;
+  background: var(--superficie);
+  color: var(--teal-hondo);
+  padding: 7px 12px;
+  font-family: var(--font-dm);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .14s ease, border-color .14s ease;
+}
+
+[data-tema='oscuro'] .zona-app .sugerencia { border-color: #24443f; }
+.zona-app .sugerencia:hover { background: var(--teal-suave); border-color: var(--teal); }
+.zona-app .sugerencia:disabled { opacity: .5; cursor: default; }
+
+.zona-app .chat-form {
+  border-top: 1px solid var(--filete);
+  padding: 13px 15px;
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+}
+
+.zona-app .chat-form textarea {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  resize: vertical;
+  min-height: 44px;
+  max-height: 170px;
+}
+
+/* El boton de enviar es redondo y del acento, como en la maqueta. */
+.zona-app .enviar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #ffffff;
+  cursor: pointer;
+  transition: filter .14s ease, transform .14s ease;
+}
+
+.zona-app .enviar:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.zona-app .enviar:disabled { opacity: .45; cursor: default; transform: none; }
+
+.zona-app .chat-pie {
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--apagado);
+  padding: 0 14px 13px;
+}
+
+/* --- el modo compacto, para el panel de «Estimar» --- */
+
+.zona-app .chat.compacto .chat-hilo { padding: 14px; gap: 10px; }
+.zona-app .chat.compacto .turno { max-width: 94%; }
+.zona-app .chat.compacto .burbuja { font-size: 12.5px; padding: 10px 12px; }
+.zona-app .chat.compacto .sugerencias { padding: 0 14px 11px; }
+.zona-app .chat.compacto .sugerencia { font-size: 10.5px; padding: 6px 10px; }
+.zona-app .chat.compacto .chat-form { padding: 11px 13px; }
+.zona-app .chat.compacto .chat-form textarea { min-height: 40px; font-size: 12.5px; }
+.zona-app .chat.compacto .enviar { width: 36px; height: 36px; }
+
+/* ---------------------------------------------------------------------------
+   La pantalla del asistente: contexto a la izquierda, conversación a la derecha
+   --------------------------------------------------------------------------- */
+
+.zona-app .asistente-columnas {
+  display: grid;
+  grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* La columna de contexto va tintada: dice «esto es de lo que estamos
+   hablando», no «esto es otra cosa que leer». */
+.zona-app .contexto {
+  background: linear-gradient(170deg, var(--teal-suave) 0%, var(--superficie) 58%);
+}
+
+.zona-app .contexto-pad { padding: 17px 19px 19px; }
+
+.zona-app .contexto-rotulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal-hondo);
+}
+
+.zona-app .contexto-rotulo::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+}
+
+.zona-app .contexto h2 { margin-top: 11px; font-size: 19px; }
+
+.zona-app .contexto-sub {
+  margin-top: 6px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--apagado);
+}
+
+.zona-app .contexto-caja {
+  margin-top: 15px;
+  padding: 15px 16px 16px;
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-1);
+}
+
+.zona-app .contexto-etiqueta { font-size: 11px; color: var(--apagado); }
+
+.zona-app .contexto-cifra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.zona-app .contexto-cifra > b {
+  font-family: var(--font-nunito);
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--tinta-fuerte);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .contexto-barra {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--superficie-2);
+  margin-top: 18px;
+}
+
+.zona-app .contexto-barra i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--teal), #0bb3a4);
+  transition: width .5s cubic-bezier(.2,.75,.2,1);
+}
+
+.zona-app .contexto-barra b {
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--acento);
+}
+
+.zona-app .contexto-extremos,
+.zona-app .contexto-pie {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 10.5px;
+  color: var(--apagado);
+}
+
+.zona-app .contexto-extremos b,
+.zona-app .contexto-pie b {
+  font-weight: 800;
+  color: var(--tinta);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .contexto-pie {
+  margin-top: 13px;
+  padding-top: 11px;
+  border-top: 1px solid var(--filete);
+}
+
+.zona-app .contexto-veces {
+  font-family: var(--font-nunito);
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--acento-texto);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .contexto-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px 19px 15px;
+  border-top: 1px solid var(--filete);
+  color: var(--apagado);
+}
+
+.zona-app .contexto-aviso svg { flex: none; margin-top: 1px; }
+.zona-app .contexto-aviso p { font-size: 10.5px; line-height: 1.55; }
+
+@media (width < 1000px) {
+  .zona-app .asistente-columnas { grid-template-columns: minmax(0, 1fr); }
 }

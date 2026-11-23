@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import { ArrowUp } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { ErrorApi, api } from '../lib/api'
 import type { Estimacion } from '../lib/tiposModelo'
@@ -22,15 +22,32 @@ interface Turno {
   texto: string
 }
 
+/**
+ * El modelo responde con **negrita** de Markdown y salían los asteriscos en
+ * crudo. No se trae un renderizador entero de Markdown por esto: se parte el
+ * texto por los pares de asteriscos y punto.
+ *
+ * Se parte, no se inyecta HTML: lo que viene del modelo nunca se interpreta
+ * como marcado, solo se pinta en negrita el trozo que iba entre asteriscos.
+ */
+function conNegrita(texto: string) {
+  return texto.split(/\*\*(.+?)\*\*/g).map((trozo, i) =>
+    i % 2 === 1 ? <strong key={i}>{trozo}</strong> : trozo,
+  )
+}
+
 export function ChatAsistente({
   estimacion,
   alto = 300,
   saludo = 'Pregúnteme por qué este paciente dio ese riesgo, qué dato lo empuja, o qué tan de fiar es la cifra.',
+  compacto = false,
 }: {
   estimacion: Estimacion | null
   /** Alto del hilo en píxeles. El panel lateral y la pantalla suelta difieren. */
   alto?: number
   saludo?: string
+  /** El panel lateral de «Estimar» es estrecho: sin etiquetas ni campo grande. */
+  compacto?: boolean
 }) {
   const [disponible, setDisponible] = useState<boolean | null>(null)
   const [sugerencias, setSugerencias] = useState<string[]>([])
@@ -89,17 +106,13 @@ export function ChatAsistente({
   const listo = disponible === true && estimacion !== null
 
   return (
-    <div className="chat">
+    <div className={`chat${compacto ? ' compacto' : ''}`}>
       <div className="chat-cabeza">
         <div className="chat-titulo">
-          <span className="sello-bot">
-            <Sparkles size={16} strokeWidth={1.8} aria-hidden="true" />
-          </span>
+          <span className="sello-bot">IA</span>
           <div>
-            <h3 className="tarjeta-titulo">Asistente</h3>
-            <p className="tarjeta-sub">
-              {estimacion ? 'Sobre el paciente en pantalla' : 'Esperando un paciente'}
-            </p>
+            <h3 className="tarjeta-titulo">Conversación</h3>
+            <p className="tarjeta-sub">Asistente educativo de ReingresaIA</p>
           </div>
         </div>
         {disponible !== false && <span className="en-linea">Disponible</span>}
@@ -107,23 +120,49 @@ export function ChatAsistente({
 
       <div className="chat-hilo" style={{ maxHeight: alto, minHeight: alto }}>
         {disponible === false ? (
-          <div className="burbuja de-bot">
-            El asistente no está configurado en este servidor. Todo lo demás funciona igual: el
-            riesgo, el paso a paso y las métricas no dependen de él.
+          <div className="turno de-bot">
+            <div className="burbuja">
+              El asistente no está configurado en este servidor. Todo lo demás funciona igual:
+              el riesgo, el paso a paso y las métricas no dependen de él.
+            </div>
           </div>
         ) : (
           <>
-            <div className="burbuja de-bot">{saludo}</div>
+            {turnos.length === 0 && (
+              <div className="turno de-bot">
+                {!compacto && <p className="turno-quien">ReingresaIA</p>}
+                <div className="burbuja">{saludo}</div>
+              </div>
+            )}
+
             {turnos.map((t, i) => (
-              <div
-                key={i}
-                className={t.quien === 'usted' ? 'burbuja de-usted' : 'burbuja de-bot'}
-              >
-                {t.texto}
+              <div key={i} className={t.quien === 'usted' ? 'turno de-usted' : 'turno de-bot'}>
+                {!compacto && (
+                  <p className="turno-quien">{t.quien === 'usted' ? 'Tú' : 'ReingresaIA'}</p>
+                )}
+                <div className="burbuja">
+                  {t.quien === 'asistente' ? conNegrita(t.texto) : t.texto}
+                  {t.quien === 'asistente' && !compacto && (
+                    <span className="burbuja-pie">
+                      Respuesta orientativa · verifique siempre el contexto clínico
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
-            {pensando && <div className="burbuja de-bot">Pensando…</div>}
-            {fallo && <div className="burbuja de-bot">{fallo}</div>}
+
+            {pensando && (
+              <div className="turno de-bot">
+                {!compacto && <p className="turno-quien">ReingresaIA</p>}
+                <div className="burbuja">Pensando…</div>
+              </div>
+            )}
+
+            {fallo && (
+              <div className="turno de-bot">
+                <div className="burbuja">{fallo}</div>
+              </div>
+            )}
           </>
         )}
         <div ref={fondo} />
@@ -131,17 +170,20 @@ export function ChatAsistente({
 
       {listo && sugerencias.length > 0 && turnos.length === 0 && (
         <div className="sugerencias">
-          {sugerencias.slice(0, 3).map((s) => (
-            <button
-              key={s}
-              type="button"
-              className="sugerencia"
-              disabled={pensando}
-              onClick={() => enviar(s)}
-            >
-              {s}
-            </button>
-          ))}
+          {!compacto && <p className="sugerencias-titulo">Para continuar</p>}
+          <div className="sugerencias-fichas">
+            {sugerencias.slice(0, 3).map((s) => (
+              <button
+                key={s}
+                type="button"
+                className="sugerencia"
+                disabled={pensando}
+                onClick={() => enviar(s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -152,12 +194,21 @@ export function ChatAsistente({
           enviar(pregunta)
         }}
       >
-        <input
+        <textarea
           value={pregunta}
           maxLength={600}
+          rows={compacto ? 1 : 3}
           disabled={!listo || pensando}
-          placeholder={listo ? 'Escriba su pregunta' : 'No disponible'}
+          placeholder={listo ? 'Pregunta lo que quieras sobre este resultado…' : 'No disponible'}
           onChange={(e) => setPregunta(e.target.value)}
+          onKeyDown={(e) => {
+            // Enter envía; Mayús+Enter hace un salto de línea. Es lo que ya
+            // espera cualquiera que haya escrito en un chat.
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              enviar(pregunta)
+            }
+          }}
           aria-label="Pregunta al asistente"
         />
         <button
@@ -166,11 +217,13 @@ export function ChatAsistente({
           disabled={!listo || pensando || !pregunta.trim()}
           aria-label="Enviar la pregunta"
         >
-          ↑
+          <ArrowUp size={17} strokeWidth={2.4} aria-hidden="true" />
         </button>
       </form>
 
-      <p className="chat-pie">Responde sobre este caso. Cuando no sabe algo, lo dice.</p>
+      <p className="chat-pie">
+        El asistente explica el modelo: no ofrece diagnóstico ni recomendaciones de tratamiento.
+      </p>
     </div>
   )
 }
