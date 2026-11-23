@@ -34,6 +34,12 @@ services:
       # dentro de este archivo, pero al contenedor solo le entrega lo que
       # aparezca aqui listado. Tener la clave en .env no basta.
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # Donde vive la base de datos del seguimiento, que es el volumen de abajo.
+      REINGRESAIA_DATOS: /app/datos
+    volumes:
+      # Sin esto, cada redespliegue borraria los pacientes registrados: la
+      # imagen se reconstruye entera y lo que estuviera dentro se pierde.
+      - datos:/app/datos
     networks:
       - interna
     # Un servidor de un solo nucleo: si la aplicacion se desboca, el resto del
@@ -70,6 +76,10 @@ networks:
     name: reingresaia-interna
 
 volumes:
+  # Los pacientes que alguien registre para seguimiento. Sobrevive a
+  # 'docker compose up --build'; solo se pierde si se borra a mano.
+  datos:
+
   # Aqui vive el certificado. Si se borra, Let's Encrypt lo vuelve a emitir,
   # pero hay limites de cuantas veces al dia: mejor no borrarlo.
   caddy-datos:

@@ -45,6 +45,15 @@ COPY reports/ ./reports/
 COPY --from=front /build/dist ./web/dist
 
 # Hugging Face corre el contenedor con un usuario sin privilegios.
+# La carpeta donde vive la base de datos del seguimiento. Se crea ANTES de
+# cambiar de usuario, y por eso el chown de abajo la alcanza.
+#
+# Ojo con esto: un volumen con nombre recien creado hereda el dueno de la
+# carpeta que encuentra en la imagen. Si /app/datos no existiera aqui, el
+# volumen quedaria de root y el contenedor no podria escribir la base. Falla
+# en silencio, al primer paciente que alguien registre.
+RUN mkdir -p /app/datos
+
 RUN useradd --create-home --uid 1000 usuario && chown -R usuario:usuario /app
 USER usuario
 
