@@ -13,9 +13,11 @@ const OrbeParticulas = lazy(() =>
  * definición de libro. Todas las cifras provienen de archivos de `reports/`.
  *
  * La maqueta: el fondo ocupa la vista entera —la fotografía de la Tierra de
- * noche con el orbe de partículas girando a la derecha— y las fases pasan
- * encima como una baraja. El orbe es el mismo de la portada y son los mismos
- * pacientes: no es un adorno traído de fuera.
+ * noche— y el orbe de partículas gira a la derecha, con todo el espacio para
+ * él. Las fases pasan en la tarjeta de la izquierda.
+ *
+ * Hubo una baraja de tarjetas a la derecha y se quitó: repetía palabra por
+ * palabra lo que ya decía la tarjeta grande, y encima tapaba el orbe.
  */
 
 interface Fase {
@@ -204,38 +206,6 @@ export function Fases() {
           </div>
         </div>
 
-        <div className="fases-baraja">
-          {FASES.map((f, i) => {
-            // Distancia desde la fase activa, en circulo. La de delante es 0;
-            // las tres siguientes se apilan detras; el resto queda fuera.
-            const d = (i - actual + FASES.length) % FASES.length
-            const detras = d >= 1 && d <= 3
-            const estado = d === 0 ? 'frente' : detras ? 'detras' : 'fuera'
-
-            return (
-              <button
-                key={f.numero}
-                type="button"
-                className={`fase-carta ${estado}`}
-                style={{ zIndex: FASES.length - d, '--d': d } as React.CSSProperties}
-                tabIndex={d === 0 ? 0 : -1}
-                aria-hidden={d !== 0}
-                onClick={() => {
-                  if (d !== 0) { setActual(i); setCorriendo(false) }
-                }}
-              >
-                <span className="fase-carta-num">{String(f.numero).padStart(2, '0')}</span>
-                <b>{f.titulo}</b>
-                {f.cifra && (
-                  <span className="fase-carta-cifra">
-                    {f.cifra}
-                    <i>{f.pie}</i>
-                  </span>
-                )}
-              </button>
-            )
-          })}
-        </div>
       </div>
 
       <div className="fases-puntos">
