@@ -281,218 +281,204 @@
   }
 }
 
+
 /* ===========================================================================
    EL APLICATIVO POR DENTRO
    ===========================================================================
 
-   Todo lo que sigue vive dentro de `.zona-app`, que solo envuelve a las
-   pantallas de /app. La portada y la pantalla de entrar quedan intactas: siguen
-   leyendo las variables de Aira de mas arriba, sin enterarse de que esto existe.
+   Todo lo que sigue vive dentro de `.zona-app`, que solo envuelve las pantallas
+   de /app. La portada y la pantalla de entrar no se enteran de que esto existe:
+   siguen leyendo las variables de Aira de mas arriba.
 
-   Y esto contradice a Aira a proposito, en dos puntos que Michel decidio
-   cambiar: aqui si entra el color donde no hay dato, y si hay sombras. Aira
-   sigue mandando afuera, que es donde se ve bien. Adentro mandaba la queja del
-   profesor.
-
-   Regla que SI se mantiene: la rampa de terracota es del riesgo y de nada mas.
-   Si el violeta empezara a significar riesgo tambien, el color dejaria de
-   decir algo.
+   Adentro NO manda Aira. Manda el diseno que Michel paso, con sus colores, su
+   letra y sus formas, sin mezclar. Intentarlo a medias fue el error de las dos
+   versiones anteriores: salia algo que no era ni lo uno ni lo otro.
    =========================================================================== */
 
 @theme {
-  --color-violeta: #5b3fd4;
-  --color-violeta-claro: #8771f5;
-  --color-violeta-hondo: #4a32b8;
-  --color-indigo: #3a6be8;
-  --color-indigo-claro: #5b8cf5;
+  --font-dm: 'DM Sans', ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-nunito: 'Nunito Sans', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
 }
 
 .zona-app {
-  /* --- superficies ------------------------------------------------------- */
+  /* --- superficies --- */
   --lienzo: #f7f8ff;
   --superficie: #ffffff;
-  --superficie-2: #eef0ff;
-
-  /* --- texto ------------------------------------------------------------- */
+  --superficie-2: #f1f2fa;
   --tinta: #22254c;
-  --tinta-fuerte: #13152e;
-  --apagado: #6f749b;
+  --tinta-fuerte: #181b3d;
+  --apagado: #73799a;
+  --filete: #e7e9f5;
+  --filete-fuerte: #d3d7ea;
+  --borde-suave: #e7e9f5;
 
-  /* --- lineas ------------------------------------------------------------ */
-  --filete: #e6e8f5;
-  --filete-fuerte: #c9cde6;
-  --borde-suave: #d8dcf0;
-
-  /* --- el acento --------------------------------------------------------- */
-  --acento: #5b3fd4;
-  --acento-2: #3a6be8;
-  --acento-texto: #5339c4;
-  --acento-suave: #eeeaff;
-  --degradado: linear-gradient(118deg, #5b3fd4, #3a6be8);
-  --relleno: #5b3fd4;
+  /* --- el acento. El morado manda en general. --- */
+  --acento: #7055e8;
+  --acento-2: #3474ee;
+  --acento-hondo: #5d47d7;
+  --acento-texto: #5d47d7;
+  --acento-suave: #f0edff;
+  --degradado: linear-gradient(110deg, #7055e8, #3474ee);
+  --sombra-acento: 0 4px 11px #6653e833;
+  --relleno: #7055e8;
   --sobre-relleno: #ffffff;
 
-  /* --- estados del seguimiento ------------------------------------------- */
+  /* --- el teal, que manda en las pantallas del modelo --- */
+  --teal: #00a99d;
+  --teal-hondo: #087f79;
+  --teal-suave: #e3f7f3;
+
+  /* --- el amarillo, solo para la prioridad y el boton de enviar --- */
+  --amarillo: #ffd331;
+  --amarillo-texto: #635000;
+
+  /* --- estados del seguimiento --- */
   --estado-pendiente-f: #eeeaff;
-  --estado-pendiente-t: #5339c4;
-  --estado-agendado-f: #e6eeff;
-  --estado-agendado-t: #2b5bc4;
-  --estado-contactado-f: #dff5f2;
-  --estado-contactado-t: #046b66;
-  --estado-cerrado-f: #eef0f6;
-  --estado-cerrado-t: #6f749b;
+  --estado-pendiente-t: #654ade;
+  --estado-agendado-f: #eaf1ff;
+  --estado-agendado-t: #3168d5;
+  --estado-contactado-f: #e3f7f3;
+  --estado-contactado-t: #087f79;
+  --estado-cerrado-f: #f1f2f8;
+  --estado-cerrado-t: #69708e;
 
-  /* --- sombras: la unica licencia que Aira no da -------------------------- */
-  --sombra-1: 0 1px 2px rgb(20 22 50 / 0.05);
-  --sombra-2: 0 1px 2px rgb(20 22 50 / 0.04), 0 5px 18px rgb(20 22 50 / 0.07);
-  --sombra-3: 0 2px 6px rgb(20 22 50 / 0.06), 0 16px 40px rgb(20 22 50 / 0.12);
-  --sombra-acento: 0 4px 14px rgb(91 63 212 / 0.28);
+  --sombra-1: 0 1px 2px #282a6008;
+  --sombra-2: 0 4px 18px #282a6010;
+  --sombra-3: 0 10px 34px #282a6022;
 
-  --radio-sm: 10px;
-  --radio: 14px;
-  --radio-lg: 20px;
+  --radio-sm: 9px;
+  --radio: 11px;
+  --radio-lg: 16px;
 
   --dato-rgb: 194 90 60;
   --tinta-rgb: 34 37 76;
 
   color-scheme: light;
-  position: relative;
   min-height: 100vh;
   background: var(--lienzo);
   color: var(--tinta);
+  font-family: var(--font-dm);
+  font-size: 13px;
 }
 
 [data-tema='oscuro'] .zona-app {
-  --lienzo: #12131f;
-  --superficie: #1b1d2e;
-  --superficie-2: #262a42;
-
-  --tinta: #e6e8f7;
+  --lienzo: #151827;
+  --superficie: #20243a;
+  --superficie-2: #282d45;
+  --tinta: #eef0ff;
   --tinta-fuerte: #ffffff;
-  --apagado: #9ba1c4;
+  --apagado: #abb1d0;
+  --filete: #343a57;
+  --filete-fuerte: #434a6b;
+  --borde-suave: #343a57;
 
-  --filete: #2b2f48;
-  --filete-fuerte: #3c4162;
-  --borde-suave: #343955;
-
-  --acento: #8771f5;
+  --acento: #8d78f2;
   --acento-2: #5b8cf5;
-  --acento-texto: #b6a6ff;
-  --acento-suave: rgb(135 113 245 / 0.17);
-  --degradado: linear-gradient(118deg, #6d52e8, #3f72ee);
-  --relleno: #6d52e8;
-  --sobre-relleno: #ffffff;
+  --acento-hondo: #7055e8;
+  --acento-texto: #c2b7ff;
+  --acento-suave: #30284d;
+  --degradado: linear-gradient(110deg, #7055e8, #3474ee);
+  --sombra-acento: 0 4px 13px #6653e855;
 
-  --estado-pendiente-f: rgb(135 113 245 / 0.18);
-  --estado-pendiente-t: #b6a6ff;
-  --estado-agendado-f: rgb(91 140 245 / 0.18);
+  --teal: #19c2b4;
+  --teal-hondo: #6fdcd4;
+  --teal-suave: #183b3a;
+
+  --amarillo: #ffd331;
+  --amarillo-texto: #4a3c00;
+
+  --estado-pendiente-f: #30284d;
+  --estado-pendiente-t: #c2b7ff;
+  --estado-agendado-f: #243453;
   --estado-agendado-t: #9bbcff;
-  --estado-contactado-f: rgb(0 170 160 / 0.18);
+  --estado-contactado-f: #183b3a;
   --estado-contactado-t: #6fdcd4;
-  --estado-cerrado-f: rgb(155 161 196 / 0.14);
-  --estado-cerrado-t: #9ba1c4;
+  --estado-cerrado-f: #2a2f4a;
+  --estado-cerrado-t: #abb1d0;
 
-  --sombra-1: 0 1px 2px rgb(0 0 0 / 0.3);
-  --sombra-2: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 20px rgb(0 0 0 / 0.33);
-  --sombra-3: 0 2px 8px rgb(0 0 0 / 0.4), 0 18px 46px rgb(0 0 0 / 0.5);
-  --sombra-acento: 0 4px 16px rgb(91 63 212 / 0.45);
+  --sombra-1: 0 1px 2px #080a1655;
+  --sombra-2: 0 4px 17px #080a1680;
+  --sombra-3: 0 12px 38px #080a16aa;
 
   --dato-rgb: 224 169 143;
-  --tinta-rgb: 230 232 247;
+  --tinta-rgb: 238 240 255;
 
   color-scheme: dark;
 }
 
 /* ---------------------------------------------------------------------------
-   El fondo: aurora y grano
+   Las pantallas del modelo van en teal
 
-   Tres manchas de color muy abiertas y muy tenues, moviendose despacio detras
-   de todo. La textura de grano encima es la que evita que el degradado se vea
-   en bandas, que es el defecto clasico de este efecto.
-
-   Va fija y sin eventos de puntero: no se mueve al bajar la pagina y nunca se
-   come un clic.
+   No es un capricho: es la clase .teal del propio diseno que Michel paso, que
+   en estimar y en entrenar cambia el acento entero. Separa de un vistazo lo
+   que es trabajar con el modelo de lo que es operar el programa.
    --------------------------------------------------------------------------- */
 
-.aurora {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
+.zona-app.zona-modelo {
+  --acento: #00a99d;
+  --acento-2: #00a99d;
+  --acento-hondo: #087f79;
+  --acento-texto: #087f79;
+  --acento-suave: #e3f7f3;
+  --degradado: linear-gradient(110deg, #00a99d, #0bb3a4);
+  --sombra-acento: 0 4px 11px #00a99d3d;
+  --relleno: #00a99d;
+  --lienzo: #f3faf8;
 }
 
-.aurora i {
-  position: absolute;
-  display: block;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.5;
-  will-change: transform;
-}
-
-.aurora i:nth-child(1) {
-  width: 46vw;
-  height: 46vw;
-  top: -14vw;
-  left: -8vw;
-  background: radial-gradient(circle, rgb(91 63 212 / 0.5), transparent 68%);
-  animation: deriva-a 34s ease-in-out infinite alternate;
-}
-
-.aurora i:nth-child(2) {
-  width: 38vw;
-  height: 38vw;
-  top: 24vh;
-  right: -10vw;
-  background: radial-gradient(circle, rgb(58 107 232 / 0.42), transparent 68%);
-  animation: deriva-b 41s ease-in-out infinite alternate;
-}
-
-.aurora i:nth-child(3) {
-  width: 34vw;
-  height: 34vw;
-  bottom: -14vw;
-  left: 34vw;
-  background: radial-gradient(circle, rgb(0 130 124 / 0.32), transparent 68%);
-  animation: deriva-c 48s ease-in-out infinite alternate;
-}
-
-/* El grano. Es un SVG en linea para no pedirle un archivo mas al servidor. */
-.aurora::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.4;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)' opacity='.055'/%3E%3C/svg%3E");
-}
-
-[data-tema='oscuro'] .aurora i {
-  opacity: 0.42;
-}
-
-[data-tema='oscuro'] .aurora::after {
-  opacity: 0.75;
-}
-
-@keyframes deriva-a {
-  to { transform: translate3d(7vw, 9vh, 0) scale(1.14); }
-}
-
-@keyframes deriva-b {
-  to { transform: translate3d(-9vw, 6vh, 0) scale(1.1); }
-}
-
-@keyframes deriva-c {
-  to { transform: translate3d(5vw, -8vh, 0) scale(1.18); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .aurora i { animation: none !important; }
+[data-tema='oscuro'] .zona-app.zona-modelo {
+  --acento: #19c2b4;
+  --acento-2: #19c2b4;
+  --acento-hondo: #6fdcd4;
+  --acento-texto: #6fdcd4;
+  --acento-suave: #183b3a;
+  --degradado: linear-gradient(110deg, #0e8d83, #12a89b);
+  --relleno: #0e8d83;
+  --lienzo: #121c25;
 }
 
 /* ---------------------------------------------------------------------------
-   Piezas que se repiten en todas las pantallas de adentro
+   Base del interior
+
+   Aira pone Fraunces en todos los h1, h2 y h3. Aqui se revierte: adentro los
+   titulares son Nunito Sans en su peso mas grueso, que es lo que le da el aire
+   de aplicacion. Afuera, en la portada, Fraunces sigue mandando.
+   --------------------------------------------------------------------------- */
+
+.zona-app h1,
+.zona-app h2,
+.zona-app h3 {
+  font-family: var(--font-nunito);
+  font-weight: 900;
+  font-variation-settings: normal;
+  color: var(--tinta-fuerte);
+  letter-spacing: -0.02em;
+}
+
+.zona-app h1 { font-size: clamp(25px, 2.6vw, 32px); line-height: 1.1; }
+.zona-app h2 { font-size: 21px; line-height: 1.2; }
+.zona-app h3 { font-size: 15px; line-height: 1.25; }
+
+/* El antetitulo: pequeno, muy grueso y muy separado. Es la pieza que mas dice
+   "software" de todo el sistema, y la que mas facil se arruina con un peso
+   flojo. */
+.zona-app .antetitulo {
+  font-family: var(--font-dm);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--acento-texto);
+}
+
+.zona-app .cifra,
+.zona-app table td,
+.zona-app table th {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   Tarjetas
    --------------------------------------------------------------------------- */
 
 .zona-app .tarjeta {
@@ -500,23 +486,32 @@
   border: 1px solid var(--filete);
   border-radius: var(--radio);
   box-shadow: var(--sombra-2);
+  overflow: hidden;
 }
 
-.zona-app .tarjeta-pad { padding: 20px 22px; }
+.zona-app .tarjeta-pad { padding: 16px 18px; }
 
-/* El titulo de una tarjeta. Serif, pero del tamano de una aplicacion: dentro
-   de un panel, un titular de revista se lee como un error de maqueta. */
+/* La cabecera de una tarjeta: titulo a la izquierda, acciones a la derecha. */
+.zona-app .cabeza-tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 15px 18px;
+}
+
 .zona-app .tarjeta-titulo {
-  font-family: var(--font-serif);
-  font-size: 17px;
-  font-weight: 400;
+  font-family: var(--font-nunito);
+  font-size: 15px;
+  font-weight: 900;
   letter-spacing: -0.01em;
   color: var(--tinta-fuerte);
 }
 
 .zona-app .tarjeta-sub {
   margin-top: 4px;
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--apagado);
 }
 
@@ -524,7 +519,7 @@
    sueltas. Juntas se leen como un panel; separadas, como cuatro adornos. */
 .zona-app .tira {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
   background: var(--superficie);
   border: 1px solid var(--filete);
   border-radius: var(--radio);
@@ -533,48 +528,40 @@
 }
 
 .zona-app .tira > div {
-  padding: 15px 18px;
+  padding: 14px 17px;
   border-right: 1px solid var(--filete);
 }
 
 .zona-app .tira > div:last-child { border-right: 0; }
 
-.zona-app .tira-etiqueta {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--apagado);
-}
+.zona-app .tira-etiqueta { font-size: 11.5px; color: var(--apagado); }
 
 .zona-app .tira-cifra {
-  margin-top: 7px;
-  font-family: var(--font-serif);
-  font-size: 30px;
-  font-weight: 400;
-  line-height: 1;
+  margin: 5px 0 2px;
+  font-family: var(--font-nunito);
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--tinta-fuerte);
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-.zona-app .tira-pie {
-  margin-top: 6px;
-  font-size: 11.5px;
-  color: var(--apagado);
-}
+.zona-app .tira-pie { font-size: 10.5px; color: var(--apagado); }
+.zona-app .tira-pie b { color: var(--acento-texto); font-weight: 800; }
 
-.zona-app .tira-pie b { color: var(--acento-texto); font-weight: 600; }
+/* ---------------------------------------------------------------------------
+   Etiquetas de estado y pastilla de prioridad
+   --------------------------------------------------------------------------- */
 
-/* Etiquetas de estado del seguimiento */
 .zona-app .etiqueta {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 11.5px;
-  font-weight: 600;
+  border-radius: 20px;
+  padding: 5px 9px;
+  font-size: 10.5px;
+  font-weight: 800;
   white-space: nowrap;
 }
 
@@ -583,72 +570,70 @@
 .zona-app .etiqueta-contactado { background: var(--estado-contactado-f); color: var(--estado-contactado-t); }
 .zona-app .etiqueta-cerrado    { background: var(--estado-cerrado-f);    color: var(--estado-cerrado-t); }
 
-/* Botones: la pastilla de Aira conserva su forma y cambia de piel. */
-.zona-app .pastilla { font-size: 13.5px; padding: 9px 18px; }
+/* El amarillo es de la prioridad y del boton de enviar del chat. De nada mas:
+   en cuanto empieza a salir en sitios sueltos deja de significar urgencia. */
+.zona-app .nivel {
+  align-self: flex-start;
+  border-radius: 20px;
+  background: var(--amarillo);
+  padding: 6px 10px;
+  color: var(--amarillo-texto);
+  font-size: 10.5px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Botones, campos y tablas
+   --------------------------------------------------------------------------- */
+
+.zona-app .pastilla {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio-sm);
+  font-family: var(--font-dm);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0;
+  padding: 10px 15px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .16s ease, filter .16s ease, border-color .16s ease, color .16s ease;
+}
 
 .zona-app .pastilla-rellena {
   background: var(--degradado);
+  border: 0;
   color: #ffffff;
   box-shadow: var(--sombra-acento);
-  transition: transform 0.18s ease, filter 0.18s ease;
 }
 
-.zona-app .pastilla-rellena:hover { transform: translateY(-1px); filter: brightness(1.07); }
+.zona-app .pastilla-rellena:hover { transform: translateY(-1px); filter: brightness(1.06); }
 
 .zona-app .pastilla-contorno {
   background: var(--superficie);
-  border-color: var(--borde-suave);
-  box-shadow: var(--sombra-1);
+  color: var(--tinta);
+  border-color: var(--filete);
 }
 
 .zona-app .pastilla-contorno:hover { border-color: var(--acento); color: var(--acento-texto); }
 
-.zona-app .pastilla-sm { font-size: 12.5px; padding: 7px 14px; }
+.zona-app .pastilla-sm { font-size: 11.5px; padding: 8px 12px; }
+.zona-app .pastilla:disabled { opacity: .55; cursor: default; transform: none; }
 
-/* Tablas */
-.zona-app table { border-collapse: collapse; width: 100%; }
-
-.zona-app thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--superficie-2);
-  color: var(--apagado);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-align: left;
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--filete);
-  white-space: nowrap;
-}
-
-.zona-app tbody td {
-  padding: 11px 12px;
-  border-bottom: 1px solid var(--filete);
-  font-size: 13px;
-  color: var(--tinta);
-}
-
-.zona-app tbody tr:last-child td { border-bottom: 0; }
-
-.zona-app tbody tr.clicable { cursor: pointer; transition: background 0.15s ease; }
-.zona-app tbody tr.clicable:hover,
-.zona-app tbody tr.elegida { background: var(--superficie-2); }
-
-/* Campos */
 .zona-app input,
 .zona-app select,
 .zona-app textarea {
-  font-family: var(--font-sans);
+  font-family: var(--font-dm);
   background: var(--superficie);
   color: var(--tinta);
-  border: 1px solid var(--borde-suave);
+  border: 1px solid var(--filete);
   border-radius: var(--radio-sm);
-  padding: 9px 11px;
+  padding: 10px 11px;
   font-size: 13.5px;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: border-color .16s ease, box-shadow .16s ease;
 }
 
 .zona-app input:focus,
@@ -661,168 +646,51 @@
 
 .zona-app :focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
 
-/* Movimiento: la entrada de cada pantalla al cambiar de ruta, y el escalonado
-   de las tarjetas, para que no aparezcan todas en el mismo fotograma. */
-@keyframes entrar-pantalla {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: none; }
-}
+.zona-app table { border-collapse: collapse; width: 100%; }
 
-.zona-app .pantalla {
-  animation: entrar-pantalla 0.42s cubic-bezier(0.22, 0.75, 0.25, 1) both;
-}
-
-.zona-app .escalonado > * {
-  animation: entrar-pantalla 0.5s cubic-bezier(0.22, 0.75, 0.25, 1) both;
-}
-
-.zona-app .escalonado > *:nth-child(1) { animation-delay: 0.04s; }
-.zona-app .escalonado > *:nth-child(2) { animation-delay: 0.10s; }
-.zona-app .escalonado > *:nth-child(3) { animation-delay: 0.16s; }
-.zona-app .escalonado > *:nth-child(4) { animation-delay: 0.22s; }
-.zona-app .escalonado > *:nth-child(5) { animation-delay: 0.28s; }
-.zona-app .escalonado > *:nth-child(6) { animation-delay: 0.34s; }
-
-/* ---------------------------------------------------------------------------
-   El buscador de Ctrl+K
-   --------------------------------------------------------------------------- */
-
-.zona-app .boton-buscar {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--superficie);
-  border: 1px solid var(--borde-suave);
-  border-radius: 999px;
-  padding: 7px 8px 7px 13px;
-  color: var(--apagado);
-  font-family: var(--font-sans);
-  font-size: 12.5px;
-  cursor: pointer;
-  box-shadow: var(--sombra-1);
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.zona-app .boton-buscar:hover { border-color: var(--acento); color: var(--tinta); }
-
-.zona-app .boton-buscar kbd {
-  font-family: var(--font-sans);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+.zona-app thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   background: var(--superficie-2);
-  border-radius: 999px;
-  padding: 3px 8px;
   color: var(--apagado);
-}
-
-/* Velo liso, sin desenfoque: el desenfoque de fondo cuesta cada fotograma y
-   a Michel no le gusta en ninguno de sus proyectos. */
-.zona-app .buscador-velo {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  background: rgb(10 11 24 / 0.5);
-  display: flex;
-  justify-content: center;
-  padding-top: 13vh;
-  animation: entrar-pantalla 0.16s ease both;
-}
-
-.zona-app .buscador-caja {
-  width: min(560px, calc(100vw - 32px));
-  height: fit-content;
-  background: var(--superficie);
-  border: 1px solid var(--filete);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-3);
-  overflow: hidden;
-}
-
-.zona-app .buscador-campo {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 15px 18px;
-  border-bottom: 1px solid var(--filete);
-  color: var(--apagado);
-}
-
-.zona-app .buscador-campo input {
-  flex: 1;
-  min-width: 0;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  font-size: 15px;
-  color: var(--tinta);
-}
-
-.zona-app .buscador-campo input:focus { outline: none; box-shadow: none; }
-
-.zona-app .buscador-lista {
-  max-height: 52vh;
-  overflow-y: auto;
-  padding: 7px;
-}
-
-.zona-app .buscador-fila {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  border: 0;
-  background: transparent;
-  border-radius: var(--radio-sm);
-  padding: 10px 12px;
-  cursor: pointer;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
   text-align: left;
+  padding: 9px 12px;
+  border-top: 1px solid var(--filete);
+  border-bottom: 1px solid var(--filete);
+  white-space: nowrap;
+}
+
+.zona-app tbody td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--filete);
+  font-size: 12.5px;
   color: var(--tinta);
-  font-family: var(--font-sans);
-  font-size: 13.5px;
 }
 
-.zona-app .buscador-fila span { flex: 1; }
-
-.zona-app .buscador-fila em {
-  font-style: normal;
-  font-size: 11px;
-  color: var(--apagado);
-}
-
-.zona-app .buscador-fila.elegida {
-  background: var(--acento-suave);
-  color: var(--acento-texto);
-}
-
-.zona-app .buscador-fila.elegida em { color: var(--acento-texto); opacity: 0.75; }
-
-.zona-app .buscador-vacio {
-  padding: 22px 14px;
-  text-align: center;
-  font-size: 13px;
-  color: var(--apagado);
-}
+.zona-app tbody tr:last-child td { border-bottom: 0; }
+.zona-app tbody tr.clicable { cursor: pointer; transition: background .14s ease; }
+.zona-app tbody tr.clicable:hover,
+.zona-app tbody tr.elegida { background: var(--superficie-2); }
 
 /* ---------------------------------------------------------------------------
    El armazon: menu lateral, cinta superior y lienzo
 
-   El contenido NO esta limitado a 1200 px. En un monitor ancho esas dos franjas
-   vacias a los lados no son respiracion, son espacio desperdiciado, y eran la
-   primera queja sobre esta pantalla.
+   El contenido NO esta limitado a 1200 px. En un monitor ancho esas dos
+   franjas vacias a los lados no son respiracion, son espacio desperdiciado.
    --------------------------------------------------------------------------- */
 
 .zona-app {
   display: grid;
-  grid-template-columns: 268px minmax(0, 1fr);
+  grid-template-columns: 252px minmax(0, 1fr);
   align-items: start;
 }
 
-.zona-app.colapsada { grid-template-columns: 76px minmax(0, 1fr); }
-
-/* Todo lo que no sea la aurora va por encima de ella. */
-.zona-app > .barra,
-.zona-app > .columna { position: relative; z-index: 1; }
+.zona-app.colapsada { grid-template-columns: 74px minmax(0, 1fr); }
 
 .zona-app .barra {
   position: sticky;
@@ -838,9 +706,8 @@
 .zona-app .barra-marca {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 17px 16px;
-  border-bottom: 1px solid var(--filete);
+  gap: 10px;
+  padding: 16px 14px;
 }
 
 .zona-app .marca-sello {
@@ -848,13 +715,13 @@
   width: 34px;
   height: 34px;
   border-radius: 11px;
-  background: var(--degradado);
-  box-shadow: var(--sombra-acento);
+  background: linear-gradient(135deg, #7055e8, #3474ee);
   color: #ffffff;
   display: grid;
   place-items: center;
-  font-family: var(--font-serif);
-  font-size: 18px;
+  font-family: var(--font-nunito);
+  font-size: 17px;
+  font-weight: 900;
   line-height: 1;
 }
 
@@ -862,10 +729,10 @@
 
 .zona-app .marca-texto strong {
   display: block;
-  font-family: var(--font-serif);
-  font-size: 16px;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-family: var(--font-nunito);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
   color: var(--tinta-fuerte);
   white-space: nowrap;
 }
@@ -873,106 +740,89 @@
 .zona-app .marca-texto small {
   display: block;
   margin-top: 2px;
-  font-size: 10.5px;
+  font-size: 9.5px;
   color: var(--apagado);
   white-space: nowrap;
 }
 
 .zona-app .barra-cerrar { display: none; }
 
-.zona-app .barra-nav {
-  flex: 1;
-  overflow-y: auto;
-  padding: 14px 10px 8px;
-}
+.zona-app .barra-nav { flex: 1; overflow-y: auto; padding: 4px 10px 8px; }
+.zona-app .barra-nav::-webkit-scrollbar { width: 6px; }
+.zona-app .barra-nav::-webkit-scrollbar-thumb { background: var(--filete-fuerte); border-radius: 999px; }
 
-.zona-app .barra-nav::-webkit-scrollbar { width: 7px; }
-.zona-app .barra-nav::-webkit-scrollbar-thumb {
-  background: var(--filete-fuerte);
-  border-radius: 999px;
-}
-
-.zona-app .barra-grupo { margin-bottom: 15px; }
+.zona-app .barra-grupo { margin-bottom: 14px; }
 
 .zona-app .barra-grupo-titulo {
-  padding: 0 10px;
+  padding: 0 9px;
   margin-bottom: 5px;
   font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.13em;
+  font-weight: 900;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--apagado);
-  opacity: 0.8;
+  color: #969bb7;
   white-space: nowrap;
 }
 
 .zona-app .barra-enlace {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 9px 11px;
-  margin-bottom: 1px;
+  gap: 10px;
+  padding: 10px 9px;
+  margin-bottom: 2px;
   border-radius: var(--radio-sm);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  color: var(--apagado);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #555d82;
   text-decoration: none;
   white-space: nowrap;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  transition: background .16s ease, color .16s ease;
 }
 
-.zona-app .barra-enlace svg { flex: none; }
+[data-tema='oscuro'] .zona-app .barra-enlace { color: #c7cbe3; }
 
-.zona-app .barra-enlace:hover {
-  background: var(--superficie-2);
-  color: var(--tinta);
-  transform: translateX(2px);
-}
+.zona-app .barra-enlace svg { flex: none; color: var(--acento); }
+
+.zona-app .barra-enlace:hover { background: var(--acento-suave); }
 
 .zona-app .barra-enlace.active {
-  background: var(--degradado);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: var(--sombra-acento);
-  transform: none;
+  background: var(--acento-suave);
+  color: var(--acento-texto);
 }
 
-.zona-app .barra-enlace.active:hover { transform: none; filter: brightness(1.05); }
+.zona-app .barra-enlace.active svg { color: var(--acento-texto); }
 
-.zona-app .barra-pie {
-  border-top: 1px solid var(--filete);
-  padding: 10px;
-}
+.zona-app .barra-pie { border-top: 1px solid var(--filete); padding: 9px 10px; }
 
 .zona-app .barra-persona {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 7px 6px;
+  gap: 9px;
+  padding: 7px 5px;
   min-width: 0;
 }
 
 .zona-app .avatar {
   flex: none;
-  width: 31px;
-  height: 31px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: var(--acento-suave);
-  color: var(--acento-texto);
+  background: #e8edff;
+  color: #435cd0;
   display: grid;
   place-items: center;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: 10.5px;
+  font-weight: 900;
 }
+
+[data-tema='oscuro'] .zona-app .avatar { background: #2c3458; color: #a9bcff; }
 
 .zona-app .barra-persona-texto { min-width: 0; }
 
 .zona-app .barra-persona-texto strong {
   display: block;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 800;
   color: var(--tinta-fuerte);
   white-space: nowrap;
   overflow: hidden;
@@ -982,7 +832,7 @@
 .zona-app .barra-persona-texto small {
   display: block;
   margin-top: 2px;
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--apagado);
   white-space: nowrap;
   overflow: hidden;
@@ -994,22 +844,23 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-top: 4px;
-  padding: 8px 11px;
+  margin-top: 3px;
+  padding: 8px 10px;
   border: 0;
   background: transparent;
   border-radius: var(--radio-sm);
   color: var(--apagado);
-  font-family: var(--font-sans);
-  font-size: 12px;
+  font-family: var(--font-dm);
+  font-size: 11.5px;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition: background .16s ease, color .16s ease;
 }
 
 .zona-app .barra-colapsar:hover { background: var(--superficie-2); color: var(--tinta); }
 
-/* --- el menu contraido a 76 px --- */
+/* --- el menu contraido --- */
 .zona-app.colapsada .marca-texto,
 .zona-app.colapsada .barra-grupo-titulo,
 .zona-app.colapsada .barra-enlace span,
@@ -1020,13 +871,10 @@
 .zona-app.colapsada .barra-persona,
 .zona-app.colapsada .barra-colapsar { justify-content: center; }
 
-.zona-app.colapsada .barra-enlace {
-  justify-content: center;
-  padding: 11px 0;
-}
+.zona-app.colapsada .barra-enlace { justify-content: center; padding: 11px 3px; }
 
 /* Sin los titulos de grupo, los grupos se separan con una linea: si no, las
-   diecisiete opciones quedan como una columna de iconos sin ninguna division. */
+   veintiuna opciones quedan como una columna de iconos sin ninguna division. */
 .zona-app.colapsada .barra-grupo + .barra-grupo {
   border-top: 1px solid var(--filete);
   padding-top: 10px;
@@ -1045,28 +893,28 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  height: 60px;
-  padding: 0 22px;
+  height: 56px;
+  padding: 0 20px;
   background: var(--superficie);
   border-bottom: 1px solid var(--filete);
 }
 
 .zona-app .cinta-izq,
-.zona-app .cinta-der { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.zona-app .cinta-der { display: flex; align-items: center; gap: 9px; min-width: 0; }
 
 .zona-app .miga {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
+  gap: 7px;
+  font-size: 11.5px;
   color: var(--apagado);
   min-width: 0;
 }
 
-.zona-app .miga i { font-style: normal; opacity: 0.5; }
+.zona-app .miga i { font-style: normal; opacity: .45; }
 
 .zona-app .miga b {
-  font-weight: 600;
+  font-weight: 800;
   color: var(--tinta-fuerte);
   white-space: nowrap;
   overflow: hidden;
@@ -1078,40 +926,38 @@
 .zona-app .boton-salir {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  background: transparent;
-  border: 1px solid var(--borde-suave);
-  border-radius: 999px;
-  padding: 7px 14px;
+  gap: 6px;
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  border-radius: var(--radio-sm);
+  padding: 8px 12px;
   color: var(--tinta);
-  font-family: var(--font-sans);
-  font-size: 12.5px;
-  font-weight: 500;
+  font-family: var(--font-dm);
+  font-size: 11.5px;
+  font-weight: 700;
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: border-color .16s ease, color .16s ease;
 }
 
-.zona-app .boton-salir:hover { border-color: var(--color-dato-3); color: var(--color-dato-4); }
+.zona-app .boton-salir:hover { border-color: var(--acento); color: var(--acento-texto); }
 
-/* --- el lienzo --- */
 .zona-app .lienzo-app {
-  padding: 26px 30px 76px;
+  padding: 22px 26px 70px;
   max-width: 1760px;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 56px);
 }
 
-/* --- celular y tableta --- */
 .zona-app .velo-movil {
   position: fixed;
   inset: 0;
   z-index: 40;
   border: 0;
-  background: rgb(10 11 24 / 0.45);
+  background: #0d0f1e73;
   cursor: pointer;
 }
 
 @media (width < 1100px) {
-  .zona-app .lienzo-app { padding: 22px 20px 64px; }
+  .zona-app .lienzo-app { padding: 18px 18px 60px; }
 }
 
 @media (width < 900px) {
@@ -1124,10 +970,10 @@
     top: 0;
     bottom: 0;
     left: 0;
-    width: 266px;
+    width: 252px;
     transform: translateX(-104%);
-    box-shadow: var(--sombra-3);
-    transition: transform 0.26s cubic-bezier(0.22, 0.75, 0.25, 1);
+    box-shadow: 10px 0 30px #161a3430;
+    transition: transform .22s cubic-bezier(.22,.75,.25,1);
   }
 
   .zona-app .barra.abierta { transform: none; }
@@ -1138,7 +984,7 @@
   .zona-app.colapsada .barra-enlace span,
   .zona-app.colapsada .barra-persona-texto { display: revert; }
 
-  .zona-app.colapsada .barra-enlace { justify-content: flex-start; padding: 9px 11px; }
+  .zona-app.colapsada .barra-enlace { justify-content: flex-start; padding: 10px 9px; }
   .zona-app.colapsada .barra-marca,
   .zona-app.colapsada .barra-persona { justify-content: flex-start; }
 
@@ -1157,51 +1003,834 @@
 
   .zona-app .boton-hamburguesa {
     align-items: center;
-    border: 1px solid var(--borde-suave);
-    border-radius: var(--radio-sm);
-    background: var(--superficie);
-    color: var(--tinta);
-    padding: 7px;
+    border: 0;
+    background: transparent;
+    color: var(--acento);
+    padding: 5px;
     cursor: pointer;
   }
 
-  .zona-app .boton-buscar span { display: none; }
+  .zona-app .boton-buscar span,
   .zona-app .boton-salir span { display: none; }
-  .zona-app .lienzo-app { padding: 18px 14px 56px; }
+  .zona-app .cinta { height: 52px; padding: 0 12px; }
+  .zona-app .lienzo-app { padding: 15px 12px 54px; }
 }
 
 /* ---------------------------------------------------------------------------
-   El encabezado de cada pantalla, en tamano de aplicacion
+   El encabezado de cada pantalla
    --------------------------------------------------------------------------- */
 
 .zona-app .encabezado {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 24px;
+  gap: 22px;
   flex-wrap: wrap;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .zona-app .encabezado-texto { min-width: 0; }
-
-.zona-app .encabezado h1 {
-  margin-top: 9px;
-  font-size: clamp(24px, 2.4vw, 31px);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
+.zona-app .encabezado h1 { margin-top: 7px; }
 
 .zona-app .encabezado-bajada {
-  margin-top: 10px;
-  max-width: 74ch;
-  font-size: 14px;
-  line-height: 1.62;
+  margin-top: 8px;
+  max-width: 78ch;
+  font-size: 12.5px;
+  line-height: 1.6;
   color: var(--apagado);
 }
 
-.zona-app .encabezado-acciones { display: flex; align-items: center; gap: 9px; }
+.zona-app .encabezado-acciones { display: flex; align-items: center; gap: 8px; }
 
-@media (width < 760px) {
-  .zona-app .encabezado { align-items: flex-start; }
+@media (width < 760px) { .zona-app .encabezado { align-items: flex-start; } }
+
+/* ---------------------------------------------------------------------------
+   El buscador de Ctrl+K
+   --------------------------------------------------------------------------- */
+
+.zona-app .boton-buscar {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  border-radius: var(--radio-sm);
+  padding: 8px 8px 8px 11px;
+  color: var(--apagado);
+  font-family: var(--font-dm);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .16s ease, color .16s ease;
+}
+
+.zona-app .boton-buscar:hover { border-color: var(--acento); color: var(--tinta); }
+
+.zona-app .boton-buscar kbd {
+  font-family: var(--font-dm);
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--superficie-2);
+  border-radius: 20px;
+  padding: 3px 7px;
+  color: var(--apagado);
+}
+
+/* Velo liso, sin desenfoque: a Michel no le gusta en ninguno de sus proyectos
+   y ademas cuesta cada fotograma. */
+.zona-app .buscador-velo {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #0d0f1e85;
+  display: flex;
+  justify-content: center;
+  padding-top: 13vh;
+  animation: entrar-pantalla .15s ease both;
+}
+
+.zona-app .buscador-caja {
+  width: min(540px, calc(100vw - 28px));
+  height: fit-content;
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-3);
+  overflow: hidden;
+}
+
+.zona-app .buscador-campo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 17px;
+  border-bottom: 1px solid var(--filete);
+  color: var(--apagado);
+}
+
+.zona-app .buscador-campo input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 14.5px;
+  color: var(--tinta);
+}
+
+.zona-app .buscador-campo input:focus { outline: none; box-shadow: none; }
+
+.zona-app .buscador-lista { max-height: 52vh; overflow-y: auto; padding: 6px; }
+
+.zona-app .buscador-fila {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radio-sm);
+  padding: 10px 11px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--tinta);
+  font-family: var(--font-dm);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.zona-app .buscador-fila span { flex: 1; }
+.zona-app .buscador-fila em { font-style: normal; font-size: 10.5px; color: var(--apagado); }
+
+.zona-app .buscador-fila.elegida {
+  background: var(--acento-suave);
+  color: var(--acento-texto);
+}
+
+.zona-app .buscador-fila.elegida em { color: var(--acento-texto); opacity: .75; }
+
+.zona-app .buscador-vacio {
+  padding: 22px 14px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--apagado);
+}
+
+/* --- movimiento: la entrada de cada pantalla --- */
+@keyframes entrar-pantalla {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.zona-app .pantalla { animation: entrar-pantalla .32s cubic-bezier(.22,.75,.25,1) both; }
+.zona-app .escalonado > * { animation: entrar-pantalla .4s cubic-bezier(.22,.75,.25,1) both; }
+.zona-app .escalonado > *:nth-child(1) { animation-delay: .03s; }
+.zona-app .escalonado > *:nth-child(2) { animation-delay: .08s; }
+.zona-app .escalonado > *:nth-child(3) { animation-delay: .13s; }
+.zona-app .escalonado > *:nth-child(4) { animation-delay: .18s; }
+.zona-app .escalonado > *:nth-child(5) { animation-delay: .23s; }
+.zona-app .escalonado > *:nth-child(6) { animation-delay: .28s; }
+
+/* ---------------------------------------------------------------------------
+   Piezas compartidas por las pantallas
+   --------------------------------------------------------------------------- */
+
+.zona-app .conmutador {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  background: var(--superficie-2);
+  border-radius: 20px;
+}
+
+.zona-app .conmutador button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-family: var(--font-dm);
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--apagado);
+  cursor: pointer;
+  transition: background .16s ease, color .16s ease;
+}
+
+.zona-app .conmutador button.activo {
+  background: var(--superficie);
+  color: var(--acento-texto);
+  box-shadow: var(--sombra-1);
+}
+
+.zona-app .barra-filtros {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 13px 16px;
+}
+
+.zona-app .barra-filtros input { min-width: 230px; flex: 1; max-width: 330px; }
+
+.zona-app .fichas-filtro { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+
+.zona-app .ficha {
+  border: 1px solid var(--filete);
+  background: var(--superficie);
+  border-radius: var(--radio-sm);
+  padding: 7px 11px;
+  font-family: var(--font-dm);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--apagado);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .16s ease, background .16s ease, color .16s ease;
+}
+
+.zona-app .ficha:hover { border-color: var(--acento); color: var(--tinta); }
+
+.zona-app .ficha.elegida {
+  background: var(--acento-suave);
+  border-color: transparent;
+  color: var(--acento-texto);
+}
+
+.zona-app .separador-ficha {
+  width: 1px;
+  height: 17px;
+  background: var(--filete);
+  margin-inline: 3px;
+}
+
+.zona-app .tabla-ancha { overflow-x: auto; }
+.zona-app .tabla-ancha table { min-width: 860px; }
+.zona-app .tabla-alta { max-height: 460px; overflow-y: auto; }
+
+.zona-app .celda-nombre { font-size: 12.5px; font-weight: 800; color: var(--tinta-fuerte); }
+.zona-app .celda-sub { display: block; margin-top: 2px; font-size: 10.5px; color: var(--apagado); }
+.zona-app .perfil-celda { font-size: 12px; }
+
+.zona-app .riesgo-alto,
+.zona-app .riesgo-bajo {
+  font-family: var(--font-nunito);
+  font-weight: 900;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.zona-app .riesgo-alto { color: #c2410c; }
+.zona-app .riesgo-bajo { color: #087f79; }
+[data-tema='oscuro'] .zona-app .riesgo-alto { color: #f0a58a; }
+[data-tema='oscuro'] .zona-app .riesgo-bajo { color: #6fdcd4; }
+
+.zona-app .vacio {
+  padding: 44px 22px;
+  text-align: center;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--apagado);
+}
+
+.zona-app .aviso-error {
+  margin-bottom: 15px;
+  padding: 11px 14px;
+  border-radius: var(--radio-sm);
+  background: #fdeee8;
+  border: 1px solid #f3cdbd;
+  font-size: 12.5px;
+  color: #a8462c;
+}
+
+[data-tema='oscuro'] .zona-app .aviso-error {
+  background: #3a2119;
+  border-color: #5c3527;
+  color: #f0c3b1;
+}
+
+.zona-app .aviso-prototipo {
+  margin-top: 24px;
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--apagado);
+  max-width: 78ch;
+}
+
+.zona-app .quitar {
+  border: 0;
+  background: transparent;
+  color: var(--apagado);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 7px;
+  transition: background .14s ease, color .14s ease;
+}
+
+.zona-app .quitar:hover { background: #fdeee8; color: #a8462c; }
+[data-tema='oscuro'] .zona-app .quitar:hover { background: #3a2119; color: #f0c3b1; }
+
+.zona-app td.cifra { font-variant-numeric: tabular-nums lining-nums; font-weight: 800; white-space: nowrap; }
+.zona-app td.cifra.apagado { font-weight: 400; color: var(--apagado); }
+.zona-app .apagado { color: var(--apagado); }
+.zona-app td.puesto { font-variant-numeric: tabular-nums lining-nums; font-size: 11px; color: var(--apagado); }
+
+/* ---------------------------------------------------------------------------
+   El chat del asistente
+
+   Sirve en los dos sitios donde aparece: la pantalla suelta y el panel que va
+   pegado a la derecha en Estimar.
+   --------------------------------------------------------------------------- */
+
+.zona-app .chat { display: flex; flex-direction: column; }
+
+.zona-app .chat-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 17px;
+  background: var(--teal-suave);
+  border-bottom: 1px solid var(--filete);
+}
+
+.zona-app .chat-titulo { display: flex; gap: 10px; align-items: center; }
+
+.zona-app .sello-bot {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  background: var(--teal);
+  color: #ffffff;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+
+.zona-app .en-linea {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 900;
+  color: var(--teal-hondo);
+  white-space: nowrap;
+}
+
+.zona-app .en-linea::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  background: #22c695;
+  border-radius: 50%;
+}
+
+.zona-app .chat-hilo {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.zona-app .burbuja {
+  max-width: 93%;
+  font-size: 12.5px;
+  line-height: 1.55;
+  padding: 10px 12px;
+  border-radius: 12px;
+  white-space: pre-wrap;
+}
+
+.zona-app .burbuja.de-bot {
+  align-self: flex-start;
+  background: var(--teal-suave);
+  color: #285552;
+  border-top-left-radius: 3px;
+}
+
+[data-tema='oscuro'] .zona-app .burbuja.de-bot { background: #214443; color: #c9f1ea; }
+
+.zona-app .burbuja.de-usted {
+  align-self: flex-end;
+  background: #e9edff;
+  color: #354caa;
+  border-top-right-radius: 3px;
+}
+
+[data-tema='oscuro'] .zona-app .burbuja.de-usted { background: #303355; color: #dddfff; }
+
+.zona-app .sugerencias { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 14px 11px; }
+
+.zona-app .sugerencia {
+  border: 1px solid #ccece5;
+  border-radius: 20px;
+  background: var(--superficie);
+  color: var(--teal-hondo);
+  padding: 7px 11px;
+  font-family: var(--font-dm);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background .14s ease;
+}
+
+[data-tema='oscuro'] .zona-app .sugerencia { border-color: #2c5551; }
+.zona-app .sugerencia:hover { background: var(--teal-suave); }
+.zona-app .sugerencia:disabled { opacity: .5; cursor: default; }
+
+.zona-app .chat-form {
+  border-top: 1px solid var(--filete);
+  padding: 11px 13px;
+  display: flex;
+  gap: 7px;
+}
+
+.zona-app .chat-form input { flex: 1; min-width: 0; font-size: 12.5px; }
+
+/* El amarillo del boton de enviar es el del diseno que paso Michel. Es el
+   unico sitio, con la pastilla de prioridad, donde entra ese color. */
+.zona-app .enviar {
+  flex: none;
+  border: 0;
+  border-radius: var(--radio-sm);
+  background: var(--amarillo);
+  color: var(--amarillo-texto);
+  width: 42px;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: filter .14s ease;
+}
+
+.zona-app .enviar:hover { filter: brightness(1.05); }
+.zona-app .enviar:disabled { opacity: .5; cursor: default; }
+
+.zona-app .chat-pie {
+  text-align: center;
+  font-size: 10px;
+  color: var(--apagado);
+  padding: 0 12px 11px;
+}
+
+/* --- la agenda semanal --- */
+
+.zona-app .semana-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 13px;
+  flex-wrap: wrap;
+}
+
+.zona-app .semana-barra b {
+  font-family: var(--font-nunito);
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--tinta-fuerte);
+}
+
+.zona-app .rejilla-semana {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 11px;
+  align-items: start;
+}
+
+.zona-app .dia { min-height: 185px; }
+.zona-app .dia.hoy { border-color: var(--acento); }
+.zona-app .dia.hoy .dia-cabeza { background: var(--degradado); color: #ffffff; }
+.zona-app .dia.hoy .dia-cabeza b { color: #ffffff; }
+
+.zona-app .dia-cabeza {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--filete);
+  font-size: 9.5px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--apagado);
+}
+
+.zona-app .dia-cabeza b {
+  font-family: var(--font-nunito);
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0;
+  color: var(--tinta-fuerte);
+}
+
+.zona-app .dia-vacio { padding: 17px 12px; font-size: 11px; color: var(--apagado); }
+
+.zona-app .cita {
+  margin: 8px;
+  padding: 9px 10px;
+  border-left: 3px solid var(--acento);
+  background: var(--acento-suave);
+  border-radius: 0 7px 7px 0;
+}
+
+.zona-app .cita.caliente { border-left-color: #c2410c; background: #fdeee8; }
+[data-tema='oscuro'] .zona-app .cita.caliente { background: #3a2119; }
+
+.zona-app .cita b { display: block; font-size: 11.5px; font-weight: 800; color: var(--tinta-fuerte); }
+.zona-app .cita small { display: block; margin-top: 3px; font-size: 10px; color: var(--apagado); }
+.zona-app .cita-nota { font-style: italic; }
+
+.zona-app .pendientes { display: grid; gap: 6px; margin-top: 13px; }
+
+.zona-app .pendiente {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) 150px;
+  gap: 11px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio-sm);
+}
+
+.zona-app .pendiente b { font-size: 12.5px; font-weight: 800; }
+
+/* --- el formulario de registro, en ventana --- */
+
+.zona-app .registrar-caja {
+  width: min(520px, calc(100vw - 28px));
+  height: fit-content;
+  background: var(--superficie);
+  border: 1px solid var(--filete);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-3);
+  overflow: hidden;
+}
+
+.zona-app .registrar-cabeza {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 19px 15px;
+  border-bottom: 1px solid var(--filete);
+  background: var(--acento-suave);
+}
+
+.zona-app .registrar-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 17px 19px;
+}
+
+.zona-app .campo-registro { display: flex; flex-direction: column; gap: 6px; }
+
+.zona-app .campo-registro > span {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--tinta);
+}
+
+.zona-app .campo-registro > small { font-size: 10.5px; color: var(--apagado); }
+
+.zona-app .registrar-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 13px 19px 15px;
+  border-top: 1px solid var(--filete);
+  background: var(--superficie-2);
+}
+
+.zona-app .registrar-pie > p {
+  flex: 1;
+  min-width: 190px;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--apagado);
+}
+
+.zona-app .registrar-botones { display: flex; gap: 7px; }
+
+@media (width < 1100px) { .zona-app .rejilla-semana { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (width < 620px) {
+  .zona-app .rejilla-semana { grid-template-columns: 1fr; }
+  .zona-app .pendiente { grid-template-columns: 62px minmax(0, 1fr); }
+  .zona-app .pendiente input { grid-column: 1 / -1; }
+}
+@media (width < 560px) {
+  .zona-app .registrar-campos { grid-template-columns: 1fr; }
+  .zona-app .campo-registro { grid-column: 1 / -1 !important; }
+}
+
+/* --- reportes --- */
+
+.zona-app .rejilla-reportes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+  gap: 13px;
+}
+
+.zona-app .reporte { display: flex; flex-direction: column; }
+
+.zona-app .reporte-filas {
+  margin-top: 13px;
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--acento-texto);
+}
+
+.zona-app .reporte-botones { display: flex; gap: 7px; margin-top: 11px; }
+.zona-app .reporte-botones .pastilla { flex: 1; justify-content: center; }
+.zona-app .reporte-nota { margin-top: 9px; font-size: 10.5px; color: var(--apagado); }
+
+.zona-app .perfil { margin-top: 42px; }
+
+.zona-app .perfil-control {
+  margin-bottom: 16px;
+  padding: 13px 15px;
+  border-left: 3px solid var(--acento);
+  background: var(--acento-suave);
+  border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--tinta);
+}
+
+.zona-app .perfil-columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.zona-app .veces { display: flex; align-items: center; gap: 8px; min-width: 94px; }
+
+.zona-app .veces b {
+  font-family: var(--font-nunito);
+  font-size: 12px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--acento-texto);
+  white-space: nowrap;
+}
+
+.zona-app .veces i {
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--superficie-2);
+  overflow: hidden;
+}
+
+.zona-app .veces i span { display: block; height: 5px; border-radius: 999px; background: var(--degradado); }
+
+/* --- lista priorizada --- */
+
+.zona-app .lista-columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(285px, 330px);
+  gap: 14px;
+  align-items: start;
+}
+
+.zona-app .ficha-paciente { position: sticky; top: 76px; }
+
+.zona-app .paginador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-top: 1px solid var(--filete);
+  font-size: 11.5px;
+  color: var(--apagado);
+}
+
+.zona-app .ficha-riesgo { display: flex; align-items: baseline; gap: 10px; margin-top: 9px; flex-wrap: wrap; }
+
+.zona-app .ficha-riesgo > span {
+  font-family: var(--font-nunito);
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.zona-app .ficha-riesgo small { font-size: 11px; color: var(--apagado); }
+
+.zona-app .ficha-veredicto {
+  margin-top: 11px;
+  padding: 9px 12px;
+  border-radius: var(--radio-sm);
+  background: var(--superficie-2);
+  font-size: 12px;
+}
+
+.zona-app .ficha-datos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+.zona-app .ficha-datos small { display: block; font-size: 10px; color: var(--apagado); }
+
+.zona-app .ficha-datos b {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--tinta-fuerte);
+}
+
+@media (width < 1080px) { .zona-app .perfil-columnas { grid-template-columns: 1fr; } }
+@media (width < 1100px) {
+  .zona-app .lista-columnas { grid-template-columns: 1fr; }
+  .zona-app .ficha-paciente { position: static; }
+}
+
+/* ---------------------------------------------------------------------------
+   El panel de inicio
+
+   La unica imagen de la aplicacion va aqui, y con el orbe de la portada al
+   lado. Es el mismo orbe y son los mismos pacientes: conecta el adentro con el
+   afuera en vez de que parezcan dos productos distintos.
+   --------------------------------------------------------------------------- */
+
+.zona-app .portico {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 22px;
+  align-items: center;
+  min-height: 228px;
+  margin-bottom: 16px;
+  padding: 28px 32px;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  background-color: #0d0e1a;
+  background-image:
+    linear-gradient(104deg, #0d0e1af2 24%, #3b2c9ec4 62%, #0d0e1a8c),
+    url('/imagenes/tierra-noche.webp');
+  background-size: cover;
+  background-position: center 38%;
+  box-shadow: var(--sombra-2);
+}
+
+.zona-app .portico.sin-orbe { grid-template-columns: minmax(0, 1fr); }
+.zona-app .portico-texto { position: relative; z-index: 1; max-width: 62ch; }
+.zona-app .portico .antetitulo { color: #ffffff9e; }
+
+.zona-app .portico h1 {
+  margin-top: 7px;
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.08;
+  color: #ffffff;
+}
+
+.zona-app .portico-bajada {
+  margin-top: 11px;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: #ffffffc2;
+}
+
+.zona-app .portico-boton { margin-top: 16px; }
+
+/* El orbe no debe robarle el clic al boton que tiene al lado. */
+.zona-app .portico-orbe { position: relative; height: 204px; pointer-events: none; }
+.zona-app .portico-orbe > div { width: 100%; height: 100%; }
+
+.zona-app .panel-columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(255px, 295px);
+  gap: 14px;
+  align-items: start;
+}
+
+.zona-app .panel-pie { padding: 12px 16px; border-top: 1px solid var(--filete); }
+
+.zona-app .atajos { display: grid; gap: 9px; }
+
+.zona-app .atajo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: var(--tinta);
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.zona-app .atajo:hover {
+  transform: translateY(-2px);
+  border-color: var(--acento);
+  box-shadow: var(--sombra-3);
+}
+
+.zona-app .atajo-icono {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: var(--acento-suave);
+  color: var(--acento-texto);
+}
+
+.zona-app .atajo b { display: block; font-size: 12.5px; font-weight: 800; color: var(--tinta-fuerte); }
+.zona-app .atajo small { display: block; margin-top: 2px; font-size: 11px; color: var(--apagado); }
+
+@media (width < 1000px) {
+  .zona-app .panel-columnas { grid-template-columns: 1fr; }
+  .zona-app .atajos { grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); }
+}
+
+@media (width < 900px) {
+  .zona-app .portico { grid-template-columns: minmax(0, 1fr); padding: 22px 18px; }
+  .zona-app .portico-orbe { display: none; }
 }

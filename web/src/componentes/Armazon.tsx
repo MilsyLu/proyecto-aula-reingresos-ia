@@ -64,13 +64,9 @@ export function Armazon() {
     sesion?.rol === 'coordinador' ? 'Coordinación del programa' : 'Personal asistencial'
 
   return (
-    <div className={`zona-app${colapsada ? ' colapsada' : ''}`}>
-      <div className="aurora" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </div>
-
+    <div
+      className={`zona-app${colapsada ? ' colapsada' : ''}${actual?.teal ? ' zona-modelo' : ''}`}
+    >
       <aside className={`barra${menuMovil ? ' abierta' : ''}`} aria-label="Secciones">
         <div className="barra-marca">
           <span className="marca-sello">R</span>

@@ -2,21 +2,25 @@ import type { ComponentType } from 'react'
 import {
   ArrowUpToLine,
   BookOpen,
+  CalendarDays,
   Calculator,
   ChartColumn,
   ChartLine,
   Database,
+  FileSpreadsheet,
   FileText,
   GitBranch,
   GitCompare,
   GraduationCap,
   Grid3x3,
   type LucideIcon,
+  LayoutDashboard,
   ListOrdered,
   MessageCircle,
   Scale,
   SlidersHorizontal,
   Upload,
+  Users,
   Weight,
 } from 'lucide-react'
 import { Archivo } from './paginas/Archivo'
@@ -32,8 +36,12 @@ import { Estimar } from './paginas/Estimar'
 import { Fases } from './paginas/Fases'
 import { Guia } from './paginas/Guia'
 import { MapaCalor } from './paginas/MapaCalor'
+import { Pacientes } from './paginas/Pacientes'
+import { Panel } from './paginas/Panel'
 import { Modelos } from './paginas/Modelos'
 import { PasoAPaso } from './paginas/PasoAPaso'
+import { Reportes } from './paginas/Reportes'
+import { Seguimiento } from './paginas/Seguimiento'
 import { Techo } from './paginas/Techo'
 import { Umbral } from './paginas/Umbral'
 
@@ -49,6 +57,7 @@ import { Umbral } from './paginas/Umbral'
  */
 
 export type Grupo =
+  | 'Panel'
   | 'Empezar aquí'
   | 'Trabajar'
   | 'Conocer los datos'
@@ -56,6 +65,7 @@ export type Grupo =
   | 'Aprender haciendo'
 
 export const GRUPOS: Grupo[] = [
+  'Panel',
   'Empezar aquí',
   'Trabajar',
   'Conocer los datos',
@@ -73,10 +83,26 @@ export interface Pantalla {
   permiso: string
   /** El icono del menu. Tambien lo usa el buscador de Ctrl+K. */
   Icono: LucideIcon
+  /**
+   * Las pantallas donde se trabaja con el modelo van en teal en vez de morado.
+   *
+   * Sale del diseno que paso Michel, que usa esa misma division: el morado es
+   * del programa y el teal es del modelo. Separa de un vistazo operar de
+   * entender, sin que haga falta leer el titulo.
+   */
+  teal?: true
   Componente: ComponentType
 }
 
 export const PANTALLAS: Pantalla[] = [
+  {
+    ruta: 'panel',
+    titulo: 'Inicio',
+    grupo: 'Panel',
+    permiso: 'Guía',
+    Icono: LayoutDashboard,
+    Componente: Panel,
+  },
   {
     ruta: 'guia',
     titulo: 'Qué es esto',
@@ -99,6 +125,7 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Trabajar',
     permiso: 'Estimar riesgo',
     Icono: Calculator,
+    teal: true,
     Componente: Estimar,
   },
   {
@@ -107,6 +134,7 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Trabajar',
     permiso: 'Paso a paso',
     Icono: ListOrdered,
+    teal: true,
     Componente: PasoAPaso,
   },
   {
@@ -115,7 +143,32 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Trabajar',
     permiso: 'Asistente',
     Icono: MessageCircle,
+    teal: true,
     Componente: Asistente,
+  },
+  {
+    ruta: 'seguimiento',
+    titulo: 'Pacientes en seguimiento',
+    grupo: 'Trabajar',
+    permiso: 'Seguimiento',
+    Icono: CalendarDays,
+    Componente: Seguimiento,
+  },
+  {
+    ruta: 'pacientes',
+    titulo: 'Lista priorizada',
+    grupo: 'Trabajar',
+    permiso: 'Lista priorizada',
+    Icono: Users,
+    Componente: Pacientes,
+  },
+  {
+    ruta: 'reportes',
+    titulo: 'Reportes',
+    grupo: 'Trabajar',
+    permiso: 'Reportes',
+    Icono: FileSpreadsheet,
+    Componente: Reportes,
   },
   {
     ruta: 'archivo',
@@ -211,6 +264,7 @@ export const PANTALLAS: Pantalla[] = [
     grupo: 'Aprender haciendo',
     permiso: 'Recorrido grabado',
     Icono: GraduationCap,
+    teal: true,
     Componente: Entrenar,
   },
 ]
@@ -218,12 +272,12 @@ export const PANTALLAS: Pantalla[] = [
 /**
  * La pantalla con la que abre la aplicación.
  *
- * No es la primera del menú a propósito. Quien entra viene a trabajar: lo
- * primero que debe ver es el formulario para estimar un paciente, no la guía.
- * La guía queda arriba en el menú para quien la necesite, que es la primera
- * vez y pocas más.
+ * El panel, que es lo primero del menú y resume lo que hay que saber antes de
+ * hacer nada: a quién falta llamar, cuántos hay en seguimiento y el umbral
+ * vigente. Estimar un paciente queda a un clic, de primera en «Trabajar» y
+ * también entre los accesos rápidos del propio panel.
  */
-export const INICIO = 'estimar'
+export const INICIO = 'panel'
 
 export function pantallasDe(grupo: Grupo, permisos: string[]): Pantalla[] {
   return PANTALLAS.filter((p) => p.grupo === grupo && permisos.includes(p.permiso))

@@ -68,6 +68,34 @@ export const api = {
     pedir<T>(ruta, { method: 'POST', body: JSON.stringify(datos) }),
   subir: <T>(ruta: string, formulario: FormData) =>
     pedir<T>(ruta, { method: 'POST', body: formulario }),
+  parchar: <T>(ruta: string, datos: unknown) =>
+    pedir<T>(ruta, { method: 'PATCH', body: JSON.stringify(datos) }),
+  borrar: <T>(ruta: string) => pedir<T>(ruta, { method: 'DELETE' }),
+}
+
+/**
+ * Baja un archivo que genera la API.
+ *
+ * No se usa un <a download> apuntando a la ruta: eso la abre sin la cookie en
+ * algunos navegadores y ademas no deja ver el error si el servidor responde
+ * mal. Asi se pide con fetch, se comprueba, y solo entonces se descarga.
+ */
+export async function descargar(ruta: string): Promise<void> {
+  const respuesta = await fetch(`/api${ruta}`, { credentials: 'include' })
+  if (!respuesta.ok) {
+    throw new ErrorApi(mensajeDe(respuesta.status), respuesta.status)
+  }
+
+  const cabecera = respuesta.headers.get('Content-Disposition') ?? ''
+  const nombre = /filename="([^"]+)"/.exec(cabecera)?.[1] ?? 'reporte'
+
+  const bytes = await respuesta.blob()
+  const url = URL.createObjectURL(bytes)
+  const enlace = document.createElement('a')
+  enlace.href = url
+  enlace.download = nombre
+  enlace.click()
+  URL.revokeObjectURL(url)
 }
 
 // --- tipos que comparten el front y la API ---------------------------------

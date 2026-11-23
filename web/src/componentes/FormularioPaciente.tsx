@@ -25,7 +25,7 @@ export function FormularioPaciente({
   const porCampo = new Map(campos.map((c) => [c.campo, c]))
 
   return (
-    <div style={{ display: 'grid', gap: 28 }}>
+    <div style={{ display: 'grid', gap: 22 }}>
       {GRUPOS_CAMPOS.map((grupo) => (
         <fieldset key={grupo.titulo} className="grupo-campos">
           <legend className="antetitulo">{grupo.titulo}</legend>
@@ -79,32 +79,37 @@ export function FormularioPaciente({
 
       <style>{`
         .grupo-campos { border: 0; margin: 0; padding: 0; }
-        .grupo-campos legend { padding: 0; margin-bottom: 12px; }
+        .grupo-campos legend { padding: 0; margin-bottom: 11px; }
         .rejilla-campos {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-          gap: 13px;
+          grid-template-columns: repeat(auto-fit, minmax(144px, 1fr));
+          gap: 12px;
         }
         .campo-paciente {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          position: relative;
+          display: flex; flex-direction: column; gap: 6px; position: relative;
         }
-        .campo-etiqueta { font-size: 12.5px; font-weight: 500; color: var(--tinta); }
+        /* La etiqueta del campo: pequena y muy gruesa. Es lo que marca el
+           caracter del diseno que paso Michel; con un peso normal se deshace. */
+        .campo-etiqueta {
+          font-size: 11px;
+          font-weight: 900;
+          letter-spacing: -.01em;
+          color: var(--apagado);
+        }
         .campo-paciente input,
         .campo-paciente select {
           background: var(--superficie);
-          border: 1px solid var(--borde-suave);
-          border-radius: var(--radio-sm, 10px);
-          padding: 9px 11px;
-          font-family: var(--font-sans);
-          font-size: 14px;
+          border: 1px solid var(--filete);
+          border-radius: var(--radio-sm, 9px);
+          min-height: 44px;
+          padding: 10px 11px;
+          font-family: var(--font-dm);
+          font-size: 13.5px;
+          font-weight: 500;
           color: var(--tinta);
-          letter-spacing: -0.009em;
           font-variant-numeric: tabular-nums lining-nums;
           width: 100%;
-          transition: border-color .18s ease, box-shadow .18s ease;
+          transition: border-color .16s ease, box-shadow .16s ease;
         }
         .campo-paciente select { cursor: pointer; appearance: none; padding-right: 28px; }
         /* La flecha del desplegable, dibujada con bordes: quitar la nativa con
@@ -113,9 +118,8 @@ export function FormularioPaciente({
           content: '';
           position: absolute;
           right: 12px;
-          top: 36px;
-          width: 0;
-          height: 0;
+          top: 40px;
+          width: 0; height: 0;
           pointer-events: none;
           border-left: 4px solid transparent;
           border-right: 4px solid transparent;
@@ -124,12 +128,12 @@ export function FormularioPaciente({
         .campo-paciente input:focus,
         .campo-paciente select:focus {
           outline: none;
-          border-color: var(--acento, var(--filete-fuerte));
-          box-shadow: 0 0 0 3px var(--acento-suave, transparent);
+          border-color: var(--acento);
+          box-shadow: 0 0 0 3px var(--acento-suave);
         }
         .campo-paciente input:disabled,
         .campo-paciente select:disabled { opacity: .55; cursor: default; }
-        .campo-rango { font-size: 10.5px; color: var(--apagado); }
+        .campo-rango { font-size: 10px; color: var(--apagado); }
       `}</style>
     </div>
   )
