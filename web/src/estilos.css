@@ -658,12 +658,12 @@
 .zona-app table { border-collapse: collapse; width: 100%; }
 
 .zona-app thead th {
+  font-size: 14px;
   position: sticky;
   top: 0;
   z-index: 1;
   background: var(--superficie-2);
   color: var(--apagado);
-  font-size: 13px;
   font-weight: 800;
   letter-spacing: .05em;
   text-transform: uppercase;
@@ -675,9 +675,9 @@
 }
 
 .zona-app tbody td {
+  font-size: 15px;
   padding: 11px 12px;
   border-bottom: 1px solid var(--filete);
-  font-size: 14px;
   color: var(--tinta);
 }
 
@@ -697,7 +697,7 @@
   display: grid;
   grid-template-columns: var(--ancho-barra) minmax(0, 1fr);
   align-items: start;
-  --ancho-barra: 252px;
+  --ancho-barra: 280px;
   --alto-cinta: 56px;
   --pad-x: 26px;
   --pad-y: 22px;
