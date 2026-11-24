@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 
-// El front corre en 5173 y la API en 8000. El proxy evita CORS mientras se
+// El front corre en 5173 y la API en 8001. El proxy evita CORS mientras se
 // desarrolla; en produccion no hace falta, porque FastAPI sirve el build desde
 // el mismo dominio.
 export default defineConfig({
