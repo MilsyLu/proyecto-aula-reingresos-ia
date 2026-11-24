@@ -3,13 +3,14 @@
 Proyecto de aula de Inteligencia Artificial — **Grupo 04**
 Universidad Popular del Cesar · Ingeniería de Sistemas · Séptimo semestre · 2026
 
-> **Versión experimental ReingresaIA:** la rama
-> [`experiment/reingresaia-ui`](https://github.com/MilsyLu/proyecto-aula-reingresos-ia/tree/experiment/reingresaia-ui)
-> aplica una identidad visual propia y organiza el aplicativo en dos áreas:
-> **Predicción de riesgo** y **Laboratorio de IA**. El laboratorio ofrece un
-> recorrido guiado por cinco etapas y deja la evidencia técnica desplegable.
-> La aplicación pública enlazada abajo no necesariamente ejecuta esta rama.
-> [Ver guía del experimento](docs/reingresaia_experimental.md).
+> **Versión web experimental (React + FastAPI):** esta rama
+> `experiment/reingresaia-ui` incluye los cambios actuales de `main`
+> y mejoras de accesibilidad tipográfica. La aplicación web está en
+> `web/`, la API en `api/`. Para ejecutarla en Windows o Linux,
+> consulte la [guía de ejecución local](docs/ejecucion_local_reingresaia.md).
+> La versión de Streamlit se conserva en `app/` como implementación anterior.
+> El enlace de Streamlit indicado más abajo corresponde a ese despliegue,
+> no necesariamente a la nueva aplicación React.
 
 **Integrantes:** Michel Custodes · Iván Güette · Maira Torres
 
