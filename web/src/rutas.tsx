@@ -44,6 +44,9 @@ import { Reportes } from './paginas/Reportes'
 import { Seguimiento } from './paginas/Seguimiento'
 import { Techo } from './paginas/Techo'
 import { Umbral } from './paginas/Umbral'
+import { AgendaTrabajo } from './paginas/AgendaTrabajo'
+import { LaboratorioIA } from './paginas/LaboratorioIA'
+import { Administracion } from './paginas/Administracion'
 
 /**
  * El registro de pantallas.
@@ -56,22 +59,9 @@ import { Umbral } from './paginas/Umbral'
  * El permiso debe coincidir exactamente con los de `api/autenticacion.py`.
  */
 
-export type Grupo =
-  | 'Panel'
-  | 'Empezar aquí'
-  | 'Trabajar'
-  | 'Conocer los datos'
-  | 'Conocer el modelo'
-  | 'Aprender haciendo'
+export type Grupo = 'Atención diaria' | 'Administración'
 
-export const GRUPOS: Grupo[] = [
-  'Panel',
-  'Empezar aquí',
-  'Trabajar',
-  'Conocer los datos',
-  'Conocer el modelo',
-  'Aprender haciendo',
-]
+export const GRUPOS: Grupo[] = ['Atención diaria', 'Administración']
 
 export interface Pantalla {
   /** Ruta relativa dentro de /app */
@@ -91,6 +81,8 @@ export interface Pantalla {
    * entender, sin que haga falta leer el titulo.
    */
   teal?: true
+  /** Rutas técnicas accesibles por URL solo para administradores. */
+  ocultarEnMenu?: true
   Componente: ComponentType
 }
 
@@ -98,174 +90,216 @@ export const PANTALLAS: Pantalla[] = [
   {
     ruta: 'panel',
     titulo: 'Inicio',
-    grupo: 'Panel',
+    grupo: 'Atención diaria',
     permiso: 'Guía',
     Icono: LayoutDashboard,
     Componente: Panel,
   },
   {
-    ruta: 'guia',
-    titulo: 'Qué es esto',
-    grupo: 'Empezar aquí',
-    permiso: 'Guía',
-    Icono: BookOpen,
-    teal: true,
-    Componente: Guia,
-  },
-  {
-    ruta: 'fases',
-    titulo: 'Cómo se construyó',
-    grupo: 'Empezar aquí',
-    permiso: 'Las 12 fases',
-    Icono: GitBranch,
-    Componente: Fases,
+    ruta: 'seguimiento',
+    titulo: 'Pacientes',
+    grupo: 'Atención diaria',
+    permiso: 'Seguimiento',
+    Icono: CalendarDays,
+    Componente: Seguimiento,
   },
   {
     ruta: 'estimar',
-    titulo: 'Estimar un paciente',
-    grupo: 'Trabajar',
+    titulo: 'Estimar riesgo',
+    grupo: 'Atención diaria',
     permiso: 'Estimar riesgo',
     Icono: Calculator,
     teal: true,
     Componente: Estimar,
   },
   {
+    ruta: 'agenda',
+    titulo: 'Agenda',
+    grupo: 'Atención diaria',
+    permiso: 'Seguimiento',
+    Icono: CalendarDays,
+    Componente: AgendaTrabajo,
+  },
+  {
+    ruta: 'administracion',
+    titulo: 'Gestión administrativa',
+    grupo: 'Administración',
+    permiso: 'Cargar archivo',
+    Icono: SlidersHorizontal,
+    Componente: Administracion,
+  },
+  {
+    ruta: 'laboratorio-ia',
+    titulo: 'Laboratorio de IA',
+    grupo: 'Administración',
+    permiso: 'Comparar modelos',
+    Icono: GraduationCap,
+    Componente: LaboratorioIA,
+  },
+  {
+    ruta: 'guia',
+    titulo: 'Qué es esto',
+    grupo: 'Administración',
+    permiso: 'Guía',
+    Icono: BookOpen,
+    teal: true,
+    ocultarEnMenu: true,
+    Componente: Guia,
+  },
+  {
+    ruta: 'fases',
+    titulo: 'Cómo se construyó',
+    grupo: 'Administración',
+    permiso: 'Las 12 fases',
+    Icono: GitBranch,
+    ocultarEnMenu: true,
+    Componente: Fases,
+  },
+  {
     ruta: 'paso-a-paso',
     titulo: 'El cálculo paso a paso',
-    grupo: 'Trabajar',
+    grupo: 'Administración',
     permiso: 'Paso a paso',
     Icono: ListOrdered,
     teal: true,
+    ocultarEnMenu: true,
     Componente: PasoAPaso,
   },
   {
     ruta: 'asistente',
     titulo: 'El asistente',
-    grupo: 'Trabajar',
+    grupo: 'Administración',
     permiso: 'Asistente',
     Icono: MessageCircle,
     teal: true,
+    ocultarEnMenu: true,
     Componente: Asistente,
-  },
-  {
-    ruta: 'seguimiento',
-    titulo: 'Pacientes en seguimiento',
-    grupo: 'Trabajar',
-    permiso: 'Seguimiento',
-    Icono: CalendarDays,
-    Componente: Seguimiento,
   },
   {
     ruta: 'pacientes',
     titulo: 'Lista priorizada',
-    grupo: 'Trabajar',
+    grupo: 'Administración',
     permiso: 'Lista priorizada',
     Icono: Users,
+    ocultarEnMenu: true,
     Componente: Pacientes,
   },
   {
     ruta: 'reportes',
     titulo: 'Reportes',
-    grupo: 'Trabajar',
+    grupo: 'Administración',
     permiso: 'Reportes',
     Icono: FileSpreadsheet,
+    ocultarEnMenu: true,
     Componente: Reportes,
   },
   {
     ruta: 'archivo',
     titulo: 'Archivo y lista de llamadas',
-    grupo: 'Trabajar',
+    grupo: 'Administración',
     permiso: 'Cargar archivo',
     Icono: Upload,
+    ocultarEnMenu: true,
     Componente: Archivo,
   },
   {
     ruta: 'umbral',
     titulo: 'Fijar el umbral',
-    grupo: 'Trabajar',
+    grupo: 'Administración',
     permiso: 'Fijar umbral',
     Icono: SlidersHorizontal,
+    ocultarEnMenu: true,
     Componente: Umbral,
   },
   {
     ruta: 'cohorte',
     titulo: 'De dónde salen los datos',
-    grupo: 'Conocer los datos',
+    grupo: 'Administración',
     permiso: 'Conocer los datos',
     Icono: Database,
+    ocultarEnMenu: true,
     Componente: Cohorte,
   },
   {
     ruta: 'estadistica',
     titulo: 'Estadística descriptiva',
-    grupo: 'Conocer los datos',
+    grupo: 'Administración',
     permiso: 'Estadística descriptiva',
     Icono: ChartColumn,
+    ocultarEnMenu: true,
     Componente: Descriptiva,
   },
   {
     ruta: 'mapa-de-calor',
     titulo: 'Mapa de calor',
-    grupo: 'Conocer los datos',
+    grupo: 'Administración',
     permiso: 'Mapa de calor',
     Icono: Grid3x3,
+    ocultarEnMenu: true,
     Componente: MapaCalor,
   },
   {
     ruta: 'modelos',
     titulo: 'Qué modelos probamos',
-    grupo: 'Conocer el modelo',
+    grupo: 'Administración',
     permiso: 'Comparar modelos',
     Icono: GitCompare,
+    ocultarEnMenu: true,
     Componente: Modelos,
   },
   {
     ruta: 'desempeno',
     titulo: 'Desempeño y métricas',
-    grupo: 'Conocer el modelo',
+    grupo: 'Administración',
     permiso: 'Desempeño',
     Icono: ChartLine,
+    ocultarEnMenu: true,
     Componente: Desempeno,
   },
   {
     ruta: 'importancia',
     titulo: 'Qué pesa en el modelo',
-    grupo: 'Conocer el modelo',
+    grupo: 'Administración',
     permiso: 'Importancia',
     Icono: Weight,
+    ocultarEnMenu: true,
     Componente: Importancia,
   },
   {
     ruta: 'equidad',
     titulo: 'Equidad y límites',
-    grupo: 'Conocer el modelo',
+    grupo: 'Administración',
     permiso: 'Equidad',
     Icono: Scale,
+    ocultarEnMenu: true,
     Componente: Equidad,
   },
   {
     ruta: 'techo',
     titulo: 'El techo de los datos',
-    grupo: 'Conocer el modelo',
+    grupo: 'Administración',
     permiso: 'Techo de los datos',
     Icono: ArrowUpToLine,
+    ocultarEnMenu: true,
     Componente: Techo,
   },
   {
     ruta: 'ficha',
     titulo: 'Ficha del modelo',
-    grupo: 'Conocer el modelo',
+    grupo: 'Administración',
     permiso: 'Ficha del modelo',
     Icono: FileText,
+    ocultarEnMenu: true,
     Componente: Ficha,
   },
   {
     ruta: 'entrenar',
     titulo: 'Entrene usted el modelo',
-    grupo: 'Aprender haciendo',
+    grupo: 'Administración',
     permiso: 'Recorrido grabado',
     Icono: GraduationCap,
     teal: true,
+    ocultarEnMenu: true,
     Componente: Entrenar,
   },
 ]
@@ -281,10 +315,10 @@ export const PANTALLAS: Pantalla[] = [
 export const INICIO = 'panel'
 
 export function pantallasDe(grupo: Grupo, permisos: string[]): Pantalla[] {
-  return PANTALLAS.filter((p) => p.grupo === grupo && permisos.includes(p.permiso))
+  return PANTALLAS.filter((p) => p.grupo === grupo && !p.ocultarEnMenu && permisos.includes(p.permiso))
 }
 
 /** Todas las que el rol puede abrir, en el orden del menú. Lo usa el buscador. */
 export function pantallasVisibles(permisos: string[]): Pantalla[] {
-  return GRUPOS.flatMap((grupo) => pantallasDe(grupo, permisos))
+  return PANTALLAS.filter((p) => permisos.includes(p.permiso))
 }
