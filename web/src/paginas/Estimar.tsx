@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { UserPlus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Encabezado } from '../componentes/Encabezado'
@@ -6,7 +6,7 @@ import { ChatAsistente } from '../componentes/ChatAsistente'
 import { FormularioPaciente } from '../componentes/FormularioPaciente'
 import { RegistrarPaciente } from '../componentes/RegistrarPaciente'
 import { api, ErrorApi } from '../lib/api'
-import { conSigno, porcentaje, veces } from '../lib/formato'
+import { porcentaje } from '../lib/formato'
 import type { Estimacion } from '../lib/tiposModelo'
 import { useSesion } from '../lib/sesion'
 import type { PacienteSeguido } from '../lib/tiposSeguimiento'
@@ -56,11 +56,15 @@ export function Estimar() {
     }
   }, [])
 
-  useEffect(() => {
-    if (!opciones) return
-    const temporizador = setTimeout(() => estimar(paraEnviar), 260)
-    return () => clearTimeout(temporizador)
-  }, [opciones, paraEnviar, estimar])
+  function cambiarDato(campo: string, valor: string | number) {
+    peticion.current += 1
+    cambiar(campo, valor)
+    setResultado(null)
+    setRegistrado(null)
+    setFallo(null)
+    setCalculando(false)
+  }
+
 
   if (error) {
     return (
@@ -79,21 +83,6 @@ export function Estimar() {
     return 'Prioridad baja'
   }
 
-  /**
-   * La frase que acompaña a la cifra.
-   *
-   * Se arma con el factor que más pesa, no con un texto fijo: decirle a alguien
-   * «revise el caso» no le dice nada, y decirle «lo que más empuja son las 5
-   * hospitalizaciones previas» le dice dónde mirar.
-   */
-  function explicacion(e: Estimacion): string {
-    const top = e.efectos[0]
-    if (!top) {
-      return 'Todos los datos están en su valor típico, así que es el riesgo del paciente promedio de la cohorte.'
-    }
-    const sentido = top.efecto >= 0 ? 'sube' : 'baja'
-    return `Lo que más mueve este resultado es «${top.nombre}: ${top.valor}», que lo ${sentido} ${conSigno(Math.abs(top.efecto) * 100)} puntos.`
-  }
 
   return (
     <div>
@@ -105,16 +94,15 @@ export function Estimar() {
             <button
               type="button"
               className="pastilla pastilla-contorno pastilla-sm"
-              onClick={restablecer}
+              onClick={() => { peticion.current += 1; restablecer(); setResultado(null); setRegistrado(null); setCalculando(false) }}
             >
-              Volver al paciente típico
+              Limpiar formulario
             </button>
           ) : null
         }
       >
         <p>
-          Escriba los datos de una hospitalización que ya terminó. El riesgo se recalcula solo a
-          medida que cambia los campos, así que se ve enseguida cuál pesa y cuál no mueve nada.
+          Complete los datos de la hospitalización y pulse «Calcular riesgo». Después podrá registrar el paciente para seguimiento.
         </p>
       </Encabezado>
 
@@ -124,7 +112,7 @@ export function Estimar() {
             <div>
               <h2 className="tarjeta-titulo">Datos del alta</h2>
               <p className="tarjeta-sub">
-                Quince datos de la hospitalización, agrupados como los piensa quien los llena
+                Información necesaria para la estimación de reingreso
               </p>
             </div>
           </div>
@@ -134,16 +122,22 @@ export function Estimar() {
               <FormularioPaciente
                 campos={opciones.campos}
                 valores={valores}
-                onCambio={cambiar}
+                onCambio={cambiarDato}
                 deshabilitado={false}
               />
             ) : (
               <p className="antetitulo">Cargando el formulario</p>
             )}
 
+            <button type="button" className="pastilla pastilla-rellena"
+              style={{ marginTop: 20, width: '100%', justifyContent: 'center' }}
+              disabled={!opciones || calculando || fueraDeRango.length > 0}
+              onClick={() => estimar(paraEnviar)}>
+              {calculando ? 'Calculando…' : 'Calcular riesgo'}
+            </button>
             {fueraDeRango.length > 0 && (
               <p className="aviso-rango">
-                Hay valores fuera de rango; se está usando el más cercano permitido.
+                Revise los campos fuera de rango antes de calcular.
               </p>
             )}
             {fallo && <p className="aviso-rango">{fallo}</p>}
@@ -166,7 +160,7 @@ export function Estimar() {
                   </div>
                   <div className="resultado-texto">
                     <h3>Probabilidad estimada de reingreso a 30 días</h3>
-                    <p>{explicacion(resultado)}</p>
+                    <p>Estimación orientativa basada en los datos registrados; no es un diagnóstico.</p>
                     <p className="resultado-decision">
                       {resultado.supera
                         ? 'Entra en la lista de llamadas del programa.'
@@ -176,28 +170,6 @@ export function Estimar() {
                   <span className="nivel">{prioridad(resultado)}</span>
                 </div>
 
-                <div className="cifras-riesgo">
-                  <div>
-                    <small>Tasa base de la cohorte</small>
-                    <b>{porcentaje(resultado.tasa_base)}</b>
-                  </div>
-                  <div>
-                    <small>Umbral del programa</small>
-                    <b>{porcentaje(resultado.umbral)}</b>
-                  </div>
-                  <div>
-                    <small>Veces la tasa base</small>
-                    <b>{veces(resultado.veces_la_base)}</b>
-                  </div>
-                </div>
-
-                <div className="barra-riesgo">
-                  <i style={{ width: `${Math.min(resultado.probabilidad * 100, 100)}%` }} />
-                  <b style={{ left: `${resultado.umbral * 100}%` }} />
-                </div>
-                <p className="barra-pie">
-                  La marca es el umbral. A la derecha, el programa llama; a la izquierda, no.
-                </p>
 
                 {puedeSeguir &&
                   (registrado ? (
@@ -224,54 +196,18 @@ export function Estimar() {
             </aside>
           )}
 
-          <aside className="tarjeta">
-            <ChatAsistente estimacion={resultado} alto={248} compacto />
-          </aside>
+          {resultado && <aside className="tarjeta tarjeta-pad">
+            <details>
+              <summary style={{ cursor: 'pointer', fontWeight: 800 }}>
+                ¿Necesita ayuda para entender el resultado?
+              </summary>
+              <p className="tarjeta-sub" style={{ marginTop: 10 }}>
+                Ayuda opcional, no sustituye el criterio de profesionales de salud.
+              </p>
+              <ChatAsistente estimacion={resultado} alto={240} compacto />
+            </details>
+          </aside>}
 
-          {resultado && resultado.efectos.length > 0 && (
-            <aside className="tarjeta">
-              <div className="cabeza-tarjeta">
-                <div>
-                  <h2 className="tarjeta-titulo">Qué pesó en este resultado</h2>
-                  <p className="tarjeta-sub">
-                    Cada cifra sale de volverle a preguntar al modelo con ese dato cambiado
-                  </p>
-                </div>
-              </div>
-              <div className="cuerpo-tarjeta">
-                {resultado.efectos.map((e) => {
-                  const ancho = Math.min(Math.abs(e.efecto) / 0.25, 1) * 100
-                  return (
-                    <div key={e.campo} className="peso-fila">
-                      <div className="peso-cabeza">
-                        <span>
-                          {e.nombre}: <strong>{e.valor}</strong>
-                        </span>
-                        <span className="peso-valor">{conSigno(e.efecto * 100)} pts</span>
-                      </div>
-                      <div className="peso-barra">
-                        <i
-                          style={{
-                            width: `${ancho}%`,
-                            background: e.efecto >= 0 ? '#c2410c' : 'var(--teal)',
-                          }}
-                        />
-                      </div>
-                      <p className="peso-pie">
-                        Con el valor típico ({e.tipico}) bajaría a {porcentaje(e.sin_el)}.
-                      </p>
-                    </div>
-                  )
-                })}
-                <Link
-                  to="../paso-a-paso"
-                  className="pastilla pastilla-contorno pastilla-sm enlace-paso"
-                >
-                  Ver el cálculo paso a paso
-                </Link>
-              </div>
-            </aside>
-          )}
         </div>
       </div>
 
