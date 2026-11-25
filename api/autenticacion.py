@@ -43,7 +43,7 @@ PERMISOS: dict[str, frozenset[str]] = {
 
 NOMBRE_ROL = {
     "clinico": "Personal asistencial",
-    "coordinador": "Coordinación del programa",
+    "coordinador": "Administrador",
 }
 
 
