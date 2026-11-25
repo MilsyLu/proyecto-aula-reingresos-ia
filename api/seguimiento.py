@@ -243,6 +243,9 @@ def cambiar(id: int, cambio: Cambio, _=Depends(auth.exige("Seguimiento"))):
         if cambio.estado == "contactado":
             campos.append("fecha_contacto = ?")
             parametros.append(date.today().isoformat())
+        if cambio.estado == "cerrado" and cambio.fecha_agendada is None:
+            campos.append("fecha_agendada = ?")
+            parametros.append("")
 
     if cambio.fecha_agendada is not None:
         fecha = cambio.fecha_agendada.strip()
@@ -383,7 +386,8 @@ def agenda(lunes: str = "", _=Depends(auth.exige("Seguimiento"))):
         filas = cx.execute(
             """
             SELECT * FROM seguimiento
-            WHERE fecha_agendada >= ? AND fecha_agendada <= ?
+            WHERE estado = 'agendado'
+              AND fecha_agendada >= ? AND fecha_agendada <= ?
             ORDER BY fecha_agendada, probabilidad DESC
             """,
             (inicio.isoformat(), fin.isoformat()),
