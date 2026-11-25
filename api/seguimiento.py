@@ -63,6 +63,17 @@ CREATE TABLE IF NOT EXISTS seguimiento (
 );
 CREATE INDEX IF NOT EXISTS idx_seguimiento_estado ON seguimiento(estado);
 CREATE INDEX IF NOT EXISTS idx_seguimiento_agenda ON seguimiento(fecha_agendada);
+CREATE TABLE IF NOT EXISTS contactos (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  seguimiento_id  INTEGER NOT NULL REFERENCES seguimiento(id) ON DELETE CASCADE,
+  creado          TEXT NOT NULL,
+  registrado_por  TEXT NOT NULL,
+  resultado       TEXT NOT NULL,
+  observaciones   TEXT NOT NULL DEFAULT '',
+  fecha_proxima   TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS idx_contactos_paciente
+  ON contactos(seguimiento_id, creado DESC, id DESC);
 """
 
 
@@ -72,6 +83,7 @@ def conexion():
     CARPETA.mkdir(parents=True, exist_ok=True)
     cx = sqlite3.connect(ARCHIVO, timeout=10)
     cx.row_factory = sqlite3.Row
+    cx.execute("PRAGMA foreign_keys = ON")
     try:
         yield cx
         cx.commit()
@@ -262,6 +274,85 @@ def cambiar(id: int, cambio: Cambio, _=Depends(auth.exige("Seguimiento"))):
     return _fila(fila)
 
 
+# Cada llamada queda registrada; las notas de seguimiento actuales
+# pueden cambiar, pero nunca sobrescriben contactos anteriores.
+RESULTADOS_CONTACTO = ("contactado", "sin_respuesta", "reprogramar")
+
+
+class NuevoContacto(BaseModel):
+    resultado: str
+    observaciones: str = Field(default="", max_length=2000)
+    fecha_proxima: str = Field(default="", max_length=10)
+
+
+def contactos(id: int, _=Depends(auth.exige("Seguimiento"))):
+    with conexion() as cx:
+        existe = cx.execute("SELECT 1 FROM seguimiento WHERE id = ?", (id,)).fetchone()
+        if existe is None:
+            raise HTTPException(404, "Ese paciente no está en seguimiento.")
+        filas = cx.execute(
+            """SELECT id, seguimiento_id, creado, registrado_por, resultado,
+                      observaciones, fecha_proxima
+               FROM contactos WHERE seguimiento_id = ?
+               ORDER BY creado DESC, id DESC""",
+            (id,),
+        ).fetchall()
+    return {"contactos": [dict(f) for f in filas]}
+
+
+def registrar_contacto(
+    id: int, contacto: NuevoContacto,
+    sesion=Depends(auth.exige("Seguimiento")),
+):
+    if contacto.resultado not in RESULTADOS_CONTACTO:
+        raise HTTPException(422, "Resultado del contacto no reconocido.")
+    proxima = contacto.fecha_proxima.strip()
+    if proxima:
+        try:
+            fecha = date.fromisoformat(proxima)
+        except ValueError:
+            raise HTTPException(422, "La próxima fecha debe tener formato AAAA-MM-DD.")
+        if fecha < date.today():
+            raise HTTPException(422, "La próxima llamada no puede quedar en el pasado.")
+    if contacto.resultado == "reprogramar" and not proxima:
+        raise HTTPException(422, "Indique la fecha de la próxima llamada.")
+    ahora = datetime.now().isoformat(timespec="seconds")
+    with conexion() as cx:
+        existe = cx.execute(
+            "SELECT id FROM seguimiento WHERE id = ?", (id,)
+        ).fetchone()
+        if existe is None:
+            raise HTTPException(404, "Ese paciente no está en seguimiento.")
+        cursor = cx.execute(
+            """INSERT INTO contactos
+               (seguimiento_id, creado, registrado_por, resultado,
+                observaciones, fecha_proxima)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (id, ahora, sesion.get("usuario", ""),
+             contacto.resultado, contacto.observaciones.strip(), proxima),
+        )
+        if contacto.resultado == "contactado":
+            nuevo_estado = "agendado" if proxima else "contactado"
+            cx.execute(
+                """UPDATE seguimiento SET estado = ?, fecha_contacto = ?,
+                   fecha_agendada = ? WHERE id = ?""",
+                (nuevo_estado, date.today().isoformat(), proxima, id),
+            )
+        elif proxima:
+            cx.execute(
+                "UPDATE seguimiento SET estado = 'agendado', fecha_agendada = ? WHERE id = ?",
+                (proxima, id),
+            )
+        else:
+            cx.execute(
+                """UPDATE seguimiento SET estado = 'pendiente',
+                   fecha_agendada = '' WHERE id = ?""",
+                (id,),
+            )
+        fila = cx.execute("SELECT * FROM contactos WHERE id = ?", (cursor.lastrowid,)).fetchone()
+    return dict(fila)
+
+
 def borrar(id: int, _=Depends(auth.exige("Seguimiento"))):
     with conexion() as cx:
         cursor = cx.execute("DELETE FROM seguimiento WHERE id = ?", (id,))
@@ -331,5 +422,7 @@ def registrar(app: FastAPI) -> None:
     app.post("/api/seguimiento")(crear)
     app.get("/api/seguimiento")(listar)
     app.get("/api/seguimiento/agenda")(agenda)
+    app.get("/api/seguimiento/{id}/contactos")(contactos)
+    app.post("/api/seguimiento/{id}/contactos")(registrar_contacto)
     app.patch("/api/seguimiento/{id}")(cambiar)
     app.delete("/api/seguimiento/{id}")(borrar)
