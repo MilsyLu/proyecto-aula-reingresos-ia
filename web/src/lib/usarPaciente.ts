@@ -73,7 +73,8 @@ export function usarPaciente() {
           const limite = LIMITES[campo]
           if (!limite) return false
           const numero = Number(valor)
-          return !Number.isFinite(numero) || numero < limite.min || numero > limite.max
+          return String(valor).trim() === '' ||
+            !Number.isFinite(numero) || numero < limite.min || numero > limite.max
         })
         .map(([campo]) => campo),
     [valores],
