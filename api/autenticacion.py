@@ -21,7 +21,7 @@ ARCHIVO_USUARIOS = BASE / "app" / "usuarios_demo.toml"
 
 # Solo funciones operativas para el personal asistencial.
 ASISTENCIAL = frozenset({
-    "Guía", "Estimar riesgo", "Seguimiento",
+    "Guía", "Estimar riesgo", "Seguimiento", "Asistente",
 })
 
 # La coordinación puede cargar archivos, generar reportes, cambiar el umbral y
