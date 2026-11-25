@@ -1,21 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Inicio de sesión y control de acceso por rol, sin Streamlit.
+"""Autenticación y permisos por rol para la plataforma ReingresaIA.
 
-Reproduce la lógica de `app/auth.py`, que ya funciona y está probada, pero
-desacoplada de Streamlit para que la pueda usar FastAPI. Se mantiene el mismo
-archivo de usuarios y el mismo esquema de contraseñas: SHA-256 con sal por
-usuario y comparación en tiempo constante.
-
-El reparto de permisos cambió respecto a Streamlit, y el cambio es deliberado.
-Antes el clínico veía menos. Ahora **ve todo el conocimiento**: los datos, las
-métricas, la equidad, el techo, cómo se entrenó. Lo que queda reservado para la
-coordinación son las tres palancas de operación: cargar archivos, fijar el
-umbral y disparar un entrenamiento.
-
-Esa división es la tesis del proyecto hecha software. El umbral es una decisión
-de política sanitaria —cuánta gente alcanza a llamar el programa—, no un
-cálculo clínico. Quien lo fija no es quien lo consume. Pero esconderle el
-conocimiento al personal asistencial no tendría ninguna justificación.
+El personal asistencial solo utiliza predicción, gestión de pacientes y agenda.
+Coordinación conserva esas funciones y accede además a operación, evaluación
+y laboratorio. Todos los permisos se verifican en la API, no solo en el menú.
 """
 from __future__ import annotations
 
@@ -31,47 +19,26 @@ from fastapi import HTTPException, Request, status
 BASE = Path(__file__).resolve().parent.parent
 ARCHIVO_USUARIOS = BASE / "app" / "usuarios_demo.toml"
 
-# Todo lo que sirve para entender: abierto a los dos roles.
-CONOCIMIENTO = frozenset({
-    "Guía",
-    "Las 12 fases",
-    "Estimar riesgo",
-    "Paso a paso",
-    "Asistente",
-    "Conocer los datos",
-    "Estadística descriptiva",
-    "Mapa de calor",
-    "Comparar modelos",
-    "Desempeño",
-    "Importancia",
-    "Equidad",
-    "Techo de los datos",
-    "Ficha del modelo",
-    "Recorrido grabado",
-})
-
-# El trabajo del dia a dia con pacientes concretos: tambien para los dos roles.
-#
-# Registrar a alguien para seguimiento y llamarlo es trabajo asistencial, no
-# una decision de politica; y los reportes son conocimiento, que es lo que este
-# proyecto decidio no esconderle a nadie. La division sigue intacta: lo
-# reservado a coordinacion son las tres palancas de abajo.
+# Solo funciones operativas para el personal asistencial.
 ASISTENCIAL = frozenset({
-    "Seguimiento",
-    "Reportes",
-    "Lista priorizada",
+    "Guía", "Estimar riesgo", "Seguimiento",
 })
 
-# Las palancas que mueven el programa: solo coordinación.
-OPERACION = frozenset({
-    "Cargar archivo",
-    "Fijar umbral",
-    "Entrenar en vivo",
+# La coordinación puede cargar archivos, generar reportes, cambiar el umbral y
+# acceder a las evidencias de desarrollo y al entrenamiento experimental.
+ADMINISTRACION = frozenset({
+    "Cargar archivo", "Fijar umbral", "Reportes", "Lista priorizada",
+})
+LABORATORIO = frozenset({
+    "Las 12 fases", "Paso a paso", "Asistente", "Conocer los datos",
+    "Estadística descriptiva", "Mapa de calor", "Comparar modelos",
+    "Desempeño", "Importancia", "Equidad", "Techo de los datos",
+    "Ficha del modelo", "Recorrido grabado", "Entrenar en vivo",
 })
 
 PERMISOS: dict[str, frozenset[str]] = {
-    "clinico": CONOCIMIENTO | ASISTENCIAL,
-    "coordinador": CONOCIMIENTO | ASISTENCIAL | OPERACION,
+    "clinico": ASISTENCIAL,
+    "coordinador": ASISTENCIAL | ADMINISTRACION | LABORATORIO,
 }
 
 NOMBRE_ROL = {
