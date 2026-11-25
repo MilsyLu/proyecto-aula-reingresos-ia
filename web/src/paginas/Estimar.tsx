@@ -28,6 +28,7 @@ export function Estimar() {
   const [fallo, setFallo] = useState<string | null>(null)
   const [registrando, setRegistrando] = useState(false)
   const [registrado, setRegistrado] = useState<PacienteSeguido | null>(null)
+  const [datosConfirmados, setDatosConfirmados] = useState(false)
   const peticion = useRef(0)
   const { sesion } = useSesion()
   const puedeSeguir = (sesion?.permisos ?? []).includes('Seguimiento')
@@ -61,6 +62,7 @@ export function Estimar() {
     cambiar(campo, valor)
     setResultado(null)
     setRegistrado(null)
+    setDatosConfirmados(false)
     setFallo(null)
     setCalculando(false)
   }
@@ -94,7 +96,7 @@ export function Estimar() {
             <button
               type="button"
               className="pastilla pastilla-contorno pastilla-sm"
-              onClick={() => { peticion.current += 1; restablecer(); setResultado(null); setRegistrado(null); setCalculando(false) }}
+              onClick={() => { peticion.current += 1; restablecer(); setResultado(null); setRegistrado(null); setDatosConfirmados(false); setCalculando(false) }}
             >
               Limpiar formulario
             </button>
@@ -129,9 +131,17 @@ export function Estimar() {
               <p className="antetitulo">Cargando el formulario</p>
             )}
 
+            <label style={{ display: 'flex', alignItems: 'start', gap: 10,
+                marginTop: 18, fontSize: 15, lineHeight: 1.5, cursor: 'pointer' }}>
+              <input type="checkbox" checked={datosConfirmados}
+                onChange={e => setDatosConfirmados(e.target.checked)}
+                style={{ marginTop: 5 }} />
+              <span>He revisado los datos de esta hospitalización.
+                Los valores precargados son solo referencias y debo comprobarlos antes de continuar.</span>
+            </label>
             <button type="button" className="pastilla pastilla-rellena"
               style={{ marginTop: 20, width: '100%', justifyContent: 'center' }}
-              disabled={!opciones || calculando || fueraDeRango.length > 0}
+              disabled={!opciones || !datosConfirmados || calculando || fueraDeRango.length > 0}
               onClick={() => estimar(paraEnviar)}>
               {calculando ? 'Calculando…' : 'Calcular riesgo'}
             </button>
