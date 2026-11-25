@@ -61,7 +61,7 @@ export function Armazon() {
   const actual = PANTALLAS.find((p) => ubicacion.pathname.endsWith(`/${p.ruta}`))
   const nombre = sesion?.nombre ?? ''
   const rol =
-    sesion?.rol === 'coordinador' ? 'Coordinación del programa' : 'Personal asistencial'
+    sesion?.rol === 'coordinador' ? 'Administrador' : 'Personal asistencial'
 
   return (
     <div
