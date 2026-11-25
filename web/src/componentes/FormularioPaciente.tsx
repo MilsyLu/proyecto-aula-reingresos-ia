@@ -104,7 +104,7 @@ export function FormularioPaciente({
           min-height: 44px;
           padding: 10px 11px;
           font-family: var(--font-dm);
-          font-size: 13.5px;
+          font-size: 16px;
           font-weight: 500;
           color: var(--tinta);
           font-variant-numeric: tabular-nums lining-nums;
@@ -133,7 +133,7 @@ export function FormularioPaciente({
         }
         .campo-paciente input:disabled,
         .campo-paciente select:disabled { opacity: .55; cursor: default; }
-        .campo-rango { font-size: 10px; color: var(--apagado); }
+        .campo-rango { font-size: 13px; color: var(--apagado); }
       `}</style>
     </div>
   )
