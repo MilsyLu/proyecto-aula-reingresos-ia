@@ -23,7 +23,7 @@ const RESULTADOS = {
 /** Área asistencial: pacientes, fichas y agenda, sin métricas de entrenamiento. */
 export function Seguimiento({
   vistaInicial = 'lista',
-  soloVista = false,
+  soloVista = true,
 }: {
   vistaInicial?: 'lista' | 'agenda'
   soloVista?: boolean
@@ -200,11 +200,17 @@ export function Seguimiento({
             <p><b>Documento:</b> {paciente.documento || 'No registrado'}</p>
             <p><b>Fecha de alta:</b> {paciente.fecha_alta ? fechaCorta(paciente.fecha_alta) : 'No registrada'}</p>
             <div style={{ display: 'grid', gap: 8, marginTop: 16 }}>
-              <label className="campo-registro"><span>Estado de seguimiento</span>
-                <select value={paciente.estado} onChange={e => cambiar(paciente.id, { estado: e.target.value })}>
-                  {ESTADOS.map(e => <option key={e} value={e}>{NOMBRE_ESTADO[e]}</option>)}
-                </select>
-              </label>
+              <div>
+                <b>Estado:</b> {NOMBRE_ESTADO[paciente.estado]}
+                <p className="tarjeta-sub">El estado de contacto se actualiza al guardar una llamada.</p>
+                <button type="button" className="pastilla pastilla-contorno pastilla-sm"
+                  style={{ marginTop: 8 }}
+                  onClick={() => cambiar(paciente.id, {
+                    estado: paciente.estado === 'cerrado' ? 'pendiente' : 'cerrado',
+                  })}>
+                  {paciente.estado === 'cerrado' ? 'Reabrir seguimiento' : 'Cerrar seguimiento'}
+                </button>
+              </div>
               <label className="campo-registro"><span>Próxima llamada</span>
                 <input type="date" key={`fecha-${paciente.id}-${paciente.fecha_agendada}`}
                   defaultValue={paciente.fecha_agendada} min={hoy}
