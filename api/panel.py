@@ -38,7 +38,7 @@ def panel(peticion: Request, sesion=Depends(auth.exige("Guía"))):
             cx.execute("SELECT estado, COUNT(*) FROM seguimiento GROUP BY estado").fetchall()
         )
         sobre_umbral = int(
-            cx.execute("SELECT COUNT(*) FROM seguimiento WHERE alerta = 1").fetchone()[0]
+            cx.execute("SELECT COUNT(*) FROM seguimiento WHERE alerta = 1 AND estado != 'cerrado'").fetchone()[0]
         )
         # Los que piden atencion: primero los de mayor riesgo sin contactar.
         urgentes = cx.execute(
@@ -51,7 +51,7 @@ def panel(peticion: Request, sesion=Depends(auth.exige("Guía"))):
         esta_semana = cx.execute(
             """
             SELECT COUNT(*) FROM seguimiento
-            WHERE fecha_agendada >= ? AND fecha_agendada <= ?
+            WHERE estado = 'agendado' AND fecha_agendada >= ? AND fecha_agendada <= ?
             """,
             (hoy.isoformat(), fin_semana),
         ).fetchone()[0]
