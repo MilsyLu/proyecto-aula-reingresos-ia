@@ -28,6 +28,15 @@ function Protegida({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
+/** Control visual adicional: la API sigue verificando permisos al solicitar datos. */
+function PermisoRuta({ permiso, children }: { permiso: string; children: ReactNode }) {
+  const { sesion, cargando } = useSesion()
+  if (cargando) return <Esperando />
+  if (!sesion) return <Navigate to="/entrar" replace />
+  if (!sesion.permisos.includes(permiso)) return <Navigate to="/app/panel" replace />
+  return <>{children}</>
+}
+
 export function App() {
   return (
     <Routes>
@@ -43,8 +52,8 @@ export function App() {
         }
       >
         <Route index element={<Navigate to={INICIO} replace />} />
-        {PANTALLAS.map(({ ruta, Componente }) => (
-          <Route key={ruta} path={ruta} element={<Componente />} />
+        {PANTALLAS.map(({ ruta, permiso, Componente }) => (
+          <Route key={ruta} path={ruta} element={<PermisoRuta permiso={permiso}><Componente /></PermisoRuta>} />
         ))}
         <Route path="*" element={<Navigate to={INICIO} replace />} />
       </Route>
